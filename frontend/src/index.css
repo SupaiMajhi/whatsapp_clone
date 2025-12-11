@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap');
+@import "tailwindcss";
+@plugin "daisyui";
+
+@theme {
+    --color-white: #fff;
+    --color-baseClr: #A9A9A9;
+    --color-primaryBg: oklch(20.5% 0 0);
+    --color-authBg: #fcf5eb;
+    --color-LogoGreen: oklch(0.792 0.209 151.711);
+    --color-secondaryClr: oklch(37.1% 0 0);
+    --color-primaryBtn: oklch(0.627 0.194 149.214);
+    --color-hoverBtn: oklch(0.792 0.209 151.711);
+}
+
+* {
+    box-sizing: border-box;
+    font-family: "Cairo", sans-serif;
+}
+
+
+@layer components {
+    .heading {
+        font-size: 2.25rem;
+        font-weight: 300;
+    }
+    
+    .h1 {
+        font-size: 1.2rem;
+        line-height: 1em;
+        font-weight: 600;
+    }
+
+    .cpadding{
+        padding-inline: 1em;
+        padding-block: 0.5em;
+    }
+
+    .box-heading {
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    .chat-heading {
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+
+    .text {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--color-baseClr);
+    }
+
+    .time-text {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--color-baseClr);
+    }
+
+    .icon {
+        width: 1.5em;
+        color: var(--color-baseClr);
+        cursor: pointer
+    }
+
+    .div-container {
+        @apply w-full h-full px-10 py-3;
+    }
+
+    .chat-left-container{
+        width: 450px;
+    }
+
+    .left-container {
+        position: relative;
+        width: 450px;
+        padding: 1em 1.15em;
+    }
+
+    .right-container {
+        position: relative;
+        width: calc(100% - 450px);
+    }
+
+    .flex-column {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 0.3em;
+    }
+
+    .input-field {
+        width: 100%;
+        padding-block: 0.4em;
+        padding-left: 2.5em;
+        padding-right: 1.3em;
+        color: var(--color-white);
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 2em;
+        background-color: var(--color-secondaryClr);
+    }
+
+    .input-field:focus{
+        outline: 2px solid var(--color-LogoGreen);
+    }
+
+    .icon-center {
+        position: absolute;
+        top: 50%;
+        left: 3%;
+        transform: translateY(-50%);
+    }
+
+    .green-btn {
+        background-color: var(--color-primaryBtn);
+        color: black;
+        border-radius: 1.5em;
+        cursor: pointer;
+    }
+
+    .green-btn:hover{
+        background-color: var(--color-hoverBtn);
+    }
+}
