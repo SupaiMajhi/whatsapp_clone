@@ -80,7 +80,7 @@ export const verifyOtpHandler = async (req, res) => {
     const updatedUser = await User.findOneAndUpdate({ phoneNumber },{ isVerified: true }, {new: true}).select('-password');
     return successfulResponse(res, 200, 'login successful.', updatedUser);
   }else {
-    //todo: otpExpiry time is already crossed
+    //todo: otpExpiry time is already crossed, provide an option to re-send an otp
     await Otp.findOneAndDelete({ phoneNumber });
   }
 };
