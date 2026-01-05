@@ -1,13 +1,12 @@
 import { errorResponse } from "../lib/lib.js";
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
-import cookie from "cookie";
 
 const authMiddleware = async (req, res, next) => {
-  const { token } = cookie.parse(req.headers.cookie || "");
-  if (!token) return errorResponse(res, 401, "Unauthorized");
+  const { auth_token } = req.cookies;
+  if (!auth_token) return errorResponse(res, 401, "Unauthorized");
   try {
-    const isVerified = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const isVerified = jwt.verify(auth_token, process.env.JWT_SECRET_KEY);
     if (!isVerified) return errorResponse(res, 401, "unauthorized");
     const user = await User.findOne({ phoneNumber: isVerified });
     if (!user) return errorResponse(res, 401, "unauthorized");

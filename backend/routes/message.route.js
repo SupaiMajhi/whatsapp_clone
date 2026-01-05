@@ -7,7 +7,7 @@ import {
   getChatListHandler,
   getOfflineMessagesHandler,
 } from "../controllers/message.controller.js";
-import upload from "../multer.js";
+import upload from "../services/multer.js";
 import validateFileType from "../middleware/validateFileTypes.middleware.js";
 
 const router = Router();
@@ -15,7 +15,6 @@ const router = Router();
 router.post(
   "/send-message/:receiverId",
   upload.single("media"),
-  validateFileType,
   sendMsgHandler
 );
 

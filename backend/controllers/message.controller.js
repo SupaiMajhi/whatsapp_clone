@@ -1,8 +1,8 @@
-import mongoose, { Types } from "mongoose";
+import mongoose from "mongoose";
 import { errorResponse, successfulResponse, sendMessageToSockets } from "../lib/lib.js";
 import Message from "../models/message.model.js";
 import Conversation from "../models/conversation.model.js";
-import { singleUpload } from "../cloudinary.js";
+import { singleUpload } from "../services/cloudinary.js";
 import { unlink } from "fs/promises";
 
 export const sendMsgHandler = async (req, res) => {
@@ -159,6 +159,10 @@ export const getChatListHandler = async (req, res) => {
                 $project: {
                     _id: 1,
                     'unreadCount': 1,
+                    'lastMessage': 1,
+                    'lastMessagePreview': 1,
+                    'createdAt': 1,
+                    'updatedAt': 1,
                     'otherUser._id': 1,
                     'otherUser.username': 1,
                     'otherUser.profilePic': 1

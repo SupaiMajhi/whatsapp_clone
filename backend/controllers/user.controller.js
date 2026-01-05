@@ -2,7 +2,7 @@ import { errorResponse, successfulResponse } from "../lib/lib.js";
 import User from "../models/user.model.js";
 
 export const getAllUsersHandler = async (req, res) => {
-    const signinId = req.user.id;
+    const signinId = req.user._id;
     if(!signinId) return errorResponse(res, 400, 'unable to fetch. please try again');
     try {
         const users = await User.find({ _id: { $ne: signinId }}).select('-password')

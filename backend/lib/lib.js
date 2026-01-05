@@ -12,22 +12,33 @@ export const connectToDB = () => {
     .catch((e) => console.log(e.message))
 }
 
-export const errorResponse = (res, code, message) => {
-    return res.status(code).json({ 'msgType': 'error', message });
+export const errorResponse = (res, code, message,data={}) => {
+    return res.status(code).json({ 'msgType': 'error', message, data });
 }
 
 export const successfulResponse = (res, code, message, data) => {
     return res.status(code).json({ 'msgType': 'success', message, data });
 }
 
-export const isValidPhoneNumber = (phone) => {
+export const isValidPhoneNumber = (phoneNumber) => {
     // Example regex for a 10-digit number, optionally with country code and separators
-    const regex = /^\+?[1-9]\d{1,14}$/;
-    return regex.test(phone);
+    const regex = /^\d{10}$/;
+    return regex.test(phoneNumber)
 }
 
 export const generateOtp = () => {
     return Math.floor(100000 + Math.random() * 900000);
+}
+
+export const hashOtp = async (otp) => {
+    const salt = await bcrypt.genSalt(10);
+    const result = await bcrypt.hash(otp.toString(), salt);
+    return result;
+}
+
+export const deHashOtp = async (otp, hashValue) => {
+    const result = await bcrypt.compare(otp, hashValue);
+    return result;
 }
 
 export const hashedPassword = async (password) => {

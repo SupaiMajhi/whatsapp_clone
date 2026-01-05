@@ -1,7 +1,11 @@
 import { Schema, model } from "mongoose";
 
 const otpSchema = new Schema({
-    phone: {
+    verification_token: {
+        type: String,
+        unique: true,
+    },
+    phoneNumber: {
         type: String,
         unique: true,
         required: true,
