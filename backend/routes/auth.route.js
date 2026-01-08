@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { sendOtpHandler, verifyOtpHandler, loginHandler, signupHandler, checkAuthHandler, avatarUploadHandler, logoutHandler } from "../controllers/auth.controller.js";
+import { sendOtpHandler, verifyOtpHandler, resendOtpHandler, loginHandler, signupHandler, checkAuthHandler, avatarUploadHandler, logoutHandler } from "../controllers/auth.controller.js";
 import authMiddleware from "../middleware/auth.middleware.js";
 import upload from "../services/multer.js";
 
@@ -10,6 +10,8 @@ router.post('/login', loginHandler);
 router.post('/otp/send-otp', sendOtpHandler);
 
 router.post('/otp/verify', verifyOtpHandler);
+
+router.post('/otp/re-send', resendOtpHandler);
 
 router.get('/logout', authMiddleware, logoutHandler);
 

@@ -10,31 +10,120 @@ import {uploadProfile} from "../services/cloudinary.js";
 import { sendOTPtoPhoneNumber } from "../services/twilio.js";
 
 export const sendOtpHandler = async (req, res) => {
+
+  let RESEND_COOLDOWN_MS = 2 * 60 * 1000;
+  let MAX_RESENDS = 3;
+
   const { phoneNumber } = req.body.content;
   if (!phoneNumber || !isValidPhoneNumber(phoneNumber))
     return errorResponse(res, 400, "Please provide valid phone number");
   try {
+    /**-----FIND A RECORD WITH THE PHONE NUMBER----- */
+    const record = await Otp.findOne({ phoneNumber });
+
+    /**------IF NO RECORD EXIST--- */
+    if(!record){
+      const otp = generateOtp();
+      const hashedOtp = await hashOtp(otp);
+
+
+      /** ----SEND A TOKEN---- */
+      const payload = {
+        phoneNumber,
+      };
+      const token = jwt.sign(payload, process.env.OTP_SECRET_KEY, {
+        expiresIn: "15m"
+      });
+
+
+      /** ------CREATE AND SAVE OTP----- */
+      const newOtp = new Otp({
+        verification_token: token,
+        phoneNumber,
+        otp: hashedOtp,
+        otpExpiry: Date.now() + 5 * 60 * 1000,
+        lastOtpSentAt: Date.now(),
+        resendCount: 1
+      });
+      await newOtp.save();
+
+
+      /** -----SEND OTP----- */
+      if (otp && isValidPhoneNumber(phoneNumber)) {
+        await sendOTPtoPhoneNumber(otp, phoneNumber);
+      }
+
+      return successfulResponse(res, 200, "sent successfully.", { verification_token:token });
+    }
+    /**-----IF THERE IS A RECORD------ */
+    else {
+      let timePassed = Date.now() - record.lastOtpSentAt;
+
+      if(record.resendCount >= MAX_RESENDS){
+        return res.status(429).set('Retry-After', 2 * 24 * 60 * 60 * 1000).json({ 'message': 'You reached maximum resend limit. Please try after some couple of hours.'});
+      }
+
+      if(timePassed < RESEND_COOLDOWN_MS){
+        return errorResponse(res, 400, `Please wait ${Math.ceil(RESEND_COOLDOWN_MS - timePassed / 1000)}s before resend otp.`);
+      }
+
+      const otp = generateOtp();
+      const hashedOtp = await hashOtp(otp);
+
+
+      /** ------UPDATE OTP----- */
+        record.otp = hashedOtp,
+        record.otpExpiry = Date.now() + 5 * 60 * 1000,
+        record.lastOtpSentAt =  Date.now(),
+        record.resendCount =  record.resendCount + 1
+        await record.save();
+
+
+      /** -----SEND OTP----- */
+      if (otp && isValidPhoneNumber(phoneNumber)) {
+        await sendOTPtoPhoneNumber(otp, phoneNumber);
+      }
+
+      return successfulResponse(res, 200, 'OTP resent successfully.');
+    }
+  } catch (error) {
+    await Otp.findOneAndDelete({phoneNumber});
+    console.log("getOtpHandler error", error.message);
+    return errorResponse(res, 500, `Internal server error ${error.message}`);
+  }
+};
+
+export const resendOtpHandler = async (req, res) => {
+  let RESEND_COOLDOWN_MS = 2 * 60 * 1000;
+  let MAX_RESENDS = 3;
+  const { verification_token:vt } = req.body.content;
+  try {
+    const { phoneNumber } = jwt.verify(vt, process.env.OTP_SECRET_KEY);
+    if(!phoneNumber) return errorResponse(res, 401, 'error', 'Invalid payload token.');
+
+    const record = Otp.findOne({ phoneNumber });
+    if(!record) return errorResponse(res, 401, 'SESSION_TIMEOUT', 'Session expired.', {"redirectURL": "/auth/otp/get_otp"});
+
+    let timePassed = Date.now() - record.lastOtpSentAt;
+
+    if(record.resendCount >= MAX_RESENDS){
+      return res.status(429).set('Retry-After', 2 * 24 * 60 * 60 * 1000).json({ 'message': 'You reached maximum resend limit. Please try after some couple of hours.'});
+    }
+
+    if(timePassed < RESEND_COOLDOWN_MS){
+      return errorResponse(res, 400, `Please wait ${Math.ceil(RESEND_COOLDOWN_MS - timePassed / 1000)}s before resend otp.`);
+    }
+
     const otp = generateOtp();
     const hashedOtp = await hashOtp(otp);
 
 
-    /** ----SEND A TOKEN---- */
-    const payload = {
-      phoneNumber,
-    };
-    const token = jwt.sign(payload, process.env.OTP_SECRET_KEY, {
-      expiresIn: "5m"
-    });
-
-
-    /** ------CREATE AND SAVE OTP----- */
-    const newOtp = new Otp({
-      verification_token: token,
-      phoneNumber,
-      otp: hashedOtp,
-      otpExpiry: Date.now() + 2 * 60 * 1000,
-    });
-    await newOtp.save();
+    /** ------UPDATE OTP----- */
+      record.otp = hashedOtp,
+      record.otpExpiry = Date.now() + 5 * 60 * 1000,
+      record.lastOtpSentAt =  Date.now(),
+      record.resendCount =  record.resendCount + 1
+      await record.save();
 
 
     /** -----SEND OTP----- */
@@ -42,13 +131,17 @@ export const sendOtpHandler = async (req, res) => {
       await sendOTPtoPhoneNumber(otp, phoneNumber);
     }
 
-    return successfulResponse(res, 200, "sent successfully.", token);
+    return successfulResponse(res, 200, 'OTP resent successfully.');
   } catch (error) {
-    await Otp.findOneAndDelete({phoneNumber});
-    console.log("getOtpHandler error", error.message);
-    return errorResponse(res, 500, `Internal server error ${error.message}`);
+    if(error.name === 'TokenExpiredError'){
+      return errorResponse(res, 400, 'SESSION_TIMEOUT', 'Session expired.', {
+        redirectURL:'/auth/otp/get_otp'
+      });
+    }
+    console.log('Error in resendOtpHandler ', error.message);
+    return errorResponse(res, 500, 'Internal server error.');
   }
-};
+}
 
 //todo: if otp is incorrect there should be a try limit and rate limit to prevent attacks
 export const verifyOtpHandler = async (req, res) => {
@@ -60,7 +153,7 @@ export const verifyOtpHandler = async (req, res) => {
   try {
     /** ----VERIFY THE TOKEN----- */
     const { phoneNumber } = jwt.verify(vt, process.env.OTP_SECRET_KEY);
-    if(!phoneNumber) return;
+    if(!phoneNumber) return errorResponse(res, 401, 'Invalid payload token.');
 
     /** ------QUERY OTP COLLECTION------ */
     const doc = await Otp.findOne({ phoneNumber });
@@ -75,11 +168,7 @@ export const verifyOtpHandler = async (req, res) => {
       
       /** ------FIND THE USER IF NOT FOUND THEN CREATE A NEW USER----- */
       const user = await User.findOne({ phoneNumber }).select("-password");
-      if(user) {
-        updatedUser = await User.findOneAndUpdate({ phoneNumber },{ isVerified: true }, {new: true}).select('-password');
-      }
 
-      successfulResponse(res, 200, '', {isVerified: false, createNew: true});
       /** ------RETURN A TOKEN------ */
       const token = generateToken(phoneNumber);
       res.cookie("auth_token", token, {
@@ -88,14 +177,28 @@ export const verifyOtpHandler = async (req, res) => {
         secure: false,
         sameSite: "strict"
       });
-      return successfulResponse(res, 200, '', updatedUser);
-    }else {
-      //todo: otpExpiry time is already crossed, provide an option to re-send an otp
+      if(user) {
+        updatedUser = await User.findOneAndUpdate({ phoneNumber },{ isVerified: true }, {new: true}).select('-password');
+        return successfulResponse(res, 200, '', updatedUser);
+      }
+
+      return successfulResponse(res, 200, '', {isVerified: updatedUser ? updatedUser.isVerified : false, createNew: true}); //todo:instead of createNew i can provide a URL which navigate to craete new user page
+    }
+    else {
       await Otp.findOneAndDelete({ phoneNumber });
+      return res.status(401).json({ "message": "OTP is expired. Please re-send new one." });
     }
   } catch (error) {
+
+    /** -----IF ERROR IS TOKEN EXPIRED------  */
+    if(error.name === 'TokenExpiredError'){
+      return errorResponse(res, 400, 'SESSION_TIMEOUT', 'Session expired.', {
+        redirectURL:'/auth/otp/get_otp'
+      });
+    }
+
     console.log("verifyOtpHandler error ", error.message);
-    return errorResponse(res, 500, "Internal server error.");
+    return errorResponse(res, 500, "Internal server error.", { verification_token:null });
   }
 };
 

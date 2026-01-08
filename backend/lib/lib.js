@@ -12,8 +12,8 @@ export const connectToDB = () => {
     .catch((e) => console.log(e.message))
 }
 
-export const errorResponse = (res, code, message,data={}) => {
-    return res.status(code).json({ 'msgType': 'error', message, data });
+export const errorResponse = (res, code, msgType='', message ,data={}) => {
+    return res.status(code).json({ 'msgType': `${msgType}`, message, data });
 }
 
 export const successfulResponse = (res, code, message, data) => {
