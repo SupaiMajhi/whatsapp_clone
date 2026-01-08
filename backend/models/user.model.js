@@ -15,13 +15,9 @@ const userSchema = new Schema(
       unique: true,
       required: true,
     },
-    password: {
-      type: String,
-      required: true,
-    },
     profilePic: {
       type: String,
-      default: null,
+      default: '', //todo: a link to a default avatar
     },
     lastSeen: {
       type: Date,

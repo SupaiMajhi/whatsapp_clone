@@ -5,12 +5,11 @@ const useAuthStore = create((set) => ({
     user: null,
     isLoading: false,
 
-    handleLogin: async (phone, password) => {
+    handleLogin: async (phoneNumber) => {
         try {
             set({ isLoading: true });
             const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/auth/login`, {
-                phone,
-                password
+                phoneNumber
             }, {withCredentials: true});
             set({ isLoading: false });
             set({ user: response.data.data });

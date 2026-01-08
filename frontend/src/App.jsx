@@ -41,14 +41,14 @@ function App() {
     <div className="w-screen h-screen">
     {/** yet implement loading page */}
       <Routes>
-        <Route path="/" element={user ? <HomePage /> : <Navigate to='/login' />} >
+        <Route path="/" element={<HomePage />} >
           <Route index element={<ChatPage isChatSelected={isChatSelected} setIsChatSelected={setIsChatSelected} />} />
           <Route path="status" element={<StatusPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="profile" element={<ProfilePage />} />
         </Route>
 
-        <Route path="/login" element={!user ? <Login setIsAuthenticated={setIsAuthenticated} /> : <Navigate to='/' />} />
+        <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
       </Routes>
     </div>
   )

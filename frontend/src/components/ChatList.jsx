@@ -9,7 +9,7 @@ const ChatList = ({ setIsChatSelected }) => {
   return (
     <div className='w-full h-full'>
       { prevChatList.map((chat) => (
-        <ShowCard key={chat.otherUser._id} chatInfo={chat} setIsChatSelected={setIsChatSelected} />
+        <ShowCard key={chat._id} chatInfo={chat} setIsChatSelected={setIsChatSelected} />
       ))}
     </div>
   )

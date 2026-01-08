@@ -19,7 +19,7 @@ const Login = ({ setIsAuthenticated }) => {
 
     const handleOnSubmit = async (e) => {
         e.preventDefault();
-        const response = await handleLogin(form.phone, form.password);
+        const response = await handleLogin(form.phone);
         if(response){
             setIsAuthenticated(true);
         }

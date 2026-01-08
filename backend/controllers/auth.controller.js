@@ -10,7 +10,7 @@ import {uploadProfile} from "../services/cloudinary.js";
 import { sendOTPtoPhoneNumber } from "../services/twilio.js";
 
 export const sendOtpHandler = async (req, res) => {
-  const { phoneNumber } = req.body;
+  const { phoneNumber } = req.body.content;
   if (!phoneNumber || !isValidPhoneNumber(phoneNumber))
     return errorResponse(res, 400, "Please provide valid phone number");
   try {
@@ -32,7 +32,7 @@ export const sendOtpHandler = async (req, res) => {
       verification_token: token,
       phoneNumber,
       otp: hashedOtp,
-      otpExpiry: Date.now() + 2 * 60 * 1000, //todo: make less than 30 seconds
+      otpExpiry: Date.now() + 2 * 60 * 1000,
     });
     await newOtp.save();
 
@@ -42,65 +42,84 @@ export const sendOtpHandler = async (req, res) => {
       await sendOTPtoPhoneNumber(otp, phoneNumber);
     }
 
-    //todo: if otp sending is failed, then delete the db write for OTP.
     return successfulResponse(res, 200, "sent successfully.", token);
   } catch (error) {
+    await Otp.findOneAndDelete({phoneNumber});
     console.log("getOtpHandler error", error.message);
     return errorResponse(res, 500, `Internal server error ${error.message}`);
   }
 };
 
-
 //todo: if otp is incorrect there should be a try limit and rate limit to prevent attacks
 export const verifyOtpHandler = async (req, res) => {
+  let updatedUser;
+
   const { otp, verification_token:vt } = req.body.content;
+  if(!otp || !vt) return errorResponse(res, 400, 'Please provide an OTP.'); //todo: maybe in future i would implement something to improve security instead of simple return.
 
-  if(!otp || !vt) return; //todo: maybe in future i would implement something to improve security instead of simple return.
+  try {
+    /** ----VERIFY THE TOKEN----- */
+    const { phoneNumber } = jwt.verify(vt, process.env.OTP_SECRET_KEY);
+    if(!phoneNumber) return;
 
-  /** ----VERIFY THE TOKEN----- */
-  const { phoneNumber } = jwt.verify(vt, process.env.OTP_SECRET_KEY);
-  if(!phoneNumber) return;
+    /** ------QUERY OTP COLLECTION------ */
+    const doc = await Otp.findOne({ phoneNumber });
+    if(!doc) return;
 
-  /** ------QUERY OTP COLLECTION------ */
-  const doc = await Otp.findOne({ phoneNumber });
-  if(!doc) return;
+    if(doc.otpExpiry > Date.now()){
+      const isSame = await deHashOtp(otp, doc.otp);
 
-  if(doc.otpExpiry > Date.now()){
-    const isSame = await deHashOtp(otp, doc.otp);
+      if(!isSame) return errorResponse(res, 401, 'OTP is incorrect.');
 
-    if(!isSame) return errorResponse(res, 401, 'OTP is incorrect.');
+      await Otp.findOneAndDelete({ phoneNumber });
+      
+      /** ------FIND THE USER IF NOT FOUND THEN CREATE A NEW USER----- */
+      const user = await User.findOne({ phoneNumber }).select("-password");
+      if(user) {
+        updatedUser = await User.findOneAndUpdate({ phoneNumber },{ isVerified: true }, {new: true}).select('-password');
+      }
 
-    await Otp.findOneAndDelete({ phoneNumber });
-    /** ------FIND THE USER IF NOT FOUND THEN CREATE A NEW USER----- */
-    const user = await User.findOne({ phoneNumber }).select("-password");
-    if(!user) {
-      //todo: we have to create a new user for that we have to ask the user for all the info. required to create a new user.
-      return errorResponse(res, 401, 'User not found.', {isVerified:false, createNew: true});
+      successfulResponse(res, 200, '', {isVerified: false, createNew: true});
+      /** ------RETURN A TOKEN------ */
+      const token = generateToken(phoneNumber);
+      res.cookie("auth_token", token, {
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        secure: false,
+        sameSite: "strict"
+      });
+      return successfulResponse(res, 200, '', updatedUser);
+    }else {
+      //todo: otpExpiry time is already crossed, provide an option to re-send an otp
+      await Otp.findOneAndDelete({ phoneNumber });
     }
-    const updatedUser = await User.findOneAndUpdate({ phoneNumber },{ isVerified: true }, {new: true}).select('-password');
-    return successfulResponse(res, 200, 'login successful.', updatedUser);
-  }else {
-    //todo: otpExpiry time is already crossed, provide an option to re-send an otp
-    await Otp.findOneAndDelete({ phoneNumber });
+  } catch (error) {
+    console.log("verifyOtpHandler error ", error.message);
+    return errorResponse(res, 500, "Internal server error.");
   }
 };
 
 export const loginHandler = async (req, res) => {
-  const { phoneNumber } = req.body;
+  console.log("came request")
+  const { phoneNumber } = req.body.content;
   try {
     if (!phoneNumber) return errorResponse(res, 400, "all fields are required");
+    console.log("there is phonenumber")
 
     //check if user already exist or not
     const alreadyExist = await User.findOne({ phoneNumber });
     if (!alreadyExist) return errorResponse(res, 401, "phone or password is incorrect");
+    console.log("there is a user")
     // generate token and send it to the user
     const token = await generateToken(alreadyExist.phoneNumber);
+    console.log("token generated")
     res.cookie("auth_token", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
       secure: false,
       sameSite: "strict",
     });
+    console.log("token send")
     return successfulResponse(res, 200, "login successful.", alreadyExist);
   } catch (e) {
     console.log("loginHandler error", e.message);

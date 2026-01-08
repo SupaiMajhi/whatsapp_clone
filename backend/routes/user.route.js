@@ -1,7 +1,9 @@
 import { Router } from "express";
-import { getAllUsersHandler, getUserStatus } from '../controllers/user.controller.js';
+import { getAllUsersHandler, getUserStatus, createUserHandler } from '../controllers/user.controller.js';
 
 const router = Router();
+
+router.post('/create/user', createUserHandler)
 
 router.get('/get-all-users', getAllUsersHandler);
 

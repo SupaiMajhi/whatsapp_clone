@@ -18,7 +18,6 @@ const MainContent = () => {
   const messagesIds = useRef(new Set());
   let timer = null;
 
-  console.log('message', messagesIds.current)
 
   const observerCallback = (entries) => {
     entries.forEach((entry) => {
@@ -74,7 +73,7 @@ const MainContent = () => {
         message.senderId === user._id ? (
           <div className="chat chat-end" key={message._id} id={message._id}>
             <div className="chat-bubble bg-green-900 text flex justify-between items-center gap-2">
-              {message.text}
+              {/* {message.contentType === 'image' || message.contentType === 'video' || message.contentType === 'gif' ?  } */}
               <div className="flex justify-center items-center gap-1 mt-3">
                 {message.isSeen ? (
                   <p className="time-text">{validateTime(message.readAt)}</p>

@@ -1,10 +1,10 @@
 
-const Avatar = ({ className = ''}) => {
+const Avatar = ({ className = '', url}) => {
   return (
     <div>
       <div className="avatar">
         <div className={`rounded-full ${className}`}>
-          <img src="https://img.daisyui.com/images/profile/demo/spiderperson@192.webp" />
+          <img src={url} />
         </div>
       </div>
     </div>
