@@ -12,8 +12,13 @@ import { sendOTPtoPhoneNumber } from "../services/twilio.js";
 export const sendOtpHandler = async (req, res) => {
   const { phoneNumber } = req.body.content;
   if (!phoneNumber || !isValidPhoneNumber(phoneNumber))
-    return errorResponse(res, 400, "Please provide valid phone number");
+    return errorResponse(res, 400, "Phonenumber is not correct. Please enter correctly.");
   try {
+    /**------CHECK IF ALREADY A OTP IS EXIST------ */
+    const record = await Otp.findOne({ phoneNumber });
+    if(record){
+      return res.status(401).json({ data: { 'redirectURL': '/auth/verify_otp '}});
+    }
     const otp = generateOtp();
     const hashedOtp = await hashOtp(otp);
 
@@ -23,7 +28,7 @@ export const sendOtpHandler = async (req, res) => {
       phoneNumber,
     };
     const token = jwt.sign(payload, process.env.OTP_SECRET_KEY, {
-      expiresIn: "5m"
+      expiresIn: "10m"
     });
 
 
@@ -42,7 +47,7 @@ export const sendOtpHandler = async (req, res) => {
       await sendOTPtoPhoneNumber(otp, phoneNumber);
     }
 
-    return successfulResponse(res, 200, "sent successfully.", token);
+    return successfulResponse(res, 200, "sent successfully.", {token, 'redirectURL': '/auth/verify_otp'});
   } catch (error) {
     await Otp.findOneAndDelete({phoneNumber});
     console.log("getOtpHandler error", error.message);
@@ -54,7 +59,14 @@ export const sendOtpHandler = async (req, res) => {
 export const verifyOtpHandler = async (req, res) => {
   let updatedUser;
 
-  const { otp, verification_token:vt } = req.body.content;
+  /**-----EXTRACT TOKEN FROM HEADER AND PARSE------ */
+  const authHeader = req.headers.authorization;
+  if(!authHeader || !authHeader.startsWith("Bearer")){
+    return errorResponse(res, 401, '', { 'redirectURL': '/auth/get_otp' });
+  }
+
+  const {token:vt} = authHeader.split('')[1];
+  const { otp } = req.body.content;
   if(!otp || !vt) return errorResponse(res, 400, 'Please provide an OTP.'); //todo: maybe in future i would implement something to improve security instead of simple return.
 
   try {
