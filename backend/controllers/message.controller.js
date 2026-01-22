@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { customResponse } from "../lib/lib.js";
+import { errorResponse, successfulResponse, sendMessageToSockets } from "../lib/lib.js";
 import Message from "../models/message.model.js";
 import Conversation from "../models/conversation.model.js";
 import { singleUpload } from "../services/cloudinary.js";
@@ -12,9 +12,9 @@ export const sendMsgHandler = async (req, res) => {
     const file = req.file;
 
 
-    if(!sender || !receiver) return customResponse(res, 400, 'sender or receiver are required.');
+    if(!sender || !receiver) return errorResponse(res, 400, 'sender or receiver are required.');
 
-    if(!textContent && !file) return customResponse(res, 400, 'Message cannot be empty.');
+    if(!textContent && !file) return errorResponse(res, 400, 'Message cannot be empty.');
 
 
     let participants = [sender, receiver].sort();
@@ -26,7 +26,7 @@ export const sendMsgHandler = async (req, res) => {
             //----Determaine Content Type-----
             if(file.mimetype.startsWith('image/')) contentType = 'image';
             else {
-                return customResponse(res, 400, 'Unsupported file type.');
+                return errorResponse(res, 400, 'Unsupported file type.');
             }
 
             //----Upload to Cloudinary----
@@ -69,10 +69,10 @@ export const sendMsgHandler = async (req, res) => {
 
         await conversation.save();
 
-        return customResponse(res, 200, 'message sent.');
+        return successfulResponse(res, 200, 'message sent.');
     } catch (error) {
       console.log("sendMsgHandler Error", error.message);
-      return customResponse(res, 500, "Internal server error");
+      return errorResponse(res, 500, "Internal server error");
     }
 }
 
@@ -80,11 +80,11 @@ export const deleteMsgHandler = async (req, res) => {
     const { id } = req.params;
     try {
         const isDeleted = await Message.findByIdAndDelete(id);
-        if(!isDeleted) return customResponse(res, 400, 'unable to delete');
-        return customResponse(res, 200, 'deleted successfully.', {_id: isDeleted._id}); //todo: make the ui like in the whatsapp for the successful deleted msg
+        if(!isDeleted) return errorResponse(res, 400, 'unable to delete');
+        return successfulResponse(res, 200, 'deleted successfully.', {_id: isDeleted._id}); //todo: make the ui like in the whatsapp for the successful deleted msg
     } catch (error) {
         console.log("deleteMsgHandler Error", error.message);
-        return customResponse(res, 500, "Internal server error");
+        return errorResponse(res, 500, "Internal server error");
     }
 }
 
@@ -92,36 +92,36 @@ export const updateMsgHandler = async (req, res) => {
     const id  = mongoose.Types.ObjectId.createFromHexString(req.params.id);
     const { content }  = req.body;
 
-    if(!content || !id) return customResponse(res, 400, 'Message cannot be empty.');
+    if(!content || !id) return errorResponse(res, 400, 'Message cannot be empty.');
 
     try {
         const isUpadated = await Message.findByIdAndUpdate(id, { content }, { new: true });
-        if(!isUpadated) return customResponse(res, 400, 'unable to update');
-        return customResponse(res, 200, 'updated successfully.', isUpadated);
+        if(!isUpadated) return errorResponse(res, 400, 'unable to update');
+        return successfulResponse(res, 200, 'updated successfully.', isUpadated);
     } catch (error) {
         console.log("updateMsgHandler Error", error.message);
-        return customResponse(res, 500, "Internal server error");
+        return errorResponse(res, 500, "Internal server error");
     }
 }
 
 export const getAllMsgHandler = async (req, res) => {
     const { convoId } = req.params;
     
-    if(!convoId) return customResponse(res, 400, 'something went wrong, please try again');
+    if(!convoId) return errorResponse(res, 400, 'something went wrong, please try again');
 
     try {
         const messages = await Message.find({ conversationId: convoId });
-        return customResponse(res, 200, 'successfully.', messages);
+        return successfulResponse(res, 200, 'successfully.', messages);
     } catch (error) {
         console.log("getAllMsgHandler Error", error.message);
-        return customResponse(res, 500, "Internal server error");
+        return errorResponse(res, 500, "Internal server error");
     }
 }
 
 export const getChatListHandler = async (req, res) => {
     const id = mongoose.Types.ObjectId.createFromHexString(req.user.id);
 
-    if(!id) return customResponse(res, 401, 'something went wrong, please try again');
+    if(!id) return errorResponse(res, 401, 'something went wrong, please try again');
 
     try {
         const chatList = await Conversation.aggregate([
@@ -169,10 +169,10 @@ export const getChatListHandler = async (req, res) => {
                 }
             }
         ]);
-        return customResponse(res, 200, 'success', chatList );
+        return successfulResponse(res, 200, 'success', chatList );
     } catch (error) {
         console.log("getChatListHandler Error", error.message);
-        return customResponse(res, 500, "Internal server error");
+        return errorResponse(res, 500, "Internal server error");
     }
 }
 

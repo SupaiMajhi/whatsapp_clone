@@ -2,8 +2,6 @@ import mongoose from 'mongoose';
 import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
 import cookie from "cookie";
-
-
 import User from '../models/user.model.js';
 import { clients } from '../socket.js';
 
@@ -14,9 +12,12 @@ export const connectToDB = () => {
     .catch((e) => console.log(e.message))
 }
 
+export const errorResponse = (res, code, msgType='', message ,data={}) => {
+    return res.status(code).json({ 'msgType': `${msgType}`, message, data });
+}
 
-export const customResponse = (res, code, message='', data={}) => {
-    return res.status(code).json({ "message": message, "data": data });
+export const successfulResponse = (res, code, message, data) => {
+    return res.status(code).json({ 'msgType': 'success', message, data });
 }
 
 export const isValidPhoneNumber = (phoneNumber) => {

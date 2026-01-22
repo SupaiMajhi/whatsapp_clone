@@ -1,17 +1,17 @@
 import jwt from "jsonwebtoken";
 
-import { customResponse } from "../lib/lib.js";
+import { errorResponse, successfulResponse } from "../lib/lib.js";
 import User from "../models/user.model.js";
 
 export const getAllUsersHandler = async (req, res) => {
     const signinId = req.user._id;
-    if(!signinId) return customResponse(res, 400, 'unable to fetch. please try again');
+    if(!signinId) return errorResponse(res, 400, 'unable to fetch. please try again');
     try {
         const users = await User.find({ _id: { $ne: signinId }}).select('-password')
-        return customResponse(res, 200, 'successful', users);
+        return successfulResponse(res, 200, 'successful', users);
     } catch (error) {
         console.log('getAllUsersHandler Error', error.message);
-        return customResponse(res, 500, 'Internal server error');
+        return errorResponse(res, 500, 'Internal server error');
     }
 }
 
@@ -29,24 +29,24 @@ export const getUserStatus = async (req, res) => {
     const { userId } = req.params;
     try {
         const response = await User.findById(userId).select('isOnline').select('lastSeen');
-        return customResponse(res, 200, 'retrieve successfully.', response);
+        return successfulResponse(res, 200, 'retrieve successfully.', response);
     } catch (error) {
         console.log('getAllUsersHandler Error', error.message);
-        return customResponse(res, 500, 'Internal server error');
+        return errorResponse(res, 500, 'Internal server error');
     }
 }
 
 export const createUserHandler = async (req, res) => {
     const { auth_token:at } = req.cookie;
-    if(!at) return customResponse(res, 401, 'Unauthorized.');
+    if(!at) return errorResponse(res, 401, 'Unauthorized.');
 
     const { username, profilePic } = req.body.content;
-    if(!username || !profilePic) return customResponse(res, 400, 'All fields are required.');
+    if(!username || !profilePic) return errorResponse(res, 400, 'All fields are required.');
     
     try {
         /** ------RETRIEVE PHONENUMBER FROM TOKEN------- */
         const { phoneNumber } = jwt.verify(vt, process.env.OTP_SECRET_KEY);
-        if(!phoneNumber) return customResponse(res, 401, 'Unauthorized.');
+        if(!phoneNumber) return errorResponse(res, 401, 'Unauthorized.');
 
         /** ------CREATE A NEW USER------ */
         const newUser = new User({
@@ -57,9 +57,9 @@ export const createUserHandler = async (req, res) => {
         });
         await newUser.save();
 
-        return customResponse(res, 201, 'User is created.', newUser);
+        return successfulResponse(res, 201, 'User is created.', newUser);
     } catch (error) {
         console.log("Error in createUserHandler ", error.message);
-        return customResponse(res, 500, 'Internal server error.');
+        return errorResponse(res, 500, 'Internal server error.');
     }
 }

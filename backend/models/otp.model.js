@@ -17,11 +17,10 @@ const otpSchema = new Schema({
         type: Date
     },
     lastOtpSentAt: {
-        type: Date
+        type: Date,
     },
     resendCount: {
-        type: Number,
-        default: 0,
+        type: Number
     }
 }, { timestamps: true });
 
