@@ -15,6 +15,12 @@ const otpSchema = new Schema({
     },
     otpExpiry: {
         type: Date
+    },
+    lastOtpSentAt: {
+        type: Date
+    },
+    resendCount: {
+        type: Number,
     }
 }, { timestamps: true });
 

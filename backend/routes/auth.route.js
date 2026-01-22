@@ -1,15 +1,18 @@
 import { Router } from "express";
-import { sendOtpHandler, verifyOtpHandler, loginHandler, signupHandler, checkAuthHandler, avatarUploadHandler, logoutHandler } from "../controllers/auth.controller.js";
+
+
+import { sendOtpHandler, resendHandler, verifyOtpHandler, checkAuthHandler, avatarUploadHandler, logoutHandler } from "../controllers/auth.controller.js";
 import authMiddleware from "../middleware/auth.middleware.js";
+import authLimiter from "../middleware/rateLimit.js";
 import upload from "../services/multer.js";
 
 const router = Router();
 
-router.post('/login', loginHandler);
-
 router.post('/otp/send-otp', sendOtpHandler);
 
-router.post('/otp/verify', verifyOtpHandler);
+router.get('/otp/re-send', authLimiter, resendHandler);
+
+router.post('/otp/verify', authLimiter, verifyOtpHandler);
 
 router.get('/logout', authMiddleware, logoutHandler);
 

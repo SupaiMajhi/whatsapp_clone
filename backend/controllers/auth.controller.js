@@ -3,23 +3,25 @@ import fs from "fs/promises";
 import bcrypt from "bcrypt";
 
 
-import { errorResponse, generateOtp, hashOtp, deHashOtp, successfulResponse, isValidPhoneNumber, hashedPassword, generateToken } from "../lib/lib.js";
+import { customResponse, generateOtp, hashOtp, deHashOtp, isValidPhoneNumber, hashedPassword, generateToken } from "../lib/lib.js";
 import User from "../models/user.model.js";
 import Otp from "../models/otp.model.js";
 import {uploadProfile} from "../services/cloudinary.js";
 import { sendOTPtoPhoneNumber } from "../services/twilio.js";
 
+
 export const sendOtpHandler = async (req, res) => {
-  const { phoneNumber } = req.body.content;
+  const {phoneNumber}  = req.body.content;
   if (!phoneNumber || !isValidPhoneNumber(phoneNumber))
-    return errorResponse(res, 400, "Phonenumber is not correct. Please enter correctly.");
+    return customResponse(res, 400, "Phonenumber is not correct. Please ensure it is correct.");
   try {
     /**------CHECK IF ALREADY A OTP IS EXIST------ */
     const record = await Otp.findOne({ phoneNumber });
     if(record){
-      return res.status(401).json({ data: { 'redirectURL': '/auth/verify_otp '}});
+      return customResponse(res, 401, '', { "redirectURL": '/auth/verify_otp' });
     }
     const otp = generateOtp();
+    console.log(otp)
     const hashedOtp = await hashOtp(otp);
 
 
@@ -37,23 +39,71 @@ export const sendOtpHandler = async (req, res) => {
       verification_token: token,
       phoneNumber,
       otp: hashedOtp,
-      otpExpiry: Date.now() + 2 * 60 * 1000,
+      otpExpiry: Date.now() + 5 * 60 * 1000,
+      lastOtpSentAt: Date.now()
     });
     await newOtp.save();
 
 
     /** -----SEND OTP----- */
-    if (otp && isValidPhoneNumber(phoneNumber)) {
-      await sendOTPtoPhoneNumber(otp, phoneNumber);
-    }
+    // if (otp && isValidPhoneNumber(phoneNumber)) {
+    //   await sendOTPtoPhoneNumber(otp, phoneNumber);
+    // }
 
-    return successfulResponse(res, 200, "sent successfully.", {token, 'redirectURL': '/auth/verify_otp'});
+    return customResponse(res, 200, "OTP sent successfully.", {token, 'redirectURL': '/auth/verify_otp' });
   } catch (error) {
     await Otp.findOneAndDelete({phoneNumber});
     console.log("getOtpHandler error", error.message);
-    return errorResponse(res, 500, `Internal server error ${error.message}`);
+    return customResponse(res, 500, `Internal server error ${error.message}`);
   }
 };
+
+export const resendHandler = async (req, res) => {
+
+  let crntTime = Date.now();
+  let COOL_DOWN = 2 * 60 * 1000;
+  let MAX_RESEND = 3;
+  let phoneNumber;
+
+  const authHeader = req.headers.authorization;
+  if(!authHeader || !authHeader.startsWith('Bearer')) return customResponse(res, 401, 'Invalid token.');
+
+  try {
+    const vt = authHeader.split(' ')[1];
+    
+    /** --------EXTRACT PHONENUMBER FROM TOKEN------- */
+    const payload = jwt.verify(vt, process.env.OTP_SECRET_KEY);
+    phoneNumber = payload.phoneNumber;
+    if(!phoneNumber || !isValidPhoneNumber(phoneNumber)) return customResponse(res, 401, 'Unauthorized.');
+
+    /**------THERE MUST BE A OTP SHOULD EXIST TO RE-SEND ANOTHER OTP------ */
+    const existDoc = await Otp.findOne({ phoneNumber });
+    if(!existDoc) return customResponse(res, 401, 'Unauthorized', {'redirectURL': '/auth/get_otp'});
+    
+    if(existDoc.resendCount >= MAX_RESEND) return customResponse(res, 401, 'You have reached maximum limit. Please try again after sometimes.');
+    
+    let timePassed = crntTime - new Date(existDoc.lastOtpSentAt).getTime();
+    if(timePassed < COOL_DOWN) return customResponse(res, 401, `Please wait ${Math.ceil((COOL_DOWN - timePassed) / 1000)}s before requesting another OTP.`);
+
+    /**-----REWRITE PREVIOUS ONE AND SEND A NEW ONE----- */
+    const otp = generateOtp();
+    const hashedOtp = await hashOtp(otp);
+    // if(phoneNumber && isValidPhoneNumber(phoneNumber)){
+    //   sendOTPtoPhoneNumber(otp, phoneNumber);
+    // }
+
+    /**-----SAVE TO THE DB------ */
+    existDoc.otp = hashedOtp;
+    existDoc.otpExpiry = Date.now() + 5 * 60 * 1000;
+    existDoc.lastOtpSentAt = Date.now();
+    await existDoc.save();
+
+    return customResponse(res, 200, 'resent successfully.');
+  } catch (error) {
+    console.log('Error in resendHandler', error.message);
+    return customResponse(res, 500, 'Internal server error.');
+  }
+}
 
 //todo: if otp is incorrect there should be a try limit and rate limit to prevent attacks
 export const verifyOtpHandler = async (req, res) => {
@@ -62,36 +112,32 @@ export const verifyOtpHandler = async (req, res) => {
   /**-----EXTRACT TOKEN FROM HEADER AND PARSE------ */
   const authHeader = req.headers.authorization;
   if(!authHeader || !authHeader.startsWith("Bearer")){
-    return errorResponse(res, 401, '', { 'redirectURL': '/auth/get_otp' });
+    return customResponse(res, 401, '', { 'redirectURL': '/auth/get_otp' });
   }
 
-  const {token:vt} = authHeader.split('')[1];
+  const vt = authHeader.split('')[1];
   const { otp } = req.body.content;
-  if(!otp || !vt) return errorResponse(res, 400, 'Please provide an OTP.'); //todo: maybe in future i would implement something to improve security instead of simple return.
+  if(!otp || !vt) return customResponse(res, 400, 'something went wrong. Please try after sometime.'); //todo: maybe in future i would implement something to improve security instead of simple return.
 
   try {
     /** ----VERIFY THE TOKEN----- */
     const { phoneNumber } = jwt.verify(vt, process.env.OTP_SECRET_KEY);
-    if(!phoneNumber) return;
+    if(!phoneNumber) return customResponse(res, 401, 'Token is expired.'); //todo: if user's token has no phoneNumber, i.e. malicious user. In that case
+
+    //first invalidate this token
 
     /** ------QUERY OTP COLLECTION------ */
     const doc = await Otp.findOne({ phoneNumber });
-    if(!doc) return;
+    if(!doc) return customResponse(res, 400, 'send an otp first.', { "redirectURL": '/auth/get_otp'});
 
     if(doc.otpExpiry > Date.now()){
       const isSame = await deHashOtp(otp, doc.otp);
 
-      if(!isSame) return errorResponse(res, 401, 'OTP is incorrect.');
+      if(!isSame) return customResponse(res, 401, 'OTP is incorrect.');
 
+      //if it is same otp
       await Otp.findOneAndDelete({ phoneNumber });
-      
-      /** ------FIND THE USER IF NOT FOUND THEN CREATE A NEW USER----- */
-      const user = await User.findOne({ phoneNumber }).select("-password");
-      if(user) {
-        updatedUser = await User.findOneAndUpdate({ phoneNumber },{ isVerified: true }, {new: true}).select('-password');
-      }
 
-      successfulResponse(res, 200, '', {isVerified: false, createNew: true});
       /** ------RETURN A TOKEN------ */
       const token = generateToken(phoneNumber);
       res.cookie("auth_token", token, {
@@ -100,76 +146,31 @@ export const verifyOtpHandler = async (req, res) => {
         secure: false,
         sameSite: "strict"
       });
-      return successfulResponse(res, 200, '', updatedUser);
+      
+      /** ------FIND THE USER IF NOT FOUND THEN CREATE A NEW USER----- */
+      const user = await User.findOne({ phoneNumber }).select("-password");
+      if(user) {
+        user.isVerified = true;
+        await user.save();
+      }
+
+      return customResponse(res, 200, '', { "redirectURL": '/user/create' });
     }else {
       //todo: otpExpiry time is already crossed, provide an option to re-send an otp
       await Otp.findOneAndDelete({ phoneNumber });
     }
   } catch (error) {
     console.log("verifyOtpHandler error ", error.message);
-    return errorResponse(res, 500, "Internal server error.");
-  }
-};
-
-export const loginHandler = async (req, res) => {
-  console.log("came request")
-  const { phoneNumber } = req.body.content;
-  try {
-    if (!phoneNumber) return errorResponse(res, 400, "all fields are required");
-    console.log("there is phonenumber")
-
-    //check if user already exist or not
-    const alreadyExist = await User.findOne({ phoneNumber });
-    if (!alreadyExist) return errorResponse(res, 401, "phone or password is incorrect");
-    console.log("there is a user")
-    // generate token and send it to the user
-    const token = await generateToken(alreadyExist.phoneNumber);
-    console.log("token generated")
-    res.cookie("auth_token", token, {
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-      secure: false,
-      sameSite: "strict",
-    });
-    console.log("token send")
-    return successfulResponse(res, 200, "login successful.", alreadyExist);
-  } catch (e) {
-    console.log("loginHandler error", e.message);
-    return errorResponse(res, 500, "Internal server error.");
-  }
-};
-
-export const signupHandler = async (req, res) => {
-  const { username, password, phoneNumber } = req.body;
-  if(!username || !password || !phoneNumber) return errorResponse(res, 400, 'All fields are required.');
-  try {
-      //-----CHECK IF THE NUMBER EXIST-----
-      const isExist = await User.findOne({ phoneNumber });
-      if(isExist) return errorResponse(res, 400, 'User already exist.');
-
-      //----Hash the Password----
-      const hashed = await hashedPassword(password);
-
-      //---Create a New User----
-      const user = new User({
-        username,
-        phoneNumber,
-        password: hashed
-      });
-      await user.save();
-      return successfulResponse(res, 201, 'User created.');
-  } catch (e) {
-    console.log("signupHandler error", e.message);
-    return errorResponse(res, 500, "Internal server error.");
+    return customResponse(res, 500, "Internal server error.");
   }
 };
 
 export const checkAuthHandler = async (req, res) => {
   try {
-    return successfulResponse(res, 200, "user is authenticated.", req.user);
+    return customResponse(res, 200, "user is authenticated.", req.user);
   } catch (error) {
     console.log("signupHandler error", error.message);
-    return errorResponse(res, 500, "Internal server error.");
+    return customResponse(res, 500, "Internal server error.");
   }
 };
 
@@ -179,7 +180,7 @@ export const avatarUploadHandler = async (req, res) => {
   try {
       const response = await uploadProfile(file);
       if(!response){
-        return errorResponse(res, 400, 'Something went wrong, please try again');
+        return customResponse(res, 400, 'Something went wrong, please try again');
       }
         //remove the file from the server
         await fs.unlink(file.path);
@@ -189,7 +190,7 @@ export const avatarUploadHandler = async (req, res) => {
           { profilePic: response.url },
           { new: true }
         );
-        return successfulResponse(
+        return customResponse(
           res,
           200,
           "profile uploaded successfully.",
@@ -197,7 +198,7 @@ export const avatarUploadHandler = async (req, res) => {
         );
   } catch (error) {
     console.log("avatarUploadHandler error", error.message);
-    return errorResponse(res, 500, "Internal server error.");
+    return customResponse(res, 500, "Internal server error.");
   }
 };
 
@@ -206,9 +207,9 @@ export const logoutHandler = async (req, res) => {
     res.cookie('token', '', {
       maxAge: 0
     });
-    return successfulResponse(res, 200, 'Logout successfully.')
+    return customResponse(res, 200, 'Logout successfully.')
   } catch (error) {
     console.log(error.message);
-    return errorResponse(res, 500, 'Internal server error.');
+    return customResponse(res, 500, 'Internal server error.');
   }
 }

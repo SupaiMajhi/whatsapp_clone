@@ -1,0 +1,3 @@
+In frontend create a global state for uncaught error with name (Error, setError). to catch error which will be thrown by throw new error.
+Implement a custom rateLimit or better rateLimit package in auth routes.
+Implement a automatic method by which a otp document gets auto deleted when it's get expired.
