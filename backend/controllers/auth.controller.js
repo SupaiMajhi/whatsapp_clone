@@ -48,9 +48,9 @@ export const sendOtpHandler = async (req, res) => {
 
 
     /** -----SEND OTP----- */
-    // if (otp && isValidPhoneNumber(phoneNumber)) {
-    //   await sendOTPtoPhoneNumber(otp, phoneNumber);
-    // }
+    if (otp && isValidPhoneNumber(phoneNumber)) {
+      await sendOTPtoPhoneNumber(otp, phoneNumber);
+    }
 
     return customResponse(res, 200, "OTP sent successfully.", {token, 'redirectURL': '/auth/verify_otp' });
   } catch (error) {
@@ -93,9 +93,9 @@ export const resendHandler = async (req, res) => {
     /**-----REWRITE PREVIOUS ONE AND SEND A NEW ONE----- */
     const otp = generateOtp();
     const hashedOtp = await hashOtp(otp);
-    // if(phoneNumber && isValidPhoneNumber(phoneNumber)){
-    //   sendOTPtoPhoneNumber(otp, phoneNumber);
-    // }
+    if(phoneNumber && isValidPhoneNumber(phoneNumber)){
+      sendOTPtoPhoneNumber(otp, phoneNumber);
+    }
 
     /**-----SAVE TO THE DB------ */
     existDoc.otp = hashedOtp;
