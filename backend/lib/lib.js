@@ -29,14 +29,14 @@ export const generateOtp = () => {
     return Math.floor(100000 + Math.random() * 900000);
 }
 
-export const hashOtp = async (otp) => {
+export const hash = async (value) => {
     const salt = await bcrypt.genSalt(10);
-    const result = await bcrypt.hash(otp.toString(), salt);
+    const result = await bcrypt.hash(value.toString(), salt);
     return result;
 }
 
-export const deHashOtp = async (otp, hashValue) => {
-    const result = await bcrypt.compare(otp, hashValue);
+export const deHash = async (value, hashValue) => {
+    const result = await bcrypt.compare(value, hashValue);
     return result;
 }
 

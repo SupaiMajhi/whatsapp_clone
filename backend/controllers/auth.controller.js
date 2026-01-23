@@ -1,9 +1,8 @@
 import jwt from 'jsonwebtoken';
 import fs from "fs/promises";
-import bcrypt from "bcrypt";
 
 
-import { customResponse, generateOtp, hashOtp, deHashOtp, isValidPhoneNumber, hashedPassword, generateToken } from "../lib/lib.js";
+import { customResponse, generateOtp, hash, deHash, isValidPhoneNumber, generateToken } from "../lib/lib.js";
 import User from "../models/user.model.js";
 import Otp from "../models/otp.model.js";
 import {uploadProfile} from "../services/cloudinary.js";
@@ -23,7 +22,7 @@ export const sendOtpHandler = async (req, res) => {
     }
 
     const otp = generateOtp();
-    const hashedOtp = await hashOtp(otp);
+    const hashedOtp = await hash(otp);
 
 
     /** ----SEND A TOKEN---- */
@@ -34,15 +33,16 @@ export const sendOtpHandler = async (req, res) => {
       expiresIn: "10m"
     });
 
+    const hashedPhoneNumber = await hash(phoneNumber);
 
     /** ------CREATE AND SAVE OTP----- */
     const newOtp = new Otp({
       verification_token: token,
-      phoneNumber, //todo: hashed the phoneNumber
+      phoneNumber: hashedPhoneNumber,
       otp: hashedOtp,
-      otpExpiry: Date.now() + 5 * 60 * 1000,
+      otpExpiry: Date.now() + 1000 * 60 * 5,
       lastOtpSentAt: Date.now(),
-      resendCount: resendCount + 1
+      resendCount: 1,
     });
     await newOtp.save();
 
@@ -58,7 +58,7 @@ export const sendOtpHandler = async (req, res) => {
     if(error.name === "TokenExpiredError"){
       return customResponse(res, 500, 'SESSION TIMEOUT. session expired.', { "redirectURL": '/auth/get_otp' });
     }
-    console.log("getOtpHandler error", error.message);
+    console.log("sendOtpHandler error", error.message);
     return customResponse(res, 500, `Internal server error ${error.message}`);
   }
 }
@@ -92,16 +92,18 @@ export const resendHandler = async (req, res) => {
 
     /**-----REWRITE PREVIOUS ONE AND SEND A NEW ONE----- */
     const otp = generateOtp();
-    const hashedOtp = await hashOtp(otp);
-    if(phoneNumber && isValidPhoneNumber(phoneNumber)){
-      sendOTPtoPhoneNumber(otp, phoneNumber);
-    }
+    const hashedOtp = await hash(otp);
 
     /**-----SAVE TO THE DB------ */
     existDoc.otp = hashedOtp;
     existDoc.otpExpiry = Date.now() + 5 * 60 * 1000;
     existDoc.lastOtpSentAt = Date.now();
+    existDoc.resendCount = resendCount + 1;
     await existDoc.save();
+
+    if(phoneNumber && isValidPhoneNumber(phoneNumber)){
+      sendOTPtoPhoneNumber(otp, phoneNumber);
+    }
 
     return customResponse(res, 200, 'resent successfully.');
   } catch (error) {
@@ -135,7 +137,7 @@ export const verifyOtpHandler = async (req, res) => {
     if(!doc) return customResponse(res, 400, 'send an otp first.', { "redirectURL": '/auth/get_otp'});
 
     if(doc.otpExpiry > Date.now()){
-      const isSame = await deHashOtp(otp, doc.otp);
+      const isSame = await deHash(otp, doc.otp);
 
       if(!isSame) return customResponse(res, 401, 'OTP is incorrect.');
 
