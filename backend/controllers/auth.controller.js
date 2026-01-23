@@ -121,54 +121,53 @@ export const verifyOtpHandler = async (req, res) => {
     return customResponse(res, 401, '', { 'redirectURL': '/auth/get_otp' });
   }
 
-  const vt = authHeader.split('')[1];
+  const vt = authHeader.split(' ')[1];
   const { otp } = req.body.content;
   if(!otp || !vt) return customResponse(res, 400, 'something went wrong. Please try after sometimes.'); //todo: maybe in future i would implement something to improve security instead of simple return.
 
   try {
     /** ----VERIFY THE TOKEN----- */
     const { phoneNumber } = jwt.verify(vt, process.env.OTP_SECRET_KEY);
-    if(!phoneNumber) return customResponse(res, 401, 'Token is expired.'); //todo: if user's token has no phoneNumber, i.e. malicious user. In that case
+    if(!phoneNumber) return customResponse(res, 401, 'Token is expired.'); //todo: if user's token has no phoneNumber, i.e. malicious user. In that case:
 
     //todo: first invalidate this token
 
     /** ------QUERY OTP COLLECTION------ */
     const doc = await Otp.findOne({ phoneNumber });
-    if(!doc) return customResponse(res, 400, 'send an otp first.', { "redirectURL": '/auth/get_otp'});
+    if(!doc) return customResponse(res, 400, 'Get an otp first.', { "redirectURL": '/auth/get_otp'});
 
-    if(doc.otpExpiry > Date.now()){
-      const isSame = await deHash(otp, doc.otp);
-
-      if(!isSame) return customResponse(res, 401, 'OTP is incorrect.');
-
-      //if it is same otp
-      await Otp.findOneAndDelete({ phoneNumber });
-
-      /** ------RETURN A TOKEN------ */
-      const token = generateToken(phoneNumber);
-      res.cookie("auth_token", token, {
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        secure: false,
-        sameSite: "strict"
-      });
-      
-      /** ------FIND THE USER IF NOT FOUND THEN CREATE A NEW USER----- */
-      const user = await User.findOne({ phoneNumber }).select("-password");
-      if(user) {
-        user.isVerified = true;
-        await user.save();
-        return customResponse(res, 200, 'Logged In.', { "username": user.username, "profilePic": user.profilePic });
-      }
-
-      return customResponse(res, 200, '', { "redirectURL": '/user/create' });
-    }else {
+    if(Date.now() > doc.otpExpiry){
       //todo: otpExpiry time is already crossed, provide an option to re-send an otp
       await Otp.deleteMany({ phoneNumber });
-      return res.status(401).json({ "message": "OTP is expired." });
+      return customResponse(res, 401, 'OTP is expired.'); 
     }
-  } catch (error) {
 
+    const isSame = await deHash(otp, doc.otp);
+
+    if(!isSame) return customResponse(res, 401, 'OTP is incorrect.');
+
+    //if it is same otp
+    await Otp.findOneAndDelete({ phoneNumber });
+
+    /** ------RETURN A TOKEN------ */
+    const token = generateToken(phoneNumber);
+    res.cookie("auth_token", token, {
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict"
+    });
+    
+    /** ------FIND THE USER IF NOT FOUND THEN CREATE A NEW USER----- */
+    const user = await User.findOne({ phoneNumber }).select("-password");
+    if(user) {
+      user.isVerified = true;
+      await user.save();
+      return customResponse(res, 200, 'Logged In.', { "username": user.username, "profilePic": user.profilePic });
+    }
+
+    return customResponse(res, 200, '', { "redirectURL": '/user/create' });
+  } catch (error) {
     /** -----IF ERROR IS TOKEN EXPIRED------  */
     if(error.name === 'TokenExpiredError'){
       return errorResponse(res, 400, 'SESSION_TIMEOUT', 'Session expired.', {
