@@ -1,3 +1,8 @@
 In frontend create a global state for uncaught error with name (Error, setError). to catch error which will be thrown by throw new error.
 Implement a custom rateLimit or better rateLimit package in auth routes.
+<<<<<<< HEAD
 Implement a automatic method by which a otp document gets auto deleted when it's get expired.
+=======
+In backend, if the token is modified by a malicious user, what will be the error thrown by the jwt, and based on that i have to write a if conditinal error statement to throw an error.
+if a user clicks verify button multiple times, there should not be a race condition, and in verify route there should be a rate limit or try limit to prevent brute force attacks.
+>>>>>>> main

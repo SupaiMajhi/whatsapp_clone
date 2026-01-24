@@ -14,13 +14,16 @@ const otpSchema = new Schema({
         type: String,
     },
     otpExpiry: {
-        type: Date
+        type: Date,
+        default: Date.now(),
+        expires: 0,
     },
     lastOtpSentAt: {
         type: Date
     },
     resendCount: {
         type: Number,
+        default: 0,
     }
 }, { timestamps: true });
 

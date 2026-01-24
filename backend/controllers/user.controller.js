@@ -45,13 +45,16 @@ export const createUserHandler = async (req, res) => {
     
     try {
         /** ------RETRIEVE PHONENUMBER FROM TOKEN------- */
-        const { phoneNumber } = jwt.verify(vt, process.env.OTP_SECRET_KEY);
+        const { phoneNumber } = jwt.verify(at, process.env.JWT_SECRET_KEY);
         if(!phoneNumber) return customResponse(res, 401, 'Unauthorized.');
+
+        /**-----HASH THE PHONENUMBER----- */
+        const hashedPhoneNumber = await hash(phoneNumber);
 
         /** ------CREATE A NEW USER------ */
         const newUser = new User({
             isVerified: true,
-            phoneNumber,
+            phoneNumber: hashedPhoneNumber,
             username,
             profilePic: profilePic || ''
         });
