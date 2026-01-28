@@ -2,6 +2,9 @@ import mongoose from 'mongoose';
 import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
 import cookie from "cookie";
+import {fileTypeFromBuffer} from "file-type";
+import {readChunk} from "read-chunk";
+
 
 
 import User from '../models/user.model.js';
@@ -40,13 +43,19 @@ export const deHash = async (value, hashValue) => {
     return result;
 }
 
-export const hashedPassword = async (password) => {
-    const hash = await bcrypt.hash(password, 10);
-    return hash;
+export const determineFileType = async (filePath) => {
+    try {
+        const buffer = await readChunk(filePath, { length: 4100 });
+        const result = await fileTypeFromBuffer(buffer);
+        return result.mime;
+    } catch (error) {
+        console.log("Error in determineFileType", error.message);
+        return null;
+    }
 }
 
-export const generateToken = async (phone) => {
-    return jwt.sign(phone, process.env.JWT_SECRET_KEY);
+export const generateToken = async (payload) => {
+    return jwt.sign(payload, process.env.JWT_SECRET_KEY);
 }
 
 export const retrieveIdFromReq = async (req) => {

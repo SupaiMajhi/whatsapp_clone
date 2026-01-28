@@ -37,7 +37,7 @@ export const getUserStatus = async (req, res) => {
 }
 
 export const createUserHandler = async (req, res) => {
-    const { auth_token:at } = req.cookie;
+    const { auth_token:at } = req.cookies;
     if(!at) return customResponse(res, 401, 'Unauthorized.');
 
     const { username, profilePic } = req.body.content;
@@ -45,16 +45,13 @@ export const createUserHandler = async (req, res) => {
     
     try {
         /** ------RETRIEVE PHONENUMBER FROM TOKEN------- */
-        const { phoneNumber } = jwt.verify(at, process.env.JWT_SECRET_KEY);
+        const {phoneNumber} = jwt.verify(at, process.env.JWT_SECRET_KEY);
         if(!phoneNumber) return customResponse(res, 401, 'Unauthorized.');
-
-        /**-----HASH THE PHONENUMBER----- */
-        const hashedPhoneNumber = await hash(phoneNumber);
 
         /** ------CREATE A NEW USER------ */
         const newUser = new User({
             isVerified: true,
-            phoneNumber: hashedPhoneNumber,
+            phoneNumber,
             username,
             profilePic: profilePic || ''
         });

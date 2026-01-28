@@ -14,7 +14,7 @@ const router = Router();
 //send message
 router.post(
   "/send-message/:receiverId",
-  upload.single("media"),
+  upload.single("media"), validateFileType,
   sendMsgHandler
 );
 

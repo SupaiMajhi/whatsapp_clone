@@ -1,18 +1,19 @@
 import mongoose from "mongoose";
+import { unlink } from "fs/promises";
+
 import { customResponse } from "../lib/lib.js";
 import Message from "../models/message.model.js";
 import Conversation from "../models/conversation.model.js";
 import { singleUpload } from "../services/cloudinary.js";
-import { unlink } from "fs/promises";
 
 export const sendMsgHandler = async (req, res) => {
     const sender = req.user._id;
     const receiver = req.params.receiverId;
     const textContent = req.body.content;
-    const file = req.file;
+    const file = req?.file;
 
 
-    if(!sender || !receiver) return customResponse(res, 400, 'sender or receiver are required.');
+    if(!sender || !receiver) return customResponse(res, 400, 'participants are required.');
 
     if(!textContent && !file) return customResponse(res, 400, 'Message cannot be empty.');
 
@@ -23,7 +24,7 @@ export const sendMsgHandler = async (req, res) => {
 
     try{
         if(file){
-            //----Determaine Content Type-----
+            /**----Determaine Content Type-----**/
             if(file.mimetype.startsWith('image/')) contentType = 'image';
             else {
                 return customResponse(res, 400, 'Unsupported file type.');
@@ -62,7 +63,7 @@ export const sendMsgHandler = async (req, res) => {
         //----Update Conversation----
         conversation.lastMessage = newMsg._id;
         conversation.lastMessagePreview = {
-            content: newMsg.content,            //i have doubt whether not to give image as content or not in lastMessagePreview
+            content: newMsg.content,   //i have doubt whether not to give image as content or not in lastMessagePreview
             contentType: newMsg.contentType,
             messageStatus: newMsg.messageStatus
         };

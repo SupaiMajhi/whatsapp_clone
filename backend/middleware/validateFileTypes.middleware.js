@@ -1,4 +1,4 @@
-import { fileTypeFromFile } from "file-type";
+import { customResponse, determineFileType } from "../lib/lib.js";
 
 const allowedTypes = [
     'image/png',
@@ -7,15 +7,18 @@ const allowedTypes = [
 ];
 
 const validateFileType = async (req, res, next) => {
-    try { 
-    const data = await fileTypeFromFile(req.file?.path || "");
-    let allowed = allowedTypes.includes(data.mime);
-    if (!allowed) {
-      return next(new Error("File format is not allowed."));
-    }
-    next();   
+    try {
+        if(req.file){
+            const result = await determineFileType(req.file?.path);
+            if(!result) return customResponse(res, 400, 'something went wrong.');
+            if(!allowedTypes.includes(result)){
+                return customResponse(res, 400, 'Unsupported file type.');
+            }
+        } 
+        next();  
     } catch (error) {
-        next(error);
+        console.log('Error in validateFileType', error.message);
+        return customResponse(res, 500, 'Internal server error.');
     }
 }
 

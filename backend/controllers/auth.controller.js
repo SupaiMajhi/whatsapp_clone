@@ -157,7 +157,7 @@ export const verifyOtpHandler = async (req, res) => {
     await Otp.findOneAndDelete({ verification_token: vt });
 
     /** ------RETURN A TOKEN------ */
-    const token = await generateToken(payload.phoneNumber);
+    const token = await generateToken({phoneNumber: doc.phoneNumber});
     res.cookie("auth_token", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
