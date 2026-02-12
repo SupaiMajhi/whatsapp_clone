@@ -1,5 +1,7 @@
 import { NavLink } from "react-router-dom";
-import { Avatar } from 'primereact/avatar';
+// import { Avatar } from 'primereact/avatar';
+import  Avatar  from '@mui/material/Avatar';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ChatIcon from '../assets/ChatIcon';
 import StatusIcon from '../assets/StatusIcon';
 import SettingIcon from '../assets/SettingIcon';
@@ -30,9 +32,11 @@ const Navbar = () => {
             </NavLink>
             <NavLink to={'/profile'}>
                 {userInfo?.profilePic ? (
-                    <Avatar image={userInfo.profilePic} className="w-10 h-10 p-2 rounded-full"/>
+                    <Avatar src={userInfo.profilePic} sx={{ width: 56, height: 56 }} />
                 ) : (
-                    <Avatar icon="pi pi-user" className="w-10 h-10 bg-neutral-700 text-center text-txtPrimary p-2 rounded-full" shape="circle" />
+                    <Avatar sx={{ width: 25, height: 25 }}>
+                        <AccountCircleIcon />
+                    </Avatar>
                 )}
             </NavLink>
         </div>
