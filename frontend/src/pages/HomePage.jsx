@@ -1,31 +1,22 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import SideNavbar from "../components/SideNavbar.jsx";
 import { useEffect } from "react";
 
 //store imports
-import useSocketStore from "../store/socketStore.js";
+import useGlobalStore from "../store/globalStore.js";
 
 const HomePage = () => {
 
-  const socket = useSocketStore((state) => state.socket);
-  const connect = useSocketStore((state) => state.connect);
-
-  useEffect(() => {
-    
-    connect();
-
-    return () => {
-      socket?.close();
-    }
-  }, [])
-
   return (
-    <div className="w-screen h-screen flex">
-      <div className="w-[70px] py-3 bg-primaryBg/30">
-        <Navbar />
-      </div>
-      <div className="w-[calc(100%-70px)]">
-        <Outlet />
+    <div className="w-screen h-screen flex justify-center items-center">
+      <div className="w-full h-full bg-amber-700 flex-center">
+        <div className="basis-[5vw] h-full">
+          <SideNavbar />
+        </div>
+
+        <div className="basis-[95vw] h-full">
+          <Outlet />
+        </div>
       </div>
     </div>
   )

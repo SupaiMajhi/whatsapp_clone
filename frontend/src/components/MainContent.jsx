@@ -5,7 +5,7 @@ import { validateTime } from "../lib.js";
 import { useRef, useLayoutEffect, useCallback } from "react";
 
 //store imports
-import useAuthStore from "../store/authStore.js";
+import useAuthStore from "../store/auth/authStore.js";
 import useMessageStore from "../store/messageStore.js";
 import useSocketStore from "../store/socketStore.js";
 
@@ -18,7 +18,6 @@ const MainContent = () => {
   const messagesIds = useRef(new Set());
   let timer = null;
 
-
   const observerCallback = (entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
@@ -27,31 +26,29 @@ const MainContent = () => {
       }
     });
 
-    if(timer) clearTimeout(timer);
+    if (timer) clearTimeout(timer);
 
     timer = setTimeout(() => {
-      if(messagesIds.current.length > 0){
+      if (messagesIds.current.length > 0) {
         socket.send(
           JSON.stringify({
             type: "markAsSeen",
             content: {
               data: messagesIds.current,
             },
-          })
+          }),
         );
         messagesIds.current.clear();
       }
-    }, 300)    
-  }
+    }, 300);
+  };
 
   useLayoutEffect(() => {
-    if(!rootRef.current) return;
-    observer.current = new IntersectionObserver(observerCallback,
-      {
-        threshold: 0.75,
-        root: rootRef.current,
-      }
-    );
+    if (!rootRef.current) return;
+    observer.current = new IntersectionObserver(observerCallback, {
+      threshold: 0.75,
+      root: rootRef.current,
+    });
 
     return () => {
       observer.current.disconnect();
@@ -111,7 +108,7 @@ const MainContent = () => {
               {message.text}
             </div>
           </div>
-        )
+        ),
       )}
     </div>
   );

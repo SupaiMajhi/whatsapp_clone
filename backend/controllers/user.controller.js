@@ -41,23 +41,31 @@ export const createUserHandler = async (req, res) => {
     if(!at) return customResponse(res, 401, 'Unauthorized.');
 
     const { username, profilePic } = req.body.content;
-    if(!username || !profilePic) return customResponse(res, 400, 'All fields are required.');
+    console.log(username, profilePic)
+    if(!username && !profilePic) return customResponse(res, 400, 'All fields are required.');
     
     try {
         /** ------RETRIEVE PHONENUMBER FROM TOKEN------- */
-        const {phoneNumber} = jwt.verify(at, process.env.JWT_SECRET_KEY);
-        if(!phoneNumber) return customResponse(res, 401, 'Unauthorized.');
+        const {phone} = jwt.verify(at, process.env.JWT_SECRET_KEY);
+        if(!phone) return customResponse(res, 401, 'Unauthorized.');
 
+        /**------CHECK IF ALREADY USER EXIST WITH SAME NUMBER------- */
+        const isAlreadyExist = await User.findOne({ phoneNumber: phone });
+        if(isAlreadyExist){
+            isAlreadyExist.isVerified = true;
+            await isAlreadyExist.save();
+            return customResponse(res, 200, 'User is verified.', { "redirectURL": "/dashboard", "user": isAlreadyExist });
+        }
         /** ------CREATE A NEW USER------ */
         const newUser = new User({
             isVerified: true,
-            phoneNumber,
+            phoneNumber:phone,
             username,
             profilePic: profilePic || ''
         });
         await newUser.save();
 
-        return customResponse(res, 201, 'User is created.', newUser);
+        return customResponse(res, 201, 'User is created.', { "redirectURL": '/dashboard', "user": newUser });
     } catch (error) {
         console.log("Error in createUserHandler ", error.message);
         return customResponse(res, 500, 'Internal server error.');

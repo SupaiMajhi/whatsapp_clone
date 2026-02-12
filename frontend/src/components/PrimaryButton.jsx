@@ -1,0 +1,17 @@
+import useGlobalStore from "../store/globalStore.js";
+
+const PrimaryButton = ({ className='', children, ...props }) => {
+
+  const theme = useGlobalStore((state) => state.theme);
+
+  return (
+    <button 
+      className={`${className} ${theme === "light" ? "text-txtDark" : "text-neutral-100"} px-2 py-2 cursor-pointer bg-btnPrimary hover:bg-secndryBtn`}
+      {...props}
+    >
+      {children}
+    </button>
+  )
+}
+
+export default PrimaryButton;
