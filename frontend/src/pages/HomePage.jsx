@@ -10,11 +10,11 @@ const HomePage = () => {
   return (
     <div className="w-screen h-screen flex justify-center items-center">
       <div className="w-full h-full bg-amber-700 flex-center">
-        <div className="basis-[5vw] h-full">
+        <div className="basis-[5vw] max-w-[5vw] h-full">
           <SideNavbar />
         </div>
 
-        <div className="basis-[95vw] h-full">
+        <div className="basis-[95vw] max-w-[95vw] overflow-hidden h-full">
           <Outlet />
         </div>
       </div>

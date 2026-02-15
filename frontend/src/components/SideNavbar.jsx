@@ -19,24 +19,22 @@ const Navbar = () => {
     <div className={`custom-container flex-col justify-between ${theme === "light" ? "bg-lightNav" : "bg-darkNav"} py-5 px-2`}>
         <div className="flex-center flex-col gap-7">
             <NavLink to={'/'}>
-                <ChatIcon className='icon' />
+                <ChatIcon className={`${theme === "light" ? "icon-dark" : "icon-light"}`} />
             </NavLink>
             <NavLink to={'/status'}>
-                <StatusIcon className='icon' />
+                <StatusIcon className={`${theme === "light" ? "icon-dark" : "icon-light"}`} />
             </NavLink>
         </div>
         
         <div className="flex-center flex-col gap-5">
             <NavLink to={'/settings'}>
-                <SettingIcon className='icon' />
+                <SettingIcon className={`${theme === "light" ? "icon-dark" : "icon-light"}`} />
             </NavLink>
             <NavLink to={'/profile'}>
                 {userInfo?.profilePic ? (
-                    <Avatar src={userInfo.profilePic} sx={{ width: 56, height: 56 }} />
+                    <Avatar src={userInfo.profilePic} sx={{ width: 40, height: 40 }} />
                 ) : (
-                    <Avatar sx={{ width: 25, height: 25 }}>
-                        <AccountCircleIcon />
-                    </Avatar>
+                        <AccountCircleIcon className={`text-[35px]! ${theme === "light" ? "text-txtLight" : "text-txtDark"}`} />
                 )}
             </NavLink>
         </div>

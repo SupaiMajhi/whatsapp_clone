@@ -98,8 +98,12 @@
         @apply w-full max-h-[270px] overflow-y-auto p-4;
     }
 
-    .icon {
+    .icon-light {
         @apply w-7 text-txtLight;
+    }
+
+    .icon-dark {
+        @apply w-7 text-txtDark;
     }
 
 }
