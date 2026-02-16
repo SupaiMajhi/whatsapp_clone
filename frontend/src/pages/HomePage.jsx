@@ -9,7 +9,7 @@ const HomePage = () => {
 
   return (
     <div className="w-screen h-screen flex justify-center items-center">
-      <div className="w-full h-full bg-amber-700 flex-center">
+      <div className="w-full h-full flex-center">
         <div className="basis-[5vw] max-w-[5vw] h-full">
           <SideNavbar />
         </div>
