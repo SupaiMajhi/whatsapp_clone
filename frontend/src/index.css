@@ -107,11 +107,6 @@
     .icon-dark {
         @apply w-7 text-NavDarkTxt;
     }
-
-    .card {
-        @apply w-full h-20 max-h-20 flex-center gap-3 px-2 py-4 cursor-pointer rounded-2xl overflow-hidden;
-    }
-
 }
 
 @layer utilities {

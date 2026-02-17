@@ -11,40 +11,34 @@ import useGlobalStore from "../store/globalStore.js";
 import useAppStore from "../store/appStore.js";
 
 const ChatPage = () => {
-
   const theme = useGlobalStore((state) => state.theme);
   const isChatSelected = useAppStore((state) => state.isChatSelected);
 
   return (
     <div className="relative custom-container">
       {/** LEFT SIDE */}
-      <div
-        className={`basis-[calc(100%-70%)] max-w-[calc(100%-70%)] h-full flex-center p-5 flex-col ${theme === "light" ? "bg-light text-dark" : "bg-dark text-white"}`}
-      >
-        <div className="w-full h-[calc(100%-80%)] max-h-[calc(100%-80%)] flex-center flex-col gap-5">
-          <div
-            className={`w-full flex items-center justify-between ${theme === "light" ? "text-black" : "text-white"}`}
-          >
-            <div
-              className={`${theme === "light" ? "text-[#1DAA61]" : "text-white"}`}
-            >
-              <Logo />
-            </div>
-            <div className="flex-center gap-8">
-              <NewChatIcon />
-              <MenuIcon />
-            </div>
+      <div className={`basis-[calc(100%-70%)] max-w-[calc(100%-70%)] h-full flex-center flex-col ${theme === "light" ? "bg-light text-dark" : "bg-dark text-white"}`}>
+        
+        <div className={`w-full h-[calc(100%-90%)] max-h-[calc(100%-90%)] flex items-center justify-between pl-6 pr-7 ${theme === "light" ? "text-black" : "text-white"}`}>
+          <div className={`${theme === "light" ? "text-[#1DAA61]" : "text-white"}`}>
+            <Logo />
           </div>
-
-          {/** INPUT */}
-          <div className="w-full mb-10">
-            <Input />
+          <div className="flex-center gap-8">
+            <NewChatIcon />
+            <MenuIcon />
           </div>
         </div>
 
-        {/** CHATlIST */}
-        <div className="h-[calc(100%-20%)] max-h-[calc(100%-20%)] overflow-y-auto overflow-x-hidden">
-          <ChatList />
+        <div className="w-full h-[calc(100%-10%)] max-h-[calc(100%-10%)] flex-center flex-col px-3 py-2">
+          {/** INPUT */}
+          <div className="w-full h-[calc(100%-90%)] mb-10">
+            <Input />
+          </div>
+
+          {/** CHATlIST */}
+          <div className="w-full h-[calc(100%-10%)] max-h-[calc(100%-10%)] overflow-y-auto overflow-x-hidden">
+            <ChatList />
+          </div>
         </div>
       </div>
 

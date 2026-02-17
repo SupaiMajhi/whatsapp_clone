@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-// import { Avatar } from 'primereact/avatar';
+
 import  Avatar  from '@mui/material/Avatar';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ChatIcon from '../assets/ChatIcon';
@@ -16,7 +16,7 @@ const Navbar = () => {
     const userInfo = useAuthStore((state) => state.userInfo);
 
   return (
-    <div className={`custom-container flex-col justify-between ${theme === "light" ? "bg-lightNav" : "bg-darkNav"} py-5 px-2`}>
+    <div className={`custom-container flex-col justify-between ${theme === "light" ? "bg-lightNav" : "bg-darkNav"} p-3.5`}>
         <div className="flex-center flex-col gap-7">
             <NavLink to={'/'}>
                 <ChatIcon className={`${theme === "light" ? "icon-dark" : "icon-light"}`} />

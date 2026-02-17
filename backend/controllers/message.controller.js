@@ -9,7 +9,8 @@ import { singleUpload } from "../services/cloudinary.js";
 export const sendMsgHandler = async (req, res) => {
     const sender = req.user._id;
     const receiver = req.params.receiverId;
-    const textContent = req.body.content;
+    const {textContent} = req.body.content;
+    console.log(textContent)
     const file = req?.file;
 
 

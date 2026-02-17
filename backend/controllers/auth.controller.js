@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 import fs from "fs/promises";
 
-
 import { customResponse, generateOtp, hash, deHash, isValidPhoneNumber, generateToken } from "../lib/lib.js";
 import User from "../models/user.model.js";
 import Otp from "../models/otp.model.js";
