@@ -28,7 +28,7 @@ app.use(cookieParser());
 //routes
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/user', userRouter);
-app.use('/api/v1//message', authMiddleware, messageRouter);
+app.use('/api/v1/message', authMiddleware, messageRouter);
 
 setupWebSocketServer(server);
 

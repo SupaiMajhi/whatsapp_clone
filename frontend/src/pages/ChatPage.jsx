@@ -3,7 +3,6 @@ import NewChatIcon from "../assets/NewChatIcon";
 import MenuIcon from "../assets/MenuIcon";
 import Input from "../components/Input";
 import ChatList from "../components/ChatList";
-import { useState, useEffect } from "react";
 import ChatBox from "../components/ChatBox";
 import Advertise from "./Advertise";
 
@@ -19,15 +18,21 @@ const ChatPage = () => {
   return (
     <div className="relative custom-container">
       {/** LEFT SIDE */}
-      <div className={`basis-[calc(100%-70%)] max-w-[calc(100%-70%)] h-full flex-center p-5 flex-col ${theme === "light" ? "bg-light text-dark" : "bg-dark text-white"}`}>
+      <div
+        className={`basis-[calc(100%-70%)] max-w-[calc(100%-70%)] h-full flex-center p-5 flex-col ${theme === "light" ? "bg-light text-dark" : "bg-dark text-white"}`}
+      >
         <div className="w-full h-[calc(100%-80%)] max-h-[calc(100%-80%)] flex-center flex-col gap-5">
-          <div className={`w-full flex items-center justify-between ${theme === "light" ? "text-black" : "text-white"}`}>
-            <div className={`${theme === "light" ? "text-[#1DAA61]" : "text-white"}`}>
+          <div
+            className={`w-full flex items-center justify-between ${theme === "light" ? "text-black" : "text-white"}`}
+          >
+            <div
+              className={`${theme === "light" ? "text-[#1DAA61]" : "text-white"}`}
+            >
               <Logo />
             </div>
             <div className="flex-center gap-8">
-              <NewChatIcon  />
-              <MenuIcon  />
+              <NewChatIcon />
+              <MenuIcon />
             </div>
           </div>
 
@@ -44,7 +49,9 @@ const ChatPage = () => {
       </div>
 
       {/** -----SEPARATOR----- */}
-      <div className={`w-[0.5px] h-full ${theme === "light" ? "bg-[#DEDCDA]" : "bg-[#2E2F2F]"}`}></div>
+      <div
+        className={`w-[0.5px] h-full ${theme === "light" ? "bg-[#DEDCDA]" : "bg-[#2E2F2F]"}`}
+      ></div>
 
       {/** RIGHT SIDE */}
       <div className="basis-[calc(100%-30%)] max-w-[calc(100%-30%)] h-full">

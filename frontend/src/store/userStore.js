@@ -1,10 +1,13 @@
 import { create } from "zustand";
 import axios from "axios";
 
+import useAppStore from "./appStore.js";
+
 const useUserStore = create((set) => ({
     prevChatList: [],
     userStatus: null,
     currentRcvr: null,
+    isLoading: false,
     
     setCurrentRcvr: (value) => {
         set({ currentRcvr: value });
@@ -12,13 +15,17 @@ const useUserStore = create((set) => ({
 
     getPrevChatList: async () => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/message/get-all-chatList`, {
+            set({ isLoading: true });
+            const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/message/get-chatList`, {
                 withCredentials: true
             });
             set({ prevChatList: response.data.data });
         } catch (error) {
-            console.log(error.message);
+            console.log(error.response);
+            useAppStore.setState({ errorMessage: error.response.message });
             set({ prevChatList: [] });
+        } finally {
+            set({ isLoading: false });
         }
     },
 

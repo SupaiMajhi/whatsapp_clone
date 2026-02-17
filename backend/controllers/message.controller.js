@@ -122,7 +122,7 @@ export const getAllMsgHandler = async (req, res) => {
 export const getChatListHandler = async (req, res) => {
     const id = mongoose.Types.ObjectId.createFromHexString(req.user.id);
 
-    if(!id) return customResponse(res, 401, 'something went wrong, please try again');
+    if(!id) return customResponse(res, 400, "Unauthorized.");
 
     try {
         const chatList = await Conversation.aggregate([
@@ -177,7 +177,9 @@ export const getChatListHandler = async (req, res) => {
     }
 }
 
-export const getOfflineMessagesHandler = async (id) => {
+export const getOfflineMessagesHandler = async (req, res) => {
+    const { userid: id } = req.params;
+    if(!id) return customResponse(res, 400, "Unauthorized");
     try {
         const messages = await Message.aggregate([
             {
@@ -218,9 +220,9 @@ export const getOfflineMessagesHandler = async (id) => {
                 }
             }
         ]);
-        return messages;
+        return customResponse(res, 200, "", { messages });
     } catch (error) {
         console.log("fetchUndeliveredMessages Error", error.message);
-        return [];
+        return customResponse(res, 500, 'Internal server error.');
     }
 }

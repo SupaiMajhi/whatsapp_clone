@@ -28,7 +28,7 @@ router.patch("/update-message/:id", updateMsgHandler);
 router.get("/get-all-message/:convoId", getAllMsgHandler);
 
 //get all prev message as chat list
-router.get("/get-all-chatList", getChatListHandler);
+router.get("/get-chatList", getChatListHandler);
 
 router.get("/get-all-offlineMessages", getOfflineMessagesHandler);
 

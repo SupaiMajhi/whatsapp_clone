@@ -1,16 +1,21 @@
-import Avatar from "./Avatar";
 import { validateTime } from "../lib.js";
 import { MdOutlineImage } from "react-icons/md";
+import Avatar from "@mui/material/Avatar";
 
 //store imports
 import useMessageStore from "../store/messageStore.js";
 import useUserStore from "../store/userStore.js";
+import useAppStore from "../store/appStore.js";
+import useGlobalStore from "../store/globalStore.js";
 
-const ShowCard = ({ chatInfo, setIsChatSelected }) => {
+
+const ShowCard = () => {
 
   const fetchAllMessage = useMessageStore((state) => state.fetchAllMessage);
   const getUserStatus = useUserStore((state) => state.getUserStatus);
   const setCurrentRcvr = useUserStore((state) => state.setCurrentRcvr)
+  const setIsChatSelected = useAppStore((state) => state.setIsChatSelected);
+  const theme = useGlobalStore((state) => state.theme);
 
   const handleOnClick = async () => {
     setCurrentRcvr(chatInfo.otherUser);
@@ -21,12 +26,12 @@ const ShowCard = ({ chatInfo, setIsChatSelected }) => {
 
   return (
     <div
-      className={`w-full max-h-20 flex items-center gap-3 px-2 py-4 cursor-pointer rounded-2xl hover:bg-secondaryClr`}
+      className={`card ${theme === "light" ? "bg-inherit hover:bg-lightNav transition-colors duration-75 ease-in" : "bg-inherit hover:bg-darkNav transition-colors duration-75 ease-in"}`}
       onClick={handleOnClick}
     >
       {/** AVATAR */}
       <div className="w-14">
-        <Avatar className="w-full" url={chatInfo.otherUser.profilePic} />
+        <Avatar className="w-full" src={chatInfo.otherUser.profilePic} />
       </div>
 
       {/** MIDDLE PART */}
