@@ -27,7 +27,7 @@ const ShowCard = ({ chatInfo }) => {
 
   return (
     <div
-      className={`w-full h-20 max-h-20 flex justify-center items-center gap-3 pl-3`}
+      className={`w-full h-20 max-h-20 flex justify-center items-center gap-3 pl-2 ${theme === "light" ? "bg-light text-txtDark hover:bg-hoverLightBg" : "bg-dark text-txtLight hover:bg-hoverDarkBg"} transition-colors duration-75 ease-in rounded-2xl cursor-pointer`}
       onClick={handleOnClick}
     >
       {/** AVATAR */}
@@ -36,7 +36,7 @@ const ShowCard = ({ chatInfo }) => {
           <Avatar className="w-full" src={chatInfo.otherUser.profilePic} />
         ) : (
           <AccountCircleIcon
-            className={`text-[64px]! ${theme === "light" ? "text-txtLight" : "text-txtDark"}`}
+            className={`text-[64px]! ${theme === "light" ? "text-txtDark" : "text-txtLight"}`}
           />
         )}
       </div>
@@ -45,14 +45,18 @@ const ShowCard = ({ chatInfo }) => {
       <div className="grow h-full flex flex-col justify-center gap-1 pr-3">
         <div className="w-full flex">
           <div className="grow">
-            <h1>Sameer(You)</h1>
+            <h1 className={`text-xl ${theme === "light" ? "text-black" : "text-white"} tracking-wide`}>{chatInfo?.otherUser?.username}</h1>
           </div>
-          <div className="w-fit max-w-28 bg-amber-400">12.30</div>
+          <div className={`w-fit max-w-28 text-xs font-medium tracking-wider`}>
+            <p>{chatInfo?.createdAt}</p>
+          </div>
         </div>
 
         <div className="w-full flex items-center gap-2">
-          <div><p>??</p></div>
-          <div><p>hello, what are you doing?</p></div>
+          <div>
+            <p className="text-base">??</p>
+          </div>
+          <div><p className={`text-base ${theme === "light" ? "text-[#666666]" : "text-[#A2A295]"}`}>{chatInfo?.lastMessagePreview?.content}</p></div>
         </div>
       </div>
     </div>

@@ -31,7 +31,7 @@ const ChatPage = () => {
 
         <div className="w-full h-[calc(100%-10%)] max-h-[calc(100%-10%)] flex-center flex-col px-3 py-2">
           {/** INPUT */}
-          <div className="w-full h-[calc(100%-90%)] mb-10">
+          <div className="w-full h-[calc(100%-90%)]">
             <Input />
           </div>
 
@@ -44,7 +44,7 @@ const ChatPage = () => {
 
       {/** -----SEPARATOR----- */}
       <div
-        className={`w-[0.5px] h-full ${theme === "light" ? "bg-[#DEDCDA]" : "bg-[#2E2F2F]"}`}
+        className={`w-[0.5px] h-full ${theme === "light" ? "bg-[#DEDCDA]" : "bg-hoverDarkBg"}`}
       ></div>
 
       {/** RIGHT SIDE */}
