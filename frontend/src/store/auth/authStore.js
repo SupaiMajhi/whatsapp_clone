@@ -106,13 +106,13 @@ const useAuthStore = create((set) => ({
         `${import.meta.env.VITE_BASE_URL}/auth/check-vt`,
         { withCredentials: true },
       );
-      useGlobalStore.setState({
+      set({
         otp_token: response.data.data.verification_token,
       });
       useGlobalStore.setState({ redirectURL: response.data?.data?.redirectURL});
     } catch (error) {
       console.log("handleCheckVT", error.response.data.message);
-      useGlobalStore.setState({ otp_token: null });
+      set({ otp_token: null });
 
       // If redirectURL === true
       if(error.response.data?.data?.redirectURL){

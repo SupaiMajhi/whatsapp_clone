@@ -6,7 +6,7 @@ const PrimaryButton = ({ className='', children, ...props }) => {
 
   return (
     <button 
-      className={`${className} px-2 py-2 cursor-pointer hover:bg-secndryBtn`}
+      className={`${className} px-2 py-2 cursor-pointer`}
       {...props}
     >
       {children}

@@ -17,7 +17,7 @@ const WelcomeBanner = () => {
             files with your friends, family and colleagues.
           </p>
           <NavLink to='/auth/get_otp'>
-            <PrimaryButton className="w-[170px] text-[0.85rem] font-semibold text-black text-center rounded-2xl hover:scale-105 hover:transition-transform duration-150">Login</PrimaryButton>
+            <PrimaryButton className={`w-[170px] text-[0.85rem] font-semibold ${theme === "light" ? "text-black" : "text-white"} text-center rounded-2xl bg-btnPrimary hover:bg-btnSecondary hover:scale-105 hover:transition-transform duration-150`}>Login</PrimaryButton>
           </NavLink>
         </div>  
   );

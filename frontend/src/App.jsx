@@ -23,8 +23,14 @@ function App() {
   const redirectURL = useGlobalStore((state) => state.redirectURL);
   const handleCheckAuth = useAuthStore((state) => state.handleCheckAuth);
   const setRedirectURL = useGlobalStore((state) => state.setRedirectURL);
+  const handleCheckVT = useAuthStore((state) => state.handleCheckVT);
+
 
   const navigate = useNavigate();
+
+  console.log("otp_token", otp_token)
+  console.log(isAuthenticated)
+
 
   useEffect(() => {
     if(redirectURL){
@@ -36,9 +42,10 @@ function App() {
   useEffect(() => {
     async function doSomething(){
       await handleCheckAuth();
+      await handleCheckVT();
     }
     doSomething();
-  }, [isAuthenticated])
+  }, [isAuthenticated, otp_token])
 
   return (
     <div className="w-screen h-screen">

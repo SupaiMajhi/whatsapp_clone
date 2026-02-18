@@ -1,5 +1,4 @@
-import { validateTime } from "../lib.js";
-import { MdOutlineImage } from "react-icons/md";
+import { formatMessageTime } from "../lib.js";
 import Avatar from "@mui/material/Avatar";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
@@ -14,7 +13,7 @@ const ShowCard = ({ chatInfo }) => {
 
   const fetchAllMessage = useMessageStore((state) => state.fetchAllMessage);
   const getUserStatus = useUserStore((state) => state.getUserStatus);
-  const setCurrentRcvr = useUserStore((state) => state.setCurrentRcvr)
+  const setCurrentRcvr = useAppStore((state) => state.setCurrentRcvr)
   const setIsChatSelected = useAppStore((state) => state.setIsChatSelected);
   const theme = useGlobalStore((state) => state.theme);
 
@@ -48,7 +47,7 @@ const ShowCard = ({ chatInfo }) => {
             <h1 className={`text-xl ${theme === "light" ? "text-black" : "text-white"} tracking-wide`}>{chatInfo?.otherUser?.username}</h1>
           </div>
           <div className={`w-fit max-w-28 text-xs font-medium tracking-wider`}>
-            <p>{chatInfo?.createdAt}</p>
+            <p>{formatMessageTime(chatInfo?.createdAt)}</p>
           </div>
         </div>
 

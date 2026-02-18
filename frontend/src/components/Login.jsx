@@ -71,7 +71,7 @@ const Login = () => {
       </div>
       <PrimaryButton
         type="submit"
-        className={`w-20 rounded-3xl text-center text-md font-medium tracking-wide outline-none`}
+        className={`w-20 rounded-3xl text-center text-sm font-medium tracking-wide outline-none bg-btnPrimary hover:bg-btnSecondary ${theme === "light" ? "text-black" : "text-white"}`}
       >
         {isLoading ? <span className="loading loading-spinner loading-sm"></span> : 'Next'}
       </PrimaryButton>

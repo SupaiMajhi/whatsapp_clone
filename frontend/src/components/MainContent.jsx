@@ -1,7 +1,7 @@
 import { IoCheckmarkSharp, IoOptions } from "react-icons/io5";
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import { FaRegClock } from "react-icons/fa";
-import { validateTime } from "../lib.js";
+import { formatMessageTime } from "../lib.js";
 import { useRef, useLayoutEffect, useCallback } from "react";
 
 //store imports
@@ -73,13 +73,13 @@ const MainContent = () => {
               {/* {message.contentType === 'image' || message.contentType === 'video' || message.contentType === 'gif' ?  } */}
               <div className="flex justify-center items-center gap-1 mt-3">
                 {message.isSeen ? (
-                  <p className="time-text">{validateTime(message.readAt)}</p>
+                  <p className="time-text">{formatMessageTime(message.readAt)}</p>
                 ) : message.isDelivered ? (
                   <p className="time-text">
-                    {validateTime(message.deliveredAt)}
+                    {formatMessageTime(message.deliveredAt)}
                   </p>
                 ) : message.isSent ? (
-                  <p className="time-text">{validateTime(message.createdAt)}</p>
+                  <p className="time-text">{formatMessageTime(message.createdAt)}</p>
                 ) : (
                   <p></p>
                 )}

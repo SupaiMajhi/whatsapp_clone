@@ -1,7 +1,7 @@
 import Avatar from "./Avatar";
 import MenuIcon from '../assets/MenuIcon';
 import SearchIcon from '../assets/SearchIcon';
-import { validateTime } from "../lib.js";
+import { formatMessageTime } from "../lib.js";
 
 //store imports
 import useUserStore from "../store/userStore.js";
@@ -19,7 +19,7 @@ const Header = () => {
         {userStatus?.isOnline ? 
           <p className="text-[0.8rem] font-semibold text-baseClr">online</p>
           :
-          <p className="text-[0.8rem] font-semibold text-baseClr">last seen today at {validateTime(userStatus?.lastSeen)}</p>
+          <p className="text-[0.8rem] font-semibold text-baseClr">last seen today at {formatMessageTime(userStatus?.lastSeen)}</p>
         }
       </div>
       <div className="flex justify-evenly items-center gap-10">
