@@ -20,6 +20,10 @@
     --color-btnSecondary: #4ade80;
     --color-txtLight: oklch(70.8% 0 0);
     --color-txtDark: oklch(37.1% 0 0);
+    --color-lightStatTxt: #7B7B7B;
+    --color-darkStatTxt: #A0A0A0;
+    --color-darkMyChatclr: #144D37;
+    --color-lightMyChatclr: #D9FDD3; 
 
     --animate-slideIn: slideIn 100ms ease-in-out;
     --animate-slideOut: slideOut 150ms ease-in-out;

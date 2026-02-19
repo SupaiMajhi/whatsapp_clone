@@ -18,7 +18,7 @@ const ShowCard = ({ chatInfo }) => {
   const theme = useGlobalStore((state) => state.theme);
 
   const handleOnClick = async () => {
-    setCurrentRcvr(chatInfo.otherUser);
+    setCurrentRcvr(chatInfo?.otherUser);
     setIsChatSelected(true);
     await fetchAllMessage(chatInfo._id);
     await getUserStatus(chatInfo.otherUser._id);

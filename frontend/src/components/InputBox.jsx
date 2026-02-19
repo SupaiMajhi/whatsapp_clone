@@ -7,18 +7,20 @@ import { useState } from "react";
 //store imports
 import useMessageStore from "../store/messageStore.js";
 import useUserStore from "../store/userStore.js";
+import useGlobalStore from "../store/globalStore.js";
 
 const InputBox = () => {
   const [msgText, setMsgText] = useState("");
   const sendAMessage = useMessageStore((state) => state.sendAMessage);
   const currentRcvr = useUserStore((state) => state.currentRcvr);
+  const theme = useGlobalStore((state) => state.theme);
 
   const handleOnSubmit = async () => {
     await sendAMessage(currentRcvr._id, msgText);
     setMsgText("");
   };
   return (
-    <div className="absolute bottom-5 min-w-[calc(100%-2em)] max-w-[calc(100%-1.5em)] min-h-12 max-h-14 flex items-center gap-4 bg-secondaryClr/50 rounded-4xl pl-4 mx-auto">
+    <div className={`absolute bottom-5 w-[calc(100%-5%)] flex justify-center items-center gap-2 px-4 rounded-4xl ${theme === "light" ? "bg-hoverLightBg" : "bg-hoverDarkBg"}`}>
       <div className="flex justify-center items-center gap-5">
         <PlusIcon className="icon text-white" />
         <StickerIcon className="icon text-white" />
@@ -29,6 +31,7 @@ const InputBox = () => {
           name="text"
           value={msgText}
           placeholder="Type a message"
+          autoComplete="off"
           className="w-full h-full outline-0 text-[1rem] font-semibold"
           onChange={(e) => setMsgText(e.target.value)}
         />

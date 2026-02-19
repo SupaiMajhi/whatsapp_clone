@@ -6,7 +6,7 @@ const useAppStore = create((set) => ({
     errorMessage: '',
 
     setIsChatSelected: (value) => {
-        set({ isSelected: value });
+        set({ isChatSelected: value });
     },
 
     setCurrentRcvr: (value) => {
