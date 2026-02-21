@@ -18,6 +18,7 @@ export const getAllUsersHandler = async (req, res) => {
 export const setUserStatus = async (id) => {
     try {
         const res = await User.findByIdAndUpdate(id, { isOnline: true }, { new:true });
+        console.log(res);
         return res.isOnline;
     } catch (error) {
         console.log("setUserStatus error", error.message);

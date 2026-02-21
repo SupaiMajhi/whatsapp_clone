@@ -7,7 +7,6 @@ import useGlobalStore from "../store/globalStore.js";
 
 const ChatBox = () => {
 
-  console.log('chatbox')
 
   const theme = useGlobalStore((state) => state.theme);
   

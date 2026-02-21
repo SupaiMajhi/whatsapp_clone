@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import { IoCheckmarkSharp } from "react-icons/io5";
 import { FaRegClock } from "react-icons/fa6";
@@ -11,9 +13,11 @@ import useSocketStore from "../store/socketStore.js";
 import useGlobalStore from "../store/globalStore.js";
 
 const MainContent = () => {
+
   const messages = useMessageStore((state) => state.messages);
   const userInfo = useAuthStore((state) => state.userInfo);
   const theme = useGlobalStore((state) => state.theme);
+
 
   return (
     <div

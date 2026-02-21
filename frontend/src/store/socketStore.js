@@ -1,4 +1,5 @@
 import { create } from "zustand";
+
 import useMessageStore from "./messageStore.js";
 
 const useSocketStore = create((set, get) => ({
@@ -7,36 +8,18 @@ const useSocketStore = create((set, get) => ({
     connect: () => {
         const ws = new WebSocket(`${import.meta.env.VITE_SOCKET_URL}`);
 
-        ws.onmessage = (event) => {
-            const message = JSON.parse(event.data);
-
-            if(message.type === 'NEW_MSG'){
-                const { updateMessages } = useMessageStore.getState();
-                updateMessages(message.content.data);
-                ws.send(
-                  JSON.stringify({
-                    type: "markAsDelivered",
-                    content: {
-                      data: message.content.data,
-                      time: Date.now(),
-                    },
-                  })
-                );
-            }
-
-            if(message.type === 'msg_delivered'){
-                const {onDelivered} = useMessageStore.getState();
-                onDelivered(message.content.data);
-            }
-
-            if(message.type === 'msg_seen'){
-                const {onSeen} = useMessageStore.getState();
-                onSeen(message.content.data);
-                //message.content.data is an array
-                //messages is also an array
-            }
+        ws.onerror = (error) => {
+            console.log('socket error', error);
         }
+        
         set({ socket: ws });
+    },
+
+    disconnect: () => {
+        if(get().socket?.readyState === "CLOSING" || get().socket?.readyState === "CLOSED"){
+            get().socket?.close();
+        }
+        set({ socket: null });
     }
 }));
 
