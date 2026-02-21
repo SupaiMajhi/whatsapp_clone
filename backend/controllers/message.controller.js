@@ -25,7 +25,7 @@ export const sendMsgHandler = async (req, res) => {
 
     try{
         if(file){
-            /**----Determaine Content Type-----**/
+            //----Determaine Content Type-----
             if(file.mimetype.startsWith('image/')) contentType = 'image';
             else {
                 return customResponse(res, 400, 'Unsupported file type.');

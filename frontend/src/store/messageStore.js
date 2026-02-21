@@ -43,7 +43,9 @@ const useMessageStore = create((set) => ({
     sendAMessage: async (receiverId, text) => {
         try {
             const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/message/send-message/${receiverId}`, {
-                text
+                content: {
+                    textContent: text
+                }
             }, { withCredentials: true });
             return response.data.data;
         } catch (error) {

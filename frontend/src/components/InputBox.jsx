@@ -1,21 +1,23 @@
 import PlusIcon from "../assets/PlusIcon";
 import StickerIcon from "../assets/StickerIcon";
 import ArrowIcon from "../assets/ArrowIcon";
-import Button from "./PrimaryButton.jsx";
 import { useState } from "react";
 
 //store imports
 import useMessageStore from "../store/messageStore.js";
-import useUserStore from "../store/userStore.js";
+import useAppStore from "../store/appStore.js";
 import useGlobalStore from "../store/globalStore.js";
 
 const InputBox = () => {
   const [msgText, setMsgText] = useState("");
   const sendAMessage = useMessageStore((state) => state.sendAMessage);
-  const currentRcvr = useUserStore((state) => state.currentRcvr);
+  const currentRcvr = useAppStore((state) => state.currentRcvr);
   const theme = useGlobalStore((state) => state.theme);
 
+  console.log('currentRcvr', currentRcvr);
+
   const handleOnSubmit = async () => {
+    console.log("clicked");
     await sendAMessage(currentRcvr._id, msgText);
     setMsgText("");
   };
@@ -36,9 +38,9 @@ const InputBox = () => {
           onChange={(e) => setMsgText(e.target.value)}
         />
       </div>
-      <Button handleOnClick={handleOnSubmit}>
+      <button onClick={handleOnSubmit}>
         <ArrowIcon className="icon text-white bg-LogoGreen rounded-full w-full h-full p-2" />
-      </Button>
+      </button>
     </div>
   );
 };

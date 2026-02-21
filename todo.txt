@@ -5,4 +5,5 @@ if a user clicks verify button multiple times, there should not be a race condit
 implement TTL for verification token, means when a verification token gets expired, that means that session is expired. so the document. //think about it before implementing.
 for now in phone input login form, user can input any number they want, and frontend take it as a hole number, unlike the whatsapp same feature. whatsapp convert the first nubmer to the country code and rest to the phone number.
 In frontend showCard component, implement text color logic for unseen message and batch
-change the toLocalTimeString or anything to intl.dateTimeformat for efficiency at  formatMessageTime method in frontend/lib.js 
+change the toLocalTimeString or anything to intl.dateTimeformat for efficiency at  formatMessageTime method in frontend/lib.js
+implement yup validation on input box also, to verify a user is not sending a malicious script. another reason to implement usehookform, because every time i type something inputbox component get re-render because of setmsgTxt.
