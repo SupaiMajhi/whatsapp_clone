@@ -5,6 +5,7 @@ import {
   updateMsgHandler,
   getAllMsgHandler,
   getChatListHandler,
+  getOfflineMessagesHandler,
 } from "../controllers/message.controller.js";
 import upload from "../services/multer.js";
 import validateFileType from "../middleware/validateFileTypes.middleware.js";
@@ -28,5 +29,7 @@ router.get("/get-all-message/:convoId", getAllMsgHandler);
 
 //get all prev message as chat list
 router.get("/get-chatList", getChatListHandler);
+
+router.get("/get-all-offlineMessages", getOfflineMessagesHandler);
 
 export default router;

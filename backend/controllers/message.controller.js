@@ -177,3 +177,53 @@ export const getChatListHandler = async (req, res) => {
         return customResponse(res, 500, "Internal server error");
     }
 }
+
+export const getOfflineMessagesHandler = async (req, res) => {
+    const { userid: id } = req.params;
+    if(!id) return customResponse(res, 400, "Unauthorized");
+    try {
+        const messages = await Message.aggregate([
+            {
+                $match: {
+                    $and: [
+                        {receiverId: mongoose.Types.ObjectId.createFromHexString(id)},
+                        { isDelivered: false }
+                    ]
+                }
+            },
+            {
+                $sort: {createdAt: -1}
+            },
+            {
+                $group: {
+                    _id: '$senderId',
+                    //:problem is here its only sending the one message that is the first coming out after the sort
+                    message: {$push: '$$ROOT'}
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'otherUser'
+                }
+            },
+            {
+                $unwind: '$otherUser'
+            },
+            {
+                $project: {
+                    message: 1,
+                    'otherUser._id': 1,
+                    'otherUser.username': 1,
+                    'otherUser.profilePic': 1
+                }
+            }
+        ]);
+        return customResponse(res, 200, "", { messages });
+    } catch (error) {
+        console.log("fetchUndeliveredMessages Error", error.message);
+        return customResponse(res, 500, 'Internal server error.');
+    }
+}

@@ -6,7 +6,12 @@ import useAppStore from "./appStore.js";
 const useUserStore = create((set) => ({
     prevChatList: [],
     userStatus: null,
+    currentRcvr: null,
     isLoading: false,
+    
+    setCurrentRcvr: (value) => {
+        set({ currentRcvr: value });
+    },
 
     getPrevChatList: async () => {
         try {

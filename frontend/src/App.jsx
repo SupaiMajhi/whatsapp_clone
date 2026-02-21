@@ -11,48 +11,41 @@ import StatusPage from "./pages/StatusPage.jsx";
 import SettingsPage from "./pages/SettingsPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import Login from "./components/Login.jsx";
-import CircularLoader from "./components/CircularLoader.jsx";
 //store imports
 import useGlobalStore from "./store/globalStore.js";
 import useAuthStore from "./store/auth/authStore.js";
 import VerifyScreen from "./components/VerifyScreen.jsx";
 
 function App() {
-  const isLoading = useAuthStore((state) => state.isLoading);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const otp_token = useAuthStore((state) => state.otp_token);
   const userInfo = useAuthStore((state) => state.userInfo);
-  const handleCheckAuth = useAuthStore((state) => state.handleCheckAuth);
   const redirectURL = useGlobalStore((state) => state.redirectURL);
-  const handleCheckVT = useAuthStore((state) => state.handleCheckVT);
+  const handleCheckAuth = useAuthStore((state) => state.handleCheckAuth);
   const setRedirectURL = useGlobalStore((state) => state.setRedirectURL);
-  const theme = useGlobalStore((state) => state.theme);
+  const handleCheckVT = useAuthStore((state) => state.handleCheckVT);
 
 
   const navigate = useNavigate();
+
+  console.log("otp_token", otp_token)
+  console.log(isAuthenticated)
 
 
   useEffect(() => {
     if(redirectURL){
       navigate(redirectURL);
-      setRedirectURL(null);
+      // setRedirectURL(null);
     }
-  }, [redirectURL])
-
+  }, []);
 
   useEffect(() => {
     async function doSomething(){
       await handleCheckAuth();
-      if(!isAuthenticated){
-        await handleCheckVT(); 
-      }
+      await handleCheckVT();
     }
     doSomething();
   }, [isAuthenticated, otp_token])
-
-  if(isLoading){
-   return <CircularLoader className={`w-screen h-screen ${theme === "light" ? "bg-white text-black" : "bg-black text-white"}`} />
-  }
 
   return (
     <div className="w-screen h-screen">

@@ -8,7 +8,6 @@ import {readChunk} from "read-chunk";
 
 
 import User from '../models/user.model.js';
-import Message from '../models/message.model.js';
 import { clients } from '../socket.js';
 
 export const connectToDB = () => {
@@ -104,53 +103,4 @@ export const populateToAllUsers = (wClients, type, content, id) => {
             );
         }
     })
-}
-
-export const getOfflineMessagesHandler = async (id) => {
-    if(!id) return;
-    try {
-        const messages = await Message.aggregate([
-            {
-                $match: {
-                    $and: [
-                        {receiverId: mongoose.Types.ObjectId.createFromHexString(id)},
-                        { isDelivered: false }
-                    ]
-                }
-            },
-            {
-                $sort: {createdAt: -1}
-            },
-            {
-                $group: {
-                    _id: '$senderId',
-                    //:problem is here its only sending the one message that is the first coming out after the sort
-                    message: {$push: '$$ROOT'}
-                }
-            },
-            {
-                $lookup: {
-                    from: 'users',
-                    localField: '_id',
-                    foreignField: '_id',
-                    as: 'otherUser'
-                }
-            },
-            {
-                $unwind: '$otherUser'
-            },
-            {
-                $project: {
-                    message: 1,
-                    'otherUser._id': 1,
-                    'otherUser.username': 1,
-                    'otherUser.profilePic': 1
-                }
-            }
-        ]);
-        return messages;
-    } catch (error) {
-        console.log("fetchUndeliveredMessages Error", error.message);
-        return [];
-    }
 }

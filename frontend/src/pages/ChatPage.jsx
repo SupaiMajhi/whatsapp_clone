@@ -11,9 +11,10 @@ import useGlobalStore from "../store/globalStore.js";
 import useAppStore from "../store/appStore.js";
 
 const ChatPage = () => {
-  
   const theme = useGlobalStore((state) => state.theme);
   const isChatSelected = useAppStore((state) => state.isChatSelected);
+
+  console.log(isChatSelected)
 
   return (
     <div className="relative custom-container">

@@ -14,8 +14,10 @@ const InputBox = () => {
   const currentRcvr = useAppStore((state) => state.currentRcvr);
   const theme = useGlobalStore((state) => state.theme);
 
+  console.log('currentRcvr', currentRcvr);
 
   const handleOnSubmit = async () => {
+    console.log("clicked");
     await sendAMessage(currentRcvr._id, msgText);
     setMsgText("");
   };

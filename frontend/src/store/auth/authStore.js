@@ -111,11 +111,11 @@ const useAuthStore = create((set) => ({
       });
       useGlobalStore.setState({ redirectURL: response.data?.data?.redirectURL});
     } catch (error) {
-      console.log("handleCheckVT", error?.response?.data?.message);
+      console.log("handleCheckVT", error.response.data.message);
       set({ otp_token: null });
 
       // If redirectURL === true
-      if(error?.response?.data?.data?.redirectURL){
+      if(error.response.data?.data?.redirectURL){
        useGlobalStore.setState({
           redirectURL: error.response.data.data.redirectURL,
         }); 
