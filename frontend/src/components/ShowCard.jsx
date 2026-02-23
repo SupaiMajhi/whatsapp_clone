@@ -17,7 +17,6 @@ const ShowCard = ({ chatInfo }) => {
   const setIsChatSelected = useAppStore((state) => state.setIsChatSelected);
   const theme = useGlobalStore((state) => state.theme);
 
-  console.log("chatInfo", chatInfo?.otherUser)
 
   const handleOnClick = async () => {
     setCurrentRcvr(chatInfo?.otherUser);

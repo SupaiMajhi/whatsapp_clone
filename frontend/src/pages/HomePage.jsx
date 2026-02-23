@@ -3,9 +3,19 @@ import SideNavbar from "../components/SideNavbar.jsx";
 import { useEffect } from "react";
 
 //store imports
-import useGlobalStore from "../store/globalStore.js";
+import useSocketStore from "../store/socketStore.js";
 
 const HomePage = () => {
+
+  const connect = useSocketStore((state) => state.connect);
+  const disconnect = useSocketStore((state) => state.disconnect);
+
+  useEffect(() => {
+    connect();
+    return () => {
+      disconnect();
+    }
+  }, [])
 
   return (
     <div className="w-screen h-screen flex justify-center items-center">
