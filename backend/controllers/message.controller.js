@@ -2,15 +2,16 @@ import mongoose from "mongoose";
 import { unlink } from "fs/promises";
 
 import { customResponse } from "../lib/lib.js";
+import { sendViaSocket, sendDualViaSocket } from "../utils/util.js";
 import Message from "../models/message.model.js";
 import Conversation from "../models/conversation.model.js";
 import { singleUpload } from "../services/cloudinary.js";
+import { onlineUsers } from "../socket.js";
 
 export const sendMsgHandler = async (req, res) => {
     const sender = req.user._id;
     const receiver = req.params.receiverId;
     const {textContent} = req.body.content;
-    console.log(textContent)
     const file = req?.file;
 
 
@@ -71,7 +72,11 @@ export const sendMsgHandler = async (req, res) => {
 
         await conversation.save();
 
-        return customResponse(res, 200, 'message sent.');
+        //-----send in real-time------
+        sendViaSocket(onlineUsers, receiver, 'new_msg', newMsg);
+        sendDualViaSocket(onlineUsers, sender, receiver, 'conversation', conversation);
+
+        return customResponse(res, 200, 'message sent.', newMsg);
     } catch (error) {
       console.log("sendMsgHandler Error", error.message);
       return customResponse(res, 500, "Internal server error");

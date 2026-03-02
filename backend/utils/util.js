@@ -4,9 +4,28 @@ import jwt from "jsonwebtoken";
 
 import User from "../models/user.model.js";
 
-export const sendViaSocket = (ws, msgType, content) => {
+export const sendViaSocket = (onlineUsers, id, msgType, content) => {
+    const ws = onlineUsers.get(id);
     if(ws.readyState === WebSocket.OPEN){
         ws.send(JSON.stringify({
+            type: msgType,
+            content
+        }))
+    }
+}
+
+export const sendDualViaSocket = (onlineUsers, sender, receiver, msgType, content) => {
+    const senderWS = onlineUsers.get(sender);
+    const receiverWS = onlineUsers.get(receiver);
+    if(senderWS.readyState === WebSocket.OPEN){
+        senderWS.send(JSON.stringify({
+            type: msgType,
+            content
+        }))
+    }
+
+    if(receiverWS.readyState === WebSocket.OPEN){
+        senderWS.send(JSON.stringify({
             type: msgType,
             content
         }))

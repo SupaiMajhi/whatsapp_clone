@@ -4,9 +4,9 @@ import { WebSocketServer } from "ws";
 import { retrieveIdFromReq, sendViaSocket } from "./utils/util.js"
 import { getOfflineMessages } from "./controllers/message.controller.js";
 
-export const setUpWebSocketServer = (server) => {
+export const onlineUsers = new Map();
+const setUpWebSocketServer = (server) => {
 
-    const onlineUsers = new Map();
     const wss = new WebSocketServer({ server });
 
     wss.on("connection", async (ws, req) => {
@@ -22,7 +22,7 @@ export const setUpWebSocketServer = (server) => {
         //fetch offline messages
         const offlineMsges = await getOfflineMessages(ws.id);
         if(offlineMsges.length > 0){
-            sendViaSocket(ws, 'offlineMsg', offlineMsges);
+            sendViaSocket(onlineUsers, ws.id, 'offlineMsg', offlineMsges);
         }
 
         ws.onmessage = (event) => {
@@ -38,3 +38,5 @@ export const setUpWebSocketServer = (server) => {
         }
     })
 }
+
+export default setUpWebSocketServer;
