@@ -1,7 +1,8 @@
 
 import { WebSocketServer } from "ws";
 
-import { retrieveIdFromReq } from "./utils/util.js"
+import { retrieveIdFromReq, sendViaSocket } from "./utils/util.js"
+import { getOfflineMessages } from "./controllers/message.controller.js";
 
 export const setUpWebSocketServer = (server) => {
 
@@ -17,6 +18,12 @@ export const setUpWebSocketServer = (server) => {
         }
         ws.id = id;
         onlineUsers.set(id, ws);
+
+        //fetch offline messages
+        const offlineMsges = await getOfflineMessages(ws.id);
+        if(offlineMsges.length > 0){
+            sendViaSocket(ws, 'offlineMsg', offlineMsges);
+        }
 
         ws.onmessage = (event) => {
             const message = JSON.parse(event.data);

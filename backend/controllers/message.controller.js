@@ -178,7 +178,7 @@ export const getChatListHandler = async (req, res) => {
     }
 }
 
-export const getOfflineMessagesHandler = async (id) => {
+export const getOfflineMessages = async (id) => {
     if(!id) return;
     try {
         const messages = await Message.aggregate([
