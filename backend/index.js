@@ -8,7 +8,7 @@ import { connectToDB } from "./lib/lib.js";
 import authRouter from './routes/auth.route.js';
 import messageRouter from './routes/message.route.js';
 import userRouter from './routes/user.route.js';
-import { setupWebSocketServer } from "./socket.js";
+import { setUpWebSocketServer } from "./socket.js";
 import authMiddleware from "./middleware/auth.middleware.js";
 
 config();
@@ -30,6 +30,6 @@ app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/message', authMiddleware, messageRouter);
 
-setupWebSocketServer(server);
+setUpWebSocketServer(server);
 
 server.listen(8080, console.log("server is listening..."));

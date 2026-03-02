@@ -177,3 +177,32 @@ export const getChatListHandler = async (req, res) => {
         return customResponse(res, 500, "Internal server error");
     }
 }
+
+export const getOfflineMessagesHandler = async (id) => {
+    if(!id) return;
+    try {
+        const messages = await Message.aggregate([
+            {
+                $match: {
+                    receiver: mongoose.Types.ObjectId(id),
+                    messageStatus: "sent"
+                }
+            },
+            {
+                $sort: {createdAt: 1}
+            },
+            {
+                $group: {
+                    _id: '$conversationId',
+                    messages: {
+                        $push: '$$ROOT'
+                    }
+                }
+            }
+        ]);
+        return messages;
+    } catch (error) {
+        console.log("fetchUndeliveredMessages Error", error.message);
+        return [];
+    }
+}

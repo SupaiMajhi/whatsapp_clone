@@ -7,9 +7,6 @@ import {readChunk} from "read-chunk";
 
 
 
-import User from '../models/user.model.js';
-import Message from '../models/message.model.js';
-import { clients } from '../socket.js';
 
 export const connectToDB = () => {
     mongoose
@@ -59,98 +56,40 @@ export const generateToken = async (payload) => {
     return jwt.sign(payload, process.env.JWT_SECRET_KEY);
 }
 
-export const retrieveIdFromReq = async (req) => {
-    const { token } = cookie.parse(req.headers.cookie);
-    if(!token) return null;
-    const isVerified = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    if(!isVerified) return null;
-    const user = await User.findOne({ phone: isVerified });
-    if(!user) return null;
-    return user.id;
-}
 
-export const sendMessageToSockets = (senderId, receiverId, msg) => {
-    const senderSocket = clients.get(senderId.toHexString());
-    const receiverSocket = clients.get(receiverId.toHexString());
+// export const sendMessageToSockets = (senderId, receiverId, msg) => {
+//     const senderSocket = clients.get(senderId.toHexString());
+//     const receiverSocket = clients.get(receiverId.toHexString());
     
-    if(senderSocket && senderSocket.readyState === WebSocket.OPEN){
-        senderSocket.send(JSON.stringify({
-            type: 'NEW_MSG',
-            content: {
-                data: msg
-            }
-        }));
-    }
+//     if(senderSocket && senderSocket.readyState === WebSocket.OPEN){
+//         senderSocket.send(JSON.stringify({
+//             type: 'NEW_MSG',
+//             content: {
+//                 data: msg
+//             }
+//         }));
+//     }
 
-    if(receiverSocket && receiverSocket.readyState === WebSocket.OPEN){
-        receiverSocket.send(JSON.stringify({
-            type: 'NEW_MSG',
-            content: {
-                data: msg
-            }
-        }));
-    }
-    return;
-}
+//     if(receiverSocket && receiverSocket.readyState === WebSocket.OPEN){
+//         receiverSocket.send(JSON.stringify({
+//             type: 'NEW_MSG',
+//             content: {
+//                 data: msg
+//             }
+//         }));
+//     }
+//     return;
+// }
 
-export const populateToAllUsers = (wClients, type, content, id) => {
-    wClients.forEach((client) => {
-        if (client.id !== id && client.readyState === WebSocket.OPEN) {
-            client.send(
-                JSON.stringify({
-                type,
-                content,
-                })
-            );
-        }
-    })
-}
-
-export const getOfflineMessagesHandler = async (req, res) => {
-    if(!id) return;
-    try {
-        const messages = await Message.aggregate([
-            {
-                $match: {
-                    $and: [
-                        {receiverId: mongoose.Types.ObjectId.createFromHexString(id)},
-                        { isDelivered: false }
-                    ]
-                }
-            },
-            {
-                $sort: {createdAt: -1}
-            },
-            {
-                $group: {
-                    _id: '$senderId',
-                    //:problem is here its only sending the one message that is the first coming out after the sort
-                    message: {$push: '$$ROOT'}
-                }
-            },
-            {
-                $lookup: {
-                    from: 'users',
-                    localField: '_id',
-                    foreignField: '_id',
-                    as: 'otherUser'
-                }
-            },
-            {
-                $unwind: '$otherUser'
-            },
-            {
-                $project: {
-                    message: 1,
-                    'otherUser._id': 1,
-                    'otherUser.username': 1,
-                    'otherUser.profilePic': 1
-                }
-            }
-        ]);
-        return messages;
-    } catch (error) {
-        console.log("fetchUndeliveredMessages Error", error.message);
-        return [];
-    }
-}
+// export const populateToAllUsers = (wClients, type, content, id) => {
+//     wClients.forEach((client) => {
+//         if (client.id !== id && client.readyState === WebSocket.OPEN) {
+//             client.send(
+//                 JSON.stringify({
+//                 type,
+//                 content,
+//                 })
+//             );
+//         }
+//     })
+// }
