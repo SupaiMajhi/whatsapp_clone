@@ -189,7 +189,7 @@ export const getOfflineMessages = async (id) => {
         const messages = await Message.aggregate([
             {
                 $match: {
-                    receiver: mongoose.Types.ObjectId(id),
+                    receiver: mongoose.Types.ObjectId.createFromHexString(id),
                     messageStatus: "sent"
                 }
             },

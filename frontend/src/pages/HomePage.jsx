@@ -12,6 +12,7 @@ const HomePage = () => {
 
   useEffect(() => {
     connect();
+    
     return () => {
       disconnect();
     }

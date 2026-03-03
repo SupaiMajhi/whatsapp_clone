@@ -1,4 +1,4 @@
-import useSocketStore from "./store/socketStore.js"
+import useSocketStore from "../store/socketStore.js"
 
 const socket = useSocketStore((state) => state.socket);
 
