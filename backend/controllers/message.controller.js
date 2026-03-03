@@ -59,7 +59,6 @@ export const sendMsgHandler = async (req, res) => {
             content: textContent,
             imageOrVideoUrl: contentType !== 'text' ? mediaUrl : '',
         });
-
         await newMsg.save();
 
         //----Update Conversation----
@@ -69,12 +68,12 @@ export const sendMsgHandler = async (req, res) => {
             contentType: newMsg.contentType,
             messageStatus: newMsg.messageStatus
         };
-
+        conversation.unreadCount += 1;
         await conversation.save();
 
         //-----send in real-time------
-        sendViaSocket(onlineUsers, receiver, 'new_msg', newMsg);
-        sendDualViaSocket(onlineUsers, sender, receiver, 'conversation', conversation);
+        sendViaSocket(onlineUsers, receiver, 'new_msg', newMsg); //send new message
+        sendDualViaSocket(onlineUsers, sender, receiver, 'conversation', {conversation, sender:newMsg.sender, receiver:newMsg.receiver }); //send conversation details 
 
         return customResponse(res, 200, 'message sent.', newMsg);
     } catch (error) {

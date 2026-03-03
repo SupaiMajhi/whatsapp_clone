@@ -20,3 +20,20 @@ export const handleDeliveryAck = (data) => {
     }
     return;
 }
+
+export const handleSeenAck = (data) => {
+    if(Array.isArray(data)){
+        try{
+            data.forEach(async(msgId) => {
+                const message = await Message.findOneAndUpdate({ id:msgId }, { messageStatus:"seen", seenAt:Date.now() }, { returnDocument: "after" });
+                
+                //send ack to sender
+                sendViaSocket(onlineUsers, message.sender, "seen_ack", { id:message.id, seenAt:message.seenAt });
+            });
+        }catch(error){
+            //handle retry, i don't know how to achieve
+            console.log('Error in handleDeliveryAck ', error);
+        }   
+    }
+    return;
+}
