@@ -8,7 +8,7 @@ import useUserStore from "../store/userStore.js";
 const 
 ChatList = () => {
 
-  const prevChatList = useUserStore((state) => state.prevChatList);
+  const chatList = useUserStore((state) => state.chatList);
   const isLoading = useUserStore((state) => state.isLoading);
   const getPrevChatList = useUserStore((state) => state.getPrevChatList);
 
@@ -27,8 +27,8 @@ ChatList = () => {
   
   return (
     <div className="w-full h-full flex items-center flex-col">
-      {prevChatList?.length > 0 ? (
-        prevChatList.map((chat) => <ShowCard key={chat._id} chatInfo={chat} />)
+      {chatList?.length > 0 ? (
+        chatList.map((chat) => <ShowCard key={chat._id} chatInfo={chat} />)
       ) : (
         <div className="custom-container">
           <p>No conversation yet.</p>

@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import axios from 'axios';
 
+import useUserStore from "./userStore.js"
+
 const useMessageStore = create((set) => ({
     messages: [],
     isLoading: false,
@@ -11,12 +13,12 @@ const useMessageStore = create((set) => ({
             const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/message/get-all-message/${otherUser}`, {
                 withCredentials: true
             });
-            set({ isLoading: false });
             set({ messages: response.data.data });
         } catch (error) {
             console.log(error.message);
-            set({ isLoading: false });
             set({ messages: [] });
+        } finally {
+            set({ isLoading: false });
         }
     },
 
@@ -38,7 +40,21 @@ const useMessageStore = create((set) => ({
         // messages: state.messages.map((msg) => msg._id === data._id ? { ...msg, isSeen: data.isSeen, readAt: data.readAt } : msg )
     }),
 
-    // onOfflineMessage = (data) => set
+    onOfflineMessage = (data) => {
+        data.forEach(d => {
+            if(useUserStore.getState().currentOpenConversationId === d._id){
+                get().updateMessages(d.messages);
+            }else {
+                //chatList can be undefined sometimes, find method return undefined if no element matches
+                const found = useUserStore.getState().chatList.find(c => c._id === useUserStore.getState().currentOpenConversationId);
+                if(!found){
+                    const newChatList = {
+                        _id: d._id,
+                        unreadCount: d.messages.length,
+                        lastMessage: d.messages[messages.length - 1],
+                        
+
+    }
 
     sendAMessage: async (receiverId, text) => {
         try {

@@ -4,9 +4,11 @@ import axios from "axios";
 import useAppStore from "./appStore.js";
 
 const useUserStore = create((set) => ({
-    prevChatList: [],
+
+    chatList: [],
     userStatus: null,
     currentRcvr: null,
+    currentOpenConversationId: null,
     isLoading: false,
     
     setCurrentRcvr: (value) => {

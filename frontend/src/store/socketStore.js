@@ -1,7 +1,7 @@
 
 import { create } from "zustand";
 
-import { handleOfflineMsg } from "../utils/handler.js";
+import { onOfflineMessage } from "../utils/handler.js";
 
 const useSocketStore = create((set, get) => ({
     socket: null,
@@ -16,8 +16,11 @@ const useSocketStore = create((set, get) => ({
             const message = JSON.parse(event.data);
 
             if(message.type === "offlineMsg"){
-                handleOfflineMsg(message.content.data);
+                onOfflineMessage(message.content.data);
             }
+
+            if(message.type === "delivered_ack"){
+
         }
 
         ws.onerror = (error) => {
