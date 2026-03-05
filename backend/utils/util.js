@@ -10,7 +10,7 @@ export const sendViaSocket = (onlineUsers, id, msgType, content) => {
         ws.send(JSON.stringify({
             type: msgType,
             content
-        }))
+        }));
     }
 }
 
@@ -21,14 +21,14 @@ export const sendDualViaSocket = (onlineUsers, sender, receiver, msgType, conten
         senderWS.send(JSON.stringify({
             type: msgType,
             content
-        }))
+        }));
     }
 
     if(receiverWS?.readyState === WebSocket.OPEN){
         senderWS.send(JSON.stringify({
             type: msgType,
             content
-        }))
+        }));
     }
 }
 

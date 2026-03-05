@@ -124,64 +124,6 @@ export const getAllMsgHandler = async (req, res) => {
     }
 }
 
-export const getChatListHandler = async (req, res) => {
-    const id = mongoose.Types.ObjectId.createFromHexString(req.user.id);
-
-    if(!id) return customResponse(res, 400, "Unauthorized.");
-
-    try {
-        const chatList = await Conversation.aggregate([
-            {
-                $match: { 'participants': { $in: [id] }}
-            },
-            {
-                $sort: { createdAt: -1 }
-            },
-            {
-                $addFields: {
-                    otherUserId: {
-                        $first: {
-                            $filter: {
-                                input: '$participants',
-                                as:'p',
-                                cond: { $ne:['$$p', id]}
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                $lookup: {
-                    from: 'users',
-                    localField: 'otherUserId',
-                    foreignField: '_id',
-                    as: 'otherUser'
-                }
-            },
-            {
-                $unwind: '$otherUser'
-            },
-            {
-                $project: {
-                    _id: 1,
-                    'unreadCount': 1,
-                    'lastMessage': 1,
-                    'lastMessagePreview': 1,
-                    'createdAt': 1,
-                    'updatedAt': 1,
-                    'otherUser._id': 1,
-                    'otherUser.username': 1,
-                    'otherUser.profilePic': 1
-                }
-            }
-        ]);
-        return customResponse(res, 200, 'success', chatList );
-    } catch (error) {
-        console.log("getChatListHandler Error", error.message);
-        return customResponse(res, 500, "Internal server error");
-    }
-}
-
 export const getOfflineMessages = async (value) => {
     const id = mongoose.Types.ObjectId.createFromHexString(value);
     if(!id) return;

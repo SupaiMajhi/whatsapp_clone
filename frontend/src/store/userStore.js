@@ -18,7 +18,7 @@ const useUserStore = create((set) => ({
     getPrevChatList: async () => {
         try {
             set({ isLoading: true });
-            const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/message/get-chatList`, {
+            const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/get-chatList`, {
                 withCredentials: true
             });
             set({ prevChatList: response.data.data });

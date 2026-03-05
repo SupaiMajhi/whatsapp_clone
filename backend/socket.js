@@ -23,19 +23,12 @@ const setUpWebSocketServer = (server) => {
         //fetch offline messages
         const offlineMsges = await getOfflineMessages(ws.id);
         if(offlineMsges.length > 0){
-            sendViaSocket(onlineUsers, ws.id, 'offlineMsg', offlineMsges);
+            sendViaSocket(onlineUsers, ws.id, 'offline_msg', offlineMsges);
         }
 
         ws.onmessage = (event) => {
             const message = JSON.parse(event.data);
 
-            if(message.type === "delivered_ack"){
-                handleDeliveryAck(message.content.data); //content.data => messages's ids
-            }
-
-            if(message.type === "seen_ack"){
-                handleSeenAck(message.content.data);
-            }
         }
 
         ws.onerror = (error) => {
