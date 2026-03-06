@@ -7,13 +7,8 @@ const useUserStore = create((set) => ({
 
     chatList: [],
     userStatus: null,
-    currentRcvr: null,
     currentOpenConversationId: null,
     isLoading: false,
-    
-    setCurrentRcvr: (value) => {
-        set({ currentRcvr: value });
-    },
 
     getPrevChatList: async () => {
         try {

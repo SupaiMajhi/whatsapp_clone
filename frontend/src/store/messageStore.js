@@ -18,6 +18,10 @@ const useMessageStore = create((set) => ({
         } finally {
             set({ isLoading: false });
         }
+    },
+
+    setMessages: (value) => {
+        set((state) => ({ messages: [...state.messages, value] }));
     }
 }));
 

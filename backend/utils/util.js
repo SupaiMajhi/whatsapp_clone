@@ -14,7 +14,7 @@ export const sendViaSocket = (onlineUsers, id, msgType, content) => {
     }
 }
 
-export const sendDualViaSocket = (onlineUsers, sender, receiver, msgType, content) => {
+export const sendBothViaSocket = (onlineUsers, sender, receiver, msgType, content) => {
     const senderWS = onlineUsers.get(sender);
     const receiverWS = onlineUsers.get(receiver);
     if(senderWS?.readyState === WebSocket.OPEN){

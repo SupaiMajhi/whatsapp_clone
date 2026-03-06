@@ -1,6 +1,6 @@
 import mongoose, { Schema, model } from "mongoose";
 
-const messageSchema = new Schema(
+export const messageSchema = new Schema(
   {
     conversationId: {
       type: mongoose.Schema.Types.ObjectId,

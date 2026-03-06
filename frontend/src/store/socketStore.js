@@ -1,7 +1,7 @@
 
 import { create } from "zustand";
 
-import { handleOfflineMsg } from "../handlers/socket.handler.js";
+import { handleOnOfflineMsg, handleOnNewMsg } from "../handlers/socket.handler.js";
 
 const useSocketStore = create((set, get) => ({
     socket: null,
@@ -16,7 +16,11 @@ const useSocketStore = create((set, get) => ({
             const message = JSON.parse(event.data);
 
             if(message.type === "offline_msg"){
-                handleOfflineMsg(message.content.data);
+                handleOnOfflineMsg(message.content.data);
+            }
+
+            if(message.type === "new_msg"){
+                handleOnNewMsg(message.content.data.newMsg);
             }
         }
 

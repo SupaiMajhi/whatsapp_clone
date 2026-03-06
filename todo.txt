@@ -7,3 +7,5 @@ for now in phone input login form, user can input any number they want, and fron
 In frontend showCard component, implement text color logic for unseen message and batch
 change the toLocalTimeString or anything to intl.dateTimeformat for efficiency at  formatMessageTime method in frontend/lib.js
 implement yup validation on input box also, to verify a user is not sending a malicious script. another reason to implement usehookform, because every time i type something inputbox component get re-render because of setmsgTxt.
+move the userInfo state to the appStore from authStore
+again i have to write the auth controller, mainly because of the userInfo data flow and overall the flow of the auth system, now its a little complicated in sending otp, receiving otp, and resend otp

@@ -14,4 +14,6 @@ router.get('/get-status/:userId', authMiddleware, getUserStatus)
 //get all prev chat list
 router.get("/get-chatList", authMiddleware, getChatListHandler);
 
+
+
 export default router;

@@ -2,8 +2,9 @@ import mongoose from "mongoose";
 import { unlink } from "fs/promises";
 
 import { customResponse } from "../lib/lib.js";
-import { sendViaSocket, sendDualViaSocket } from "../utils/util.js";
+import { sendBothViaSocket } from "../utils/util.js";
 import Message from "../models/message.model.js";
+import User from "../models/user.model.js";
 import Conversation from "../models/conversation.model.js";
 import { singleUpload } from "../services/cloudinary.js";
 import { onlineUsers } from "../socket.js";
@@ -61,20 +62,26 @@ export const sendMsgHandler = async (req, res) => {
         });
         await newMsg.save();
 
+        //-------get user------
+        const user = await User.findOne({ id: sender });
+
         //----Update Conversation----
-        conversation.lastMessage = newMsg._id;
-        conversation.lastMessagePreview = {
-            content: newMsg.content ? newMsg.content : '',   //i have doubt whether not to give image as content or not in lastMessagePreview
-            contentType: newMsg.contentType,
-            messageStatus: newMsg.messageStatus
-        };
         conversation.unreadCount += 1;
+        conversation.lastMessage = newMsg;
+        conversation.otherUser = {
+            _id: user.id,
+            username: user.username,
+            profilePic: user.profilePic
+        }
         await conversation.save();
 
         //-----send in real-time------
-        sendViaSocket(onlineUsers, receiver, 'new_msg', newMsg); //send new message
-        sendDualViaSocket(onlineUsers, sender, receiver, 'conversation', {conversation, sender:newMsg.sender, receiver:newMsg.receiver }); //send conversation details 
-
+        sendBothViaSocket(onlineUsers, sender, receiver, 'new_msg', { 
+            data: {
+                newMsg,
+                conversation,
+            }
+        });
         return customResponse(res, 200, 'message sent.', newMsg);
     } catch (error) {
       console.log("sendMsgHandler Error", error.message);

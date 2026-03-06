@@ -166,7 +166,7 @@ export const verifyOtpHandler = async (req, res) => {
     });
     
     /** ------FIND THE USER IF NOT FOUND THEN CREATE A NEW USER----- */
-    const user = await User.findOne({ phoneNumber: doc.phoneNumber }).select("-password");
+    const user = await User.findOne({ phoneNumber: doc.phoneNumber });
     if(user) {
       user.isVerified = true;
       await user.save();
