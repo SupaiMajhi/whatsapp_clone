@@ -26,6 +26,10 @@ const useSocketStore = create((set, get) => ({
             if(message.type === "delivered_ack"){
                 handleDeliveredMsg(message.content.data);
             }
+
+            if(message.type === "seen_ack"){
+                handleSeenMsg(message.content.data);
+            }
         }
 
         ws.onerror = (error) => {

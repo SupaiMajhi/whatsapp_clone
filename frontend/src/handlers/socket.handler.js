@@ -79,3 +79,12 @@ export const handleDeliveredMsg = (data) => {
         useMessageStore.getState().updateMessages(data._id, { messageStatus: data.messageStatus, deliveredAt: data.deliveredAt });
     }
 }
+
+export const handleSeenMsg = (data) => {
+    if(useUserStore.getState().currentOpenConversationId === data.conversationId){
+        useMessageStore.getState().updateMessages(data._id, { 
+            messageStatus: data.messageStatus,
+            seenAt: data.seenAt
+        })
+    }
+} 
