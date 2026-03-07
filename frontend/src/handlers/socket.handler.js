@@ -73,3 +73,9 @@ export const handleOnNewMsg = (data) => {
         }
     }
 }
+
+export const handleDeliveredMsg = (data) => {
+    if(useUserStore.getState().currentOpenConversationId === data.conversationId){
+        useMessageStore.getState().updateMessages(data._id, { messageStatus: data.messageStatus, deliveredAt: data.deliveredAt });
+    }
+}

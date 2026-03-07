@@ -3,7 +3,7 @@ import { WebSocketServer } from "ws";
 
 import { retrieveIdFromReq, sendViaSocket } from "./utils/util.js"
 import { getOfflineMessages } from "./controllers/message.controller.js";
-import { handleDeliveryAck, handleSeenAck } from "./handlers/socket.handlers.js";
+import { onDelivered, handleSeenAck } from "./handlers/socket.handlers.js";
 
 export const onlineUsers = new Map();
 const setUpWebSocketServer = (server) => {
@@ -29,6 +29,9 @@ const setUpWebSocketServer = (server) => {
         ws.onmessage = (event) => {
             const message = JSON.parse(event.data);
 
+            if(message.type === "delivered_ack"){
+                onDelivered(message.content.data)  //data => [id, id, id, id]
+            }
         }
 
         ws.onerror = (error) => {

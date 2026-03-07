@@ -20,7 +20,11 @@ const useSocketStore = create((set, get) => ({
             }
 
             if(message.type === "new_msg"){
-                handleOnNewMsg(message.content.data.newMsg);
+                handleOnNewMsg(message.content.data);
+            }
+
+            if(message.type === "delivered_ack"){
+                handleDeliveredMsg(message.content.data);
             }
         }
 

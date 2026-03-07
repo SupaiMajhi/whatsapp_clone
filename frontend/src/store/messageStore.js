@@ -22,6 +22,14 @@ const useMessageStore = create((set) => ({
 
     setMessages: (value) => {
         set((state) => ({ messages: [...state.messages, value] }));
+    },
+
+    updateMessages: (id, value) => {
+        set((state) => ({
+            messages: state.messages.map(m =>
+                m._id === id ? {...m, ...value} : m
+            )
+        }));
     }
 }));
 
