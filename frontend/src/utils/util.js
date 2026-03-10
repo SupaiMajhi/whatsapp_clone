@@ -1,8 +1,9 @@
+
+
 import useSocketStore from "../store/socketStore.js"
 
-const socket = useSocketStore.getState()?.socket;
-
 export const onSeen = (messagesIds) => {
+    const socket = useSocketStore.getState()?.socket;
     if(socket?.readyState === WebSocket.OPEN){
         socket?.send(JSON.stringify({
             type: 'markAsSeen',
@@ -14,6 +15,7 @@ export const onSeen = (messagesIds) => {
 }
 
 export const sendMessageViaSocket = (msgType, content) => {
+    const socket = useSocketStore.getState()?.socket;
     if(socket?.readyState === WebSocket.OPEN){    
         socket?.send(JSON.stringify({
             type: msgType,

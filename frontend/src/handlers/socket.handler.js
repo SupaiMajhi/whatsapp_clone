@@ -1,31 +1,31 @@
 
+import { sendMessageViaSocket } from "../utils/util.js";
+
+//store imports
 import useUserStore from "../store/userStore.js"
 import useMessageStore from "../store/messageStore.js";
 import useAuthStore from "../store/auth/authStore.js";
 
 export const handleOnOfflineMsg = (data) => {
+    const messagesIds = [];
     data.forEach(d => {
         const { chatList } = useUserStore.getState();
-        console.log(chatList);
         const lastMessage = d.messages.at(-1);
         const unreadCount = d.messages.length;
 
-        const index = chatList.findIndex(c => c._id === d._id);
-        if(index !== -1){
-            const updatedConversation = {
-                ...chatList[index],
-                lastMessage,
-                unreadCount
-            }
-
-            const newChatList = [
-                updatedConversation,
-                ...chatList.filter(c => c._id !== d._id)
-            ];
-            useUserStore.setState({ chatList: newChatList });
+        const found = chatList.find(c => c._id === d._id);
+        if(found){
+            useUserStore.setState((state) => {
+                return { chatList: [
+                    {...found, lastMessage, unreadCount},
+                    ...state.chatList.filter(c => c._id !== found._id)
+                ]}
+            })
         }
-    });
-    //send delivery_ack
+        //send delivery ack
+        d.messages.forEach(m => messagesIds.push(m._id));
+        sendMessageViaSocket("message_delivered", { data: messagesIds });
+    })
 }
 
 export const handleOnNewMsg = (data) => {
