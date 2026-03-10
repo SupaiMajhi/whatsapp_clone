@@ -14,13 +14,11 @@ const InputBox = () => {
   const currentRcvr = useAppStore((state) => state.currentRcvr);
   const theme = useGlobalStore((state) => state.theme);
 
-  console.log('currentRcvr', currentRcvr);
-
   const handleOnSubmit = async () => {
-    console.log("clicked");
     await sendAMessage(currentRcvr._id, msgText);
     setMsgText("");
   };
+
   return (
     <div className={`absolute bottom-5 w-[calc(100%-5%)] flex justify-center items-center gap-2 px-4 rounded-4xl ${theme === "light" ? "bg-hoverLightBg" : "bg-hoverDarkBg"}`}>
       <div className="flex justify-center items-center gap-5">

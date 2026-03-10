@@ -1,11 +1,12 @@
 
 import useUserStore from "../store/userStore.js"
 import useMessageStore from "../store/messageStore.js";
-import useAuthStore from "../store/authStore.js";
+import useAuthStore from "../store/auth/authStore.js";
 
 export const handleOnOfflineMsg = (data) => {
     data.forEach(d => {
         const { chatList } = useUserStore.getState();
+        console.log(chatList);
         const lastMessage = d.messages.at(-1);
         const unreadCount = d.messages.length;
 

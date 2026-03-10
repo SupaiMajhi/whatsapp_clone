@@ -48,7 +48,7 @@ const ShowCard = ({ chatInfo }) => {
             <h1 className={`text-xl ${theme === "light" ? "text-black" : "text-white"} tracking-wide`}>{chatInfo?.otherUser?.username}</h1>
           </div>
           <div className={`w-fit max-w-28 text-xs font-medium tracking-wider`}>
-            <p>{formatMessageTime(chatInfo?.createdAt)}</p>
+            <p>{formatMessageTime(chatInfo?.lastMessage.createdAt)}</p>
           </div>
         </div>
 
@@ -56,7 +56,7 @@ const ShowCard = ({ chatInfo }) => {
           <div>
             <p className="text-base">??</p>
           </div>
-          <div><p className={`text-base ${theme === "light" ? "text-[#666666]" : "text-[#A2A295]"}`}>{chatInfo?.lastMessagePreview?.content}</p></div>
+          <div><p className={`text-base ${theme === "light" ? "text-[#666666]" : "text-[#A2A295]"}`}>{chatInfo?.lastMessage?.content}</p></div>
         </div>
       </div>
     </div>

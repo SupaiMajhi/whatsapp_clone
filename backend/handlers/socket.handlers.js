@@ -1,7 +1,7 @@
 
 import Message from "../models/message.model.js";
 import { onlineUsers } from "../socket.js";
-import { sendViaSocket } from "../utils/util.js"
+import { sendViaSocket } from "../socket.js"
 
 
 export const onDelivered = (data) => {
@@ -11,7 +11,7 @@ export const onDelivered = (data) => {
                 const message = await Message.findOneAndUpdate({ id:msgId }, { messageStatus:"delivered", deliveredAt:Date.now() }, { returnDocument: "after" });
                 
                 //send ack to sender
-                sendViaSocket(onlineUsers, message.sender, "delivered_ack", {
+                sendViaSocket(message.sender, "delivered_ack", {
                     data: {
                         _id: message.id,
                         conversationId: message.conversationId,
@@ -35,7 +35,7 @@ export const onSeen = (data) => {
                 const message = await Message.findOneAndUpdate({ id:msgId }, { messageStatus:"seen", seenAt:Date.now() }, { returnDocument: "after" });
                 
                 //send ack to sender
-                sendViaSocket(onlineUsers, message.sender, "seen_ack", { 
+                sendViaSocket(message.sender, "seen_ack", { 
                     id:message.id,
                     conversationId: message.conversationId,
                     messageStatus: message.messageStatus,

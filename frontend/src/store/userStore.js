@@ -16,11 +16,11 @@ const useUserStore = create((set) => ({
             const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/get-chatList`, {
                 withCredentials: true
             });
-            set({ prevChatList: response.data.data });
+            set({ chatList: response.data.data });
         } catch (error) {
             console.log(error.response);
             useAppStore.setState({ errorMessage: error.response.message });
-            set({ prevChatList: [] });
+            set({ chatList: [] });
         } finally {
             set({ isLoading: false });
         }

@@ -14,12 +14,12 @@ const AuthPage = () => {
   const theme = useGlobalStore((state) => state.theme);
 
 
-  useEffect(() => {
-    async function doSomething(){
-      await handleCheckVT();
-    }
-    doSomething();
-  }, [otp_token]);
+  // useEffect(() => {
+  //   async function doSomething(){
+  //     await handleCheckVT();
+  //   }
+  //   doSomething();
+  // }, [otp_token]);
 
   if (isLoading) {
     return (

@@ -1,6 +1,6 @@
 import useSocketStore from "../store/socketStore.js"
 
-const socket = useSocketStore((state) => state.socket);
+const socket = useSocketStore.getState()?.socket;
 
 export const onSeen = (messagesIds) => {
     if(socket?.readyState === WebSocket.OPEN){

@@ -7,28 +7,35 @@ const useSocketStore = create((set, get) => ({
     socket: null,
 
     connect: () => {
-        const ws = new WebSocket(process.env.VITE_SOCKET_URL);
+        if(get().socket) return;
+        const ws = new WebSocket(import.meta.env.VITE_SOCKET_URL);
 
         ws.onopen = () => {
+            set({ socket:ws });
         }
 
         ws.onmessage = (event) => {
-            const message = JSON.parse(event.data);
+            try{
+                const message = JSON.parse(event.data);
+                console.log(message);
 
-            if(message.type === "offline_msg"){
-                handleOnOfflineMsg(message.content.data);
-            }
+                if(message.type === "offline_msg"){
+                    handleOnOfflineMsg(message.content.data);
+                }
 
-            if(message.type === "new_msg"){
-                handleOnNewMsg(message.content.data);
-            }
+                if(message.type === "new_msg"){
+                    handleOnNewMsg(message.content.data);
+                }
 
-            if(message.type === "delivered_ack"){
-                handleDeliveredMsg(message.content.data);
-            }
+                if(message.type === "delivered_ack"){
+                    handleDeliveredMsg(message.content.data);
+                }
 
-            if(message.type === "seen_ack"){
-                handleSeenMsg(message.content.data);
+                if(message.type === "seen_ack"){
+                    handleSeenMsg(message.content.data);
+                }
+            } catch(err) {
+                console.log('invalid ws message', err.message);
             }
         }
 
@@ -37,9 +44,8 @@ const useSocketStore = create((set, get) => ({
         }
 
         ws.onclose = () => {
+            set({ socket: null });
         }
-
-        set({ socket:ws });
     },
 
     disconnect: () => {

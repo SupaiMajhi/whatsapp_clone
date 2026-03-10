@@ -1,29 +1,84 @@
+
+import { useState, useEffect, useRef } from "react";
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import { IoCheckmarkSharp } from "react-icons/io5";
 import { FaRegClock } from "react-icons/fa6";
 
 import { formatMessageTime } from "../lib.js";
+import { sendMessageViaSocket } from "../utils/util.js";
 
 //store imports
 import useAuthStore from "../store/auth/authStore.js";
 import useMessageStore from "../store/messageStore.js";
-import useSocketStore from "../store/socketStore.js";
 import useGlobalStore from "../store/globalStore.js";
+import usePageVisibility from "../hooks/usePageVisibility.js";
 
 const MainContent = () => {
+
   const messages = useMessageStore((state) => state.messages);
   const userInfo = useAuthStore((state) => state.userInfo);
   const theme = useGlobalStore((state) => state.theme);
 
+  const isVisible = usePageVisibility();
+  const rootRef = useRef(null);
+  const observerRef = useRef(null);
+  const elemRef = useRef(new Set());
+
+
+  const observerCallback = (entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        if(!entry.target.dataset.seen === "seen"){
+          sendMessageViaSocket("message_seen", { data: entry.target.dataset.id });
+        }
+      }
+      observerRef.current.unobserve(entry.target);
+    })
+  }
+
+  const setRef = (el) => {
+    if(!el) return;
+    if(!elemRef.current.has(el)){
+      elemRef.current.add(el);
+      observerRef.current.observe(el);
+    }
+  }
+
+  useEffect(() => {
+    if(!isVisible) return;
+
+    const options = {
+      root: rootRef.current,
+      rootMargin: "0px",
+      threshold: 0.75
+    }
+
+    observerRef.current = new IntersectionObserver(observerCallback, options);
+    elemRef.current.forEach(el => {
+      observerRef.current.observe(el);
+    });
+
+    return () => {
+      observerRef.current.disconnect();
+    }
+
+  }, [isVisible])
   return (
     <div
+      ref={rootRef}
       className={`w-full h-full flex flex-col px-18 pt-5 pb-8 text-sm overflow-x-hidden overflow-y-auto ${theme === "light" ? "text-black" : "text-white"}`}
     >
       {/** for now default contentType is "text", in future i will implement other contentType */}
       {messages.map((message) =>
         message?.contentType === "text" ? (
           message?.receiver === userInfo._id ? (
-            <div className="chat chat-start" key={message?._id}>
+            <div 
+              className="chat chat-start" 
+              key={message?._id} 
+              ref={(el) => setRef(el)}
+              data-seen={message.messageStatus}
+              id={message._id}
+            >
               <div className={`chat-bubble flex justify-center items-center gap-2 ${theme === "light" ? "bg-white text-black" : "bg-[#242626] text-white"}`}>
                 {/** main content */}
                 <div className="text-sm font-normal tracking-wide">{message?.content}</div>
@@ -71,7 +126,7 @@ const MainContent = () => {
             </div>
           )
         ) : (
-          <p>only type text is supported.</p>
+          <p key={message._id}>only text type is supported.</p>
         ),
       )}
     </div>

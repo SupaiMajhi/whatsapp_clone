@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { unlink } from "fs/promises";
 
 import { customResponse } from "../lib/lib.js";
-import { sendBothViaSocket } from "../utils/util.js";
+import { sendBothViaSocket } from "../socket.js";
 import Message from "../models/message.model.js";
 import User from "../models/user.model.js";
 import Conversation from "../models/conversation.model.js";
@@ -10,7 +10,7 @@ import { singleUpload } from "../services/cloudinary.js";
 import { onlineUsers } from "../socket.js";
 
 export const sendMsgHandler = async (req, res) => {
-    const sender = req.user._id;
+    const sender = req.user.id;
     const receiver = req.params.receiverId;
     const {textContent} = req.body.content;
     const file = req?.file;
@@ -63,7 +63,7 @@ export const sendMsgHandler = async (req, res) => {
         await newMsg.save();
 
         //-------get user------
-        const user = await User.findOne({ id: sender });
+        const user = await User.findOne({ _id: sender });
 
         //----Update Conversation----
         conversation.unreadCount += 1;
@@ -76,7 +76,7 @@ export const sendMsgHandler = async (req, res) => {
         await conversation.save();
 
         //-----send in real-time------
-        sendBothViaSocket(onlineUsers, sender, receiver, 'new_msg', { 
+        sendBothViaSocket(sender, receiver, 'new_msg', {
             data: {
                 newMsg,
                 conversation,

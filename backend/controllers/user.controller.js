@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 import { customResponse } from "../lib/lib.js";
 import User from "../models/user.model.js";
-import Conversation from "../models/coversation.model.js";
+import Conversation from "../models/conversation.model.js";
 
 export const getAllUsersHandler = async (req, res) => {
     const signinId = req.user._id;
