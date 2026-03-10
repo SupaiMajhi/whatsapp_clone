@@ -27,16 +27,20 @@ const setUpWebSocketServer = (server) => {
             sendViaSocket(id, 'offline_msg', { data: offlineMsges});
         }
 
-        ws.on('message', (event) => {
-            const message = JSON.parse(event.data);
-            console.log(message);
+        ws.on('message', (data) => {
+            try{
+                const message = JSON.parse(data.toString());
+                console.log(message);
 
-            if(message.type === "message_delivered"){
-                onDelivered(message.content.data)  //data => [id, id, id, id]
-            }
+                if(message.type === "message_delivered"){
+                    onDelivered(message.content.data)  //data => [id, id, id, id]
+                }
 
-            if(message.type === "message_seen"){
-                onSeen(message.content.data); //data => [id, id, id, id]
+                if(message.type === "message_seen"){
+                    onSeen(message.content.data); //data => [id, id, id, id]
+                }
+            } catch(err){
+                console.log('Error in socket.js', err.message);
             }
         });
 

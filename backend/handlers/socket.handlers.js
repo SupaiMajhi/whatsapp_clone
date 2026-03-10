@@ -1,6 +1,7 @@
 
+import mongoose from "mongoose";
+
 import Message from "../models/message.model.js";
-import { onlineUsers } from "../socket.js";
 import { sendViaSocket } from "../socket.js"
 
 
@@ -8,12 +9,12 @@ export const onDelivered = (data) => {
     if(Array.isArray(data)){
         try{
             data.forEach(async(msgId) => {
-                const message = await Message.findOneAndUpdate({ id:msgId }, { messageStatus:"delivered", deliveredAt:Date.now() }, { returnDocument: "after" });
+                const message = await Message.findOneAndUpdate({ _id: mongoose.Types.ObjectId.createFromHexString(msgId) }, { messageStatus:"delivered", deliveredAt:Date.now() }, { returnDocument: "after" });
                 
                 //send ack to sender
                 sendViaSocket(message.sender, "delivered_ack", {
                     data: {
-                        _id: message.id,
+                        id: message.id,
                         conversationId: message.conversationId,
                         messageStatus: message.messageStatus,
                         deliveredAt: message.deliveredAt
