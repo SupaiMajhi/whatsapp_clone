@@ -10,16 +10,20 @@ const useUserStore = create((set) => ({
     currentOpenConversationId: null,
     isLoading: false,
 
+    setCurrentOpenConversationId: (value) => {
+        set({ currentOpenConversationId: value });
+    },
+
     getPrevChatList: async () => {
         try {
             set({ isLoading: true });
-            const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/get-chatList`, {
+            const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/chatList`, {
                 withCredentials: true
             });
-            set({ chatList: response.data.data });
+            set({ chatList: response.data.data.chatList });
         } catch (error) {
             console.log(error.response);
-            useAppStore.setState({ errorMessage: error.response.message });
+            useAppStore.setState({ errorMessage: error.response.data.error.message });
             set({ chatList: [] });
         } finally {
             set({ isLoading: false });

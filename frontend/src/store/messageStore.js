@@ -8,10 +8,10 @@ const useMessageStore = create((set) => ({
     fetchAllMessage: async (otherUser) => {
         try {
             set({ isLoading: true });
-            const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/message/get-all-message/${otherUser}`, {
+            const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/message/messages/${otherUser}`, {
                 withCredentials: true
             });
-            set({ messages: response.data.data });
+            set({ messages: response.data.data.messages });
         } catch (error) {
             console.log(error.message);
             set({ messages: [] });

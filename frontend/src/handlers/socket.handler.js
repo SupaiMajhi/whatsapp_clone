@@ -29,7 +29,7 @@ export const handleOnOfflineMsg = (data) => {
 }
 
 export const handleOnNewMsg = (data) => {
-    
+    const messagesIds = [];
     const { chatList } = useUserStore.getState();
     const lastMessage = data.newMsg;
     const unreadCount = data.conversation.unreadCount;
@@ -38,7 +38,6 @@ export const handleOnNewMsg = (data) => {
 
     if(useUserStore.getState().currentOpenConversationId === data.conversation._id){
         if(found){
-
             const newChatList = [
                 {...found, lastMessage },
                 ...chatList.filter(c => c._id !== data.conversation._id)
@@ -73,6 +72,10 @@ export const handleOnNewMsg = (data) => {
             useMessageStore.getState().setMessages(data.newMsg);
         }
     }
+    messagesIds.push(data.newMsg._id);
+    sendMessageViaSocket("message_delivered", {
+        data: messagesIds
+    });
 }
 
 export const handleDeliveredMsg = (data) => {
@@ -88,4 +91,4 @@ export const handleSeenMsg = (data) => {
             seenAt: data.seenAt
         })
     }
-} 
+}

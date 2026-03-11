@@ -13,6 +13,7 @@ const ShowCard = ({ chatInfo }) => {
 
   const fetchAllMessage = useMessageStore((state) => state.fetchAllMessage);
   const getUserStatus = useUserStore((state) => state.getUserStatus);
+  const setCurrentOpenConversationId = useUserStore((state) => state.setCurrentOpenConversationId);
   const setCurrentRcvr = useAppStore((state) => state.setCurrentRcvr)
   const setIsChatSelected = useAppStore((state) => state.setIsChatSelected);
   const theme = useGlobalStore((state) => state.theme);
@@ -20,6 +21,7 @@ const ShowCard = ({ chatInfo }) => {
 
   const handleOnClick = async () => {
     setCurrentRcvr(chatInfo?.otherUser);
+    setCurrentOpenConversationId(chatInfo._id);
     setIsChatSelected(true);
     await fetchAllMessage(chatInfo._id);
     await getUserStatus(chatInfo.otherUser._id);

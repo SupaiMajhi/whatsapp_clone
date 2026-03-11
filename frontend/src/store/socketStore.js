@@ -7,17 +7,15 @@ const useSocketStore = create((set, get) => ({
     socket: null,
 
     connect: () => {
-        if(get().socket) return;
         const ws = new WebSocket(import.meta.env.VITE_SOCKET_URL);
 
         ws.onopen = () => {
-            set({ socket:ws });
+            set({ socket: ws });
         }
 
         ws.onmessage = (event) => {
             try{
                 const message = JSON.parse(event.data);
-                console.log(message);
 
                 if(message.type === "offline_msg"){
                     handleOnOfflineMsg(message.content.data);

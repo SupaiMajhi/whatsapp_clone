@@ -8,7 +8,7 @@ import { formatMessageTime } from "../lib.js";
 import { sendMessageViaSocket } from "../utils/util.js";
 
 //store imports
-import useAuthStore from "../store/auth/authStore.js";
+import useAppStore from "../store/appStore.js";
 import useMessageStore from "../store/messageStore.js";
 import useGlobalStore from "../store/globalStore.js";
 import usePageVisibility from "../hooks/usePageVisibility.js";
@@ -16,14 +16,13 @@ import usePageVisibility from "../hooks/usePageVisibility.js";
 const MainContent = () => {
 
   const messages = useMessageStore((state) => state.messages);
-  const userInfo = useAuthStore((state) => state.userInfo);
+  const userInfo = useAppStore((state) => state.userInfo);
   const theme = useGlobalStore((state) => state.theme);
 
   const isVisible = usePageVisibility();
   const rootRef = useRef(null);
   const observerRef = useRef(null);
   const elemRef = useRef(new Set());
-
 
   const observerCallback = (entries) => {
     entries.forEach(entry => {
@@ -62,7 +61,7 @@ const MainContent = () => {
       observerRef.current.disconnect();
     }
 
-  }, [isVisible])
+  }, [isVisible, messages])
   return (
     <div
       ref={rootRef}
@@ -71,13 +70,13 @@ const MainContent = () => {
       {/** for now default contentType is "text", in future i will implement other contentType */}
       {messages.map((message) =>
         message?.contentType === "text" ? (
-          message?.receiver === userInfo._id ? (
+          message?.receiver === userInfo.id ? (
             <div 
               className="chat chat-start" 
               key={message?._id} 
               ref={(el) => setRef(el)}
               data-seen={message.messageStatus}
-              id={message._id}
+              data-id={message._id}
             >
               <div className={`chat-bubble flex justify-center items-center gap-2 ${theme === "light" ? "bg-white text-black" : "bg-[#242626] text-white"}`}>
                 {/** main content */}
@@ -88,8 +87,10 @@ const MainContent = () => {
                     <p>{formatMessageTime(message?.seenAt)}</p>
                   ) : message?.deliveredAt ? (
                     <p>{formatMessageTime(message?.deliveredAt)}</p>
+                  ) : message?.sentAt ? (
+                    <p>{formatMessageTime(message?.sentAt)}</p>
                   ) : (
-                    <p></p>
+                    <p>...</p>
                   )}
                 </div>
               </div>

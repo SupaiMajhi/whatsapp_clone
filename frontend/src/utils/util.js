@@ -17,6 +17,7 @@ export const onSeen = (messagesIds) => {
 export const sendMessageViaSocket = (msgType, content) => {
     const socket = useSocketStore.getState()?.socket;
     if(socket?.readyState === WebSocket.OPEN){    
+        console.log('sent');
         socket?.send(JSON.stringify({
             type: msgType,
             content
