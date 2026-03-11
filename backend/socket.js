@@ -1,5 +1,5 @@
 
-import { WebSocketServer } from "ws";
+import { WebSocketServer, WebSocket } from "ws";
 
 import { retrieveIdFromReq } from "./utils/util.js"
 import { getOfflineMessages } from "./controllers/message.controller.js";
@@ -30,7 +30,7 @@ const setUpWebSocketServer = (server) => {
         ws.on('message', (data) => {
             try{
                 const message = JSON.parse(data.toString());
-                console.log(message);
+                console.log(message)
 
                 if(message.type === "message_delivered"){
                     onDelivered(message.content.data)  //data => [id, id, id, id]

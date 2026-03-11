@@ -230,6 +230,7 @@ let now = Date.now();
         "message": "Login successful.",
         "data": {
           "user": {
+            "id": user.id,
             "username": user.username, 
             "profilePic": user.profilePic,
           },
@@ -273,7 +274,12 @@ export const checkAuthHandler = async (req, res) => {
   try {
     return customResponse(res, 200, {
       data: {
-        user: req.user 
+        user: {
+          id: req.user.id,
+          username: req.user.username,
+          profilePic: req.user.profilePic,
+          isVerified: req.user.isVerified
+        }
       }
     });
         

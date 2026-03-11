@@ -140,14 +140,26 @@ export const updateMsgHandler = async (req, res) => {
 export const getAllMsgHandler = async (req, res) => {
     const { convoId } = req.params;
     
-    if(!convoId) return customResponse(res, 400, 'something went wrong, please try again');
+    if(!convoId) return customResponse(res, 400, {
+        error: {
+            message: 'Invalid conversation id'
+        }
+    });
 
     try {
         const messages = await Message.find({ conversationId: convoId });
-        return customResponse(res, 200, 'successfully.', messages);
+        return customResponse(res, 200, {
+            data: {
+                messages
+            }
+        });
     } catch (error) {
         console.log("getAllMsgHandler Error", error.message);
-        return customResponse(res, 500, "Internal server error");
+        return customResponse(res, 500, {
+            error: {
+                message: `Internal server error ${error.message}`
+            }
+        });
     }
 }
 

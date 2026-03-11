@@ -115,7 +115,7 @@ export const getChatListHandler = async (req, res) => {
     const id = mongoose.Types.ObjectId.createFromHexString(req.user.id);
     if(!id) return customResponse(res, 400, {
         error: {
-            message: "Unauthorized."
+            message: "Can't retrieve chatlist."
         }
     });
 

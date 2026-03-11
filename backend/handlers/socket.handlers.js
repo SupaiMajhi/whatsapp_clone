@@ -12,6 +12,7 @@ export const onDelivered = (data) => {
                 const message = await Message.findOneAndUpdate({ _id: mongoose.Types.ObjectId.createFromHexString(msgId) }, { messageStatus:"delivered", deliveredAt:Date.now() }, { returnDocument: "after" });
                 
                 //send ack to sender
+                console.log('message', message);
                 sendViaSocket(message.sender, "delivered_ack", {
                     data: {
                         id: message.id,
@@ -26,14 +27,13 @@ export const onDelivered = (data) => {
             console.log('Error in onDelivered ', error);
         }   
     }
-    return;
 }
 
 export const onSeen = (data) => {
     if(Array.isArray(data)){
         try{
             data.forEach(async(msgId) => {
-                const message = await Message.findOneAndUpdate({ id:msgId }, { messageStatus:"seen", seenAt:Date.now() }, { returnDocument: "after" });
+                const message = await Message.findOneAndUpdate({ _id: mongoose.Types.ObjectId.createFromHexString(msgId) }, { messageStatus:"seen", seenAt:Date.now() }, { returnDocument: "after" });
                 
                 //send ack to sender
                 sendViaSocket(message.sender, "seen_ack", { 

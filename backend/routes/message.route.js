@@ -23,7 +23,7 @@ router.delete("/delete-message/:id", deleteMsgHandler);
 router.patch("/update-message/:id", updateMsgHandler);
 
 //get all messages
-router.get("/get-all-message/:convoId", getAllMsgHandler);
+router.get("/messages/:convoId", getAllMsgHandler);
 
 // router.get("/offline/messages", devGetOfflineMessages);
 

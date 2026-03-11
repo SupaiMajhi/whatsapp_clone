@@ -12,7 +12,7 @@ router.get('/get-all-users', authMiddleware, getAllUsersHandler);
 router.get('/get-status/:userId', authMiddleware, getUserStatus)
 
 //get all prev chat list
-router.get("/get-chatList", authMiddleware, getChatListHandler);
+router.get("/chatList", authMiddleware, getChatListHandler);
 
 
 
