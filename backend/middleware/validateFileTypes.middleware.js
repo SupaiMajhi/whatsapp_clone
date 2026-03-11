@@ -1,4 +1,4 @@
-import { customResponse, determineFileType } from "../lib/lib.js";
+import { customResponse, determineFileType } from "../utils/util.js";
 
 const allowedTypes = [
     'image/png',

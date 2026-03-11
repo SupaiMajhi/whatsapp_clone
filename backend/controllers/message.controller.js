@@ -1,13 +1,12 @@
 import mongoose from "mongoose";
 import { unlink } from "fs/promises";
 
-import { customResponse } from "../lib/lib.js";
+import { customResponse } from "../utils/util.js";
 import { sendBothViaSocket } from "../socket.js";
 import Message from "../models/message.model.js";
 import User from "../models/user.model.js";
 import Conversation from "../models/conversation.model.js";
 import { singleUpload } from "../services/cloudinary.js";
-import { onlineUsers } from "../socket.js";
 
 export const sendMsgHandler = async (req, res) => {
     const sender = req.user.id;
@@ -16,9 +15,17 @@ export const sendMsgHandler = async (req, res) => {
     const file = req?.file;
 
 
-    if(!sender || !receiver) return customResponse(res, 400, 'participants are required.');
+    if(!sender || !receiver) return customResponse(res, 400, {
+        "error": {
+            "message": 'participants are required.'
+        }
+    });
 
-    if(!textContent && !file) return customResponse(res, 400, 'Message cannot be empty.');
+    if(!textContent && !file) return customResponse(res, 400, {
+        "error": {
+            "message": 'Message cannot be empty.'
+        }
+    });
 
 
     let participants = [sender, receiver].sort();
@@ -30,7 +37,11 @@ export const sendMsgHandler = async (req, res) => {
             //----Determaine Content Type-----
             if(file.mimetype.startsWith('image/')) contentType = 'image';
             else {
-                return customResponse(res, 400, 'Unsupported file type.');
+                return customResponse(res, 400, {
+                    "error": {
+                        "message": 'Unsupported file type.'
+                    }
+                });
             }
 
             //----Upload to Cloudinary----
@@ -82,10 +93,19 @@ export const sendMsgHandler = async (req, res) => {
                 conversation,
             }
         });
-        return customResponse(res, 200, 'message sent.', newMsg);
+        return customResponse(res, 200, {
+            "message": 'message sent.',
+            "data": {
+                newMsg
+            }
+        });
     } catch (error) {
       console.log("sendMsgHandler Error", error.message);
-      return customResponse(res, 500, "Internal server error");
+      return customResponse(res, 500, {
+        "error": {
+          "message": `Internal server error ${error.message}`,
+        },
+      });
     }
 }
 

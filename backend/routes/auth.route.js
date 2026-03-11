@@ -8,9 +8,9 @@ import upload from "../services/multer.js";
 
 const router = Router();
 
-router.post('/otp/get-otp', getOtpHandler);
+router.post('/otp', getOtpHandler);
 
-router.get('/otp/re-send', authLimiter, resendHandler);
+router.get('/otp/resend', authLimiter, resendHandler);
 
 router.post('/otp/verify', authLimiter, verifyOtpHandler);
 

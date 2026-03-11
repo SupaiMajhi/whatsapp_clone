@@ -15,11 +15,6 @@ export const connectToDB = () => {
     .catch((e) => console.log(e.message))
 }
 
-
-export const customResponse = (res, code, message='', data={}) => {
-    return res.status(code).json({ "message": message, "data": data });
-}
-
 export const isValidPhoneNumber = (phoneNumber) => {
     // Example regex for a 10-digit number, optionally with country code and separators
     const regex = /^\d{10}$/;
@@ -39,17 +34,6 @@ export const hash = async (value) => {
 export const deHash = async (value, hashValue) => {
     const result = await bcrypt.compare(value, hashValue);
     return result;
-}
-
-export const determineFileType = async (filePath) => {
-    try {
-        const buffer = await readChunk(filePath, { length: 4100 });
-        const result = await fileTypeFromBuffer(buffer);
-        return result.mime;
-    } catch (error) {
-        console.log("Error in determineFileType", error.message);
-        return null;
-    }
 }
 
 export const generateToken = async (payload) => {

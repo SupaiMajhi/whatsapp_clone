@@ -18,3 +18,18 @@ export const retrieveIdFromReq = async (req) => {
         return null;
     }
 }
+
+export const customResponse = (res, code, data) => {
+    return res.status(code).json({...data});
+}
+
+export const determineFileType = async (filePath) => {
+    try {
+        const buffer = await readChunk(filePath, { length: 4100 });
+        const result = await fileTypeFromBuffer(buffer);
+        return result.mime;
+    } catch (error) {
+        console.log("Error in determineFileType", error.message);
+        return null;
+    }
+}

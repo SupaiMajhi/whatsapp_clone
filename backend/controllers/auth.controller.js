@@ -1,7 +1,8 @@
 import jwt from 'jsonwebtoken';
 import fs from "fs/promises";
 
-import { customResponse, generateOtp, hash, deHash, isValidPhoneNumber, generateToken } from "../lib/lib.js";
+import { generateOtp, hash, deHash, isValidPhoneNumber, generateToken } from "../lib/lib.js";
+import { customResponse } from "../utils/util.js";
 import User from "../models/user.model.js";
 import Otp from "../models/otp.model.js";
 import {uploadProfile} from "../services/cloudinary.js";
@@ -9,26 +10,32 @@ import { sendOTPtoPhoneNumber } from "../services/twilio.js";
 
 
 export const getOtpHandler = async (req, res) => {
-
   //todo: implement a phone validation library with country code and change in sendToPhoneNumber method accordingly.
   const { phone } = req.body.content;
   if (!phone || !isValidPhoneNumber(phone))
-    return customResponse(res, 400, "Phonenumber is not correct. Please ensure it is correct.");
+    return customResponse(res, 400, {
+      "error": {
+        "message": "phone is not an of invalid type.",
+      }
+    });
   try {
-    /**------CHECK IF ALREADY A OTP IS EXIST------ */
-    const record = await Otp.findOne({ phoneNumber: phone });
-
+    const isOtpExist = await Otp.findOne({ phoneNumber: phone });
+    if(isOtpExist) return customResponse(res, 404, {
+      "error": {
+        "message": "OTP already exist.",
+        "data": {
+          "verificatiion_token": isOtpExist.verification_token,
+          "redirect_url": "/auth/verify"
+        }
+      }
+    });
+    
     /** ----CREATE A TOKEN---- */
     const payload = {
       phone,
     };
     const token = jwt.sign(payload, process.env.OTP_SECRET_KEY);
 
-    if(record) {
-      return customResponse(res, 401, "otp already exist.", {
-        verification_token: record.verification_token
-      });
-    }
 
     const otp = generateOtp();
     const hashedOtp = await hash(otp);
@@ -39,32 +46,52 @@ export const getOtpHandler = async (req, res) => {
       phoneNumber: phone,
       otp: hashedOtp,
       otpExpiry: Date.now() + 1000 * 60 * 5,
-      lastOtpSentAt: Date.now(),
-      resendCount: 1,
     });
+
+    const user = await User.findOne({ phoneNumber: phone });
+    user.lastOtpSentAt = Date.now();
+    user.resendCount = 1;
+
+    await user.save();
     await newOtp.save();
 
     /** -----SEND OTP----- */
-    if (otp && isValidPhoneNumber(phone)) {
-      await sendOTPtoPhoneNumber(otp, phone);
-    }
+    // if (otp && isValidPhoneNumber(phone)) {
+    //   await sendOTPtoPhoneNumber(otp, phone);
+    // }
 
     res.cookie("verification_token", token, {
       httpOnly: true,
-      maxAge: 1000 * 60 * 15,
+      maxAge: 1000 * 60 * 5,
       secure: false,
       sameSite: "strict",
     });
-    return customResponse(res, 200, "OTP sent successfully.", {
-      verification_token: token
+    return customResponse(res, 200, {
+      "message": "OTP sent successfully.",
+      "data": {
+        "verification_token": token,
+        "redirect_url": "/auth/verify"
+      }
     });
   } catch (error) {
-    await Otp.deleteMany({phoneNumber:phone});
+    await Otp.deleteOne({phoneNumber:phone});
     if(error.name === "TokenExpiredError"){
-      return customResponse(res, 500, 'SESSION TIMEOUT. session expired.', { "redirectURL": '/auth/authpage', verification_token: null  });
+      return customResponse(res, 500, {
+        "error": {
+          "message": "session expired.",
+          "data": {
+            "redirectURL": '/auth/authpage', 
+            "verification_token": null  
+          }
+        }
+      });
     }
+
     console.log("sendOtpHandler error", error.message);
-    return customResponse(res, 500, `Internal server error ${error.message}`);
+    return customResponse(res, 500, {
+        "message": `Internal server error ${error.message}`
+      }
+    );
   }
 }
 
@@ -119,23 +146,41 @@ export const resendHandler = async (req, res) => {
 
 //todo: if otp is incorrect there should be a try limit and rate limit to prevent attacks
 export const verifyOtpHandler = async (req, res) => {
-
+let now = Date.now();
   /**-----EXTRACT TOKEN FROM HEADER AND PARSE------ */
   const { verification_token:vt } = req.cookies;
   const { otp } = req.body.content;
-  if(!otp || !vt) return customResponse(res, 400, 'something went wrong. Please try after sometimes.'); //todo: maybe in future i would implement something to improve security instead of simple return.
+  if(!otp || !vt) return customResponse(res, 400, {
+    "error": {
+      "message": "Token session expired.",
+      "details": {
+        "suggestion": "Please try after sometimes."
+      }
+    }
+  }); //todo: maybe in future i would implement something to improve security instead of simple return.
 
   try {
     /** ----VERIFY THE TOKEN----- */
     const payload = jwt.verify(vt, process.env.OTP_SECRET_KEY);
  
-    if(!payload.phone) return customResponse(res, 401, 'Invalid token'); //todo: if user's token has no phoneNumber or another phonenumber, i.e. malicious user. In that case:
+    if(!payload.phone) return customResponse(res, 401, {
+      "error": {
+        "message": 'Invalid token'
+      }
+    }); //todo: if user's token has no phoneNumber or another phonenumber, i.e. malicious user. In that case:
 
     //todo: first invalidate this token
 
     /** ------QUERY OTP COLLECTION------ */
-    const doc = await Otp.findOne({ verification_token: vt });
-    if(!doc) return customResponse(res, 400, 'Get an otp first.', { "redirectURL": '/auth/authpage'});
+    const doc = await Otp.findOne({ phoneNumber: phone });
+    if(!doc) return customResponse(res, 400, { 
+      "error": {
+        "message": 'Get an otp first.',
+        "data": {
+          "redirect_url": '/auth'
+        }
+      }
+    });
 
 
     /**-----COMPARE THE PAYLOAD PHONE AND DATABASE PHONE------ */
@@ -143,18 +188,28 @@ export const verifyOtpHandler = async (req, res) => {
     // if(!isSamePhoneNumber) return customResponse(res, 401, 'Unauthorized access.');
 
 
-    if(Date.now() > doc.otpExpiry){
+    if(now > doc.otpExpiry){
       //todo: otpExpiry time is already crossed, provide an option to re-send an otp
       await Otp.deleteMany({ phoneNumber: payload.phone });
-      return customResponse(res, 401, 'OTP is expired.'); 
+      return customResponse(res, 401, {
+        "error": {
+          "message": 'OTP is expired.',
+          "data": {
+            "redirect_url": '/auth'
+          }
+        }
+      }); 
     }
 
     const isSameOtp = await deHash(otp, doc.otp);
-
-    if(!isSameOtp) return customResponse(res, 401, 'OTP is incorrect.');
+    if(!isSameOtp) return customResponse(res, 401, {
+      "error": {
+        "message": 'OTP is incorrect.'
+      }
+    });
 
     //if it is same otp
-    await Otp.findOneAndDelete({ verification_token: vt });
+    await Otp.findOneAndDelete({ phoneNumber: payload.phone });
 
     /** ------RETURN A TOKEN------ */
     const token = await generateToken({phone: doc.phoneNumber});
@@ -170,31 +225,65 @@ export const verifyOtpHandler = async (req, res) => {
     if(user) {
       user.isVerified = true;
       await user.save();
-      return customResponse(res, 200, 'Logged In.', { "user": {
-        "username": user.username, "profilePic": user.profilePic,
-      }, "isVerified": true });
+
+      return customResponse(res, 200, {
+        "message": "Login successful.",
+        "data": {
+          "user": {
+            "username": user.username, 
+            "profilePic": user.profilePic,
+          },
+          "isVerified": true,
+          "redirect_url": "/" 
+        }
+      });
     }
 
-    return customResponse(res, 200, '', { "redirectURL": '/auth/user/create', "isVerified": true });
+    return customResponse(res, 200, { 
+      "message": "Login successful.",
+      "data": {
+        "redirectURL": '/auth/user/create',
+        "isVerified": true 
+      }
+    });
+        
   } catch (error) {
     /** -----IF ERROR IS TOKEN EXPIRED------  */
     if(error.name === 'TokenExpiredError'){
-      return customResponse(res, 400, 'SESSION_TIMEOUT', 'Session expired.', {
-        redirectURL:'/auth/authpage',
+      return customResponse(res, 400, {
+        "error": {
+          "message": 'Session expired.',
+          "data": {
+            redirect_url:'/auth',
+          }
+        }
       });
     }
 
     console.log("verifyOtpHandler error ", error.message);
-    return customResponse(res, 500, "Internal server error.");
+    return customResponse(res, 500, {
+      "error": {
+        "message": `Internal server error ${error.message}`
+      }
+    });
   }
 };
 
 export const checkAuthHandler = async (req, res) => {
   try {
-    return customResponse(res, 200, "user is authenticated.", { "user": req.user });
+    return customResponse(res, 200, {
+      data: {
+        user: req.user 
+      }
+    });
+        
   } catch (error) {
     console.log("signupHandler error", error.message);
-    return customResponse(res, 500, "Internal server error.",);
+    return customResponse(res, 500, {
+      error: {
+        message: `Internal server error ${error.message}`
+      }
+    });
   }
 };
 
@@ -202,27 +291,54 @@ export const checkVTtokenHandler = async (req,res) => {
   const { verification_token:vt } = req.cookies;
   try {
     if(!vt){
-      await Otp.deleteMany({ verification_token: vt });
-      return customResponse(res, 400, 'Session Expired.');
+      return customResponse(res, 400, {
+        error: {
+          message: 'Session Expired.'
+        }
+      });
     }
     
     /**------VERIFY THE TOKEN------- */
     const { phone } = jwt.verify(vt, process.env.OTP_SECRET_KEY);
-    if(!phone) return customResponse(res, 401, 'unauthorized.');
+    if(!phone) return customResponse(res, 400, {
+      error: {
+        message: 'Session Expired.'
+      }
+    });
 
     /**=====RETRIEVE OTP DOC WITH PHONE======= */
     const record = await Otp.findOne({ phoneNumber: phone });
-    if(!record) return customResponse(res, 401, 'Unauthorized.');
+    if(!record) return customResponse(res, 401, {
+      error: {
+        message: 'unauthorized.'
+      }
+    });
 
 
-    return customResponse(res, 200, 'success', { verification_token: record.verification_token, "redirectURL": "/auth/verify" });
+    return customResponse(res, 200, {
+      message: 'Valid token',
+      data: {
+        verification_token: record.verification_token
+      }
+    });
   } catch (error) {
     if(error.name === "TokenExpiredError"){
       await Otp.deleteMany({ verification_token: vt});
-      return customResponse(res, 400, 'Session Expired.', {redirectURL: '/auth/get_otp'});
+      return customResponse(res, 400, {
+        error: {
+          message: 'Session Expired.',
+          data: {
+            redirect_url: '/auth'
+          }
+        }
+      });
     }
     console.log('checkVTtokenHandler', error.message);
-    return customResponse(res, 500, 'Internal server error.');
+    return customResponse(res, 500, {
+      error: {
+        message: `Internal server error ${error.message}`
+      }
+    });
   }
 };
 
