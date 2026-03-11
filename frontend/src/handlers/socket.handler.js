@@ -49,7 +49,7 @@ export const handleOnNewMsg = (data) => {
         useMessageStore.getState().setMessages(data.newMsg);
     }else{
         if(found){
-            //if found = true, and user is sender
+            //found = true, and user is sender
             if(data.newMsg.sender === useAuthStore.getState()?.userInfo?._id){
 
                 const newChatList = [
