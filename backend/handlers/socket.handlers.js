@@ -12,7 +12,6 @@ export const onDelivered = (data) => {
                 const message = await Message.findOneAndUpdate({ _id: mongoose.Types.ObjectId.createFromHexString(msgId) }, { messageStatus:"delivered", deliveredAt:Date.now() }, { returnDocument: "after" });
                 
                 //send ack to sender
-                console.log('message', message);
                 sendViaSocket(message.sender, "delivered_ack", {
                     data: {
                         id: message.id,

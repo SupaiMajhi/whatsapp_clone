@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 import { unlink } from "fs/promises";
 
-import { customResponse } from "../utils/util.js";
-import { sendBothViaSocket } from "../socket.js";
 import Message from "../models/message.model.js";
 import User from "../models/user.model.js";
 import Conversation from "../models/conversation.model.js";
+import { customResponse } from "../utils/util.js";
+import { sendViaSocket } from "../socket.js";
 import { singleUpload } from "../services/cloudinary.js";
 
 export const sendMsgHandler = async (req, res) => {
@@ -87,7 +87,7 @@ export const sendMsgHandler = async (req, res) => {
         await conversation.save();
 
         //-----send in real-time------
-        sendBothViaSocket(sender, receiver, 'new_msg', {
+        sendViaSocket(receiver, 'new_msg', {
             data: {
                 newMsg,
                 conversation,

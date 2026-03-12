@@ -9,6 +9,7 @@ import useAppStore from "../store/appStore.js";
 import useGlobalStore from "../store/globalStore.js";
 
 const InputBox = () => {
+  
   const [msgText, setMsgText] = useState("");
   const sendAMessage = useMessageStore((state) => state.sendAMessage);
   const currentRcvr = useAppStore((state) => state.currentRcvr);

@@ -11,7 +11,7 @@ import validateFileType from "../middleware/validateFileTypes.middleware.js";
 
 const router = Router();
 //send message
-router.post("/send-message/:receiverId",
+router.post("/send/:receiverId",
     upload.single("media"), validateFileType,
     sendMsgHandler
 );

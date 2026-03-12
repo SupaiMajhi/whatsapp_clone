@@ -90,7 +90,7 @@ const MainContent = () => {
               data-seen={message.messageStatus}
               data-id={message._id}
             >
-              <div className={`chat-bubble flex justify-center items-center gap-2 ${theme === "light" ? "bg-white text-black" : "bg-[#242626] text-white"}`}>
+              <div className={`chat-bubble flex justify-center items-center gap-2 rounded-r-[10px] rounded-tl-[10px] ${theme === "light" ? "bg-white text-black" : "bg-[#242626] text-white"}`}>
                 {/** main content */}
                 <div className="text-sm font-normal tracking-wide">{message?.content}</div>
                 {/** time */}
@@ -109,7 +109,7 @@ const MainContent = () => {
             </div>
           ) : (
             <div className="chat chat-end" key={message?._id}>
-              <div className={`chat-bubble flex justify-center items-center gap-2 ${theme === "light" ? "bg-lightMyChatclr text-black" : "bg-darkMyChatclr text-white"}`}>
+              <div className={`chat-bubble flex justify-center items-center gap-2 rounded-l-[10px] rounded-tr-[10px] ${theme === "light" ? "bg-lightMyChatclr text-black" : "bg-darkMyChatclr text-white"}`}>
                 {/** main content */}
                 <div className="text-sm font-normal tracking-wide">{message?.content}</div>
                 {/** time and status */}
