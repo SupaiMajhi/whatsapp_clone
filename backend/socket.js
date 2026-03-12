@@ -30,13 +30,12 @@ const setUpWebSocketServer = (server) => {
         ws.on('message', (data) => {
             try{
                 const message = JSON.parse(data.toString());
-                console.log(message)
 
-                if(message.type === "message_delivered"){
+                if(message.type === "markAsDelivered"){
                     onDelivered(message.content.data)  //data => [id, id, id, id]
                 }
 
-                if(message.type === "message_seen"){
+                if(message.type === "markAsSeen"){
                     onSeen(message.content.data); //data => [id, id, id, id]
                 }
             } catch(err){

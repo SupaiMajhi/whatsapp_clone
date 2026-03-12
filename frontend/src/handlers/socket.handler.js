@@ -24,7 +24,7 @@ export const handleOnOfflineMsg = (data) => {
         }
         //send delivery ack
         d.messages.forEach(m => messagesIds.push(m._id));
-        sendMessageViaSocket("message_delivered", { data: messagesIds });
+        sendMessageViaSocket("markAsDelivered", { data: messagesIds });
     })
 }
 
@@ -73,7 +73,7 @@ export const handleOnNewMsg = (data) => {
         }
     }
     messagesIds.push(data.newMsg._id);
-    sendMessageViaSocket("message_delivered", {
+    sendMessageViaSocket("markAsDelivered", {
         data: messagesIds
     });
 }

@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import { IoCheckmarkSharp } from "react-icons/io5";
 import { FaRegClock } from "react-icons/fa6";
@@ -23,12 +23,13 @@ const MainContent = () => {
   const rootRef = useRef(null);
   const observerRef = useRef(null);
   const elemRef = useRef(new Set());
+  const ref = useRef(null);
 
   const observerCallback = (entries) => {
     entries.forEach(entry => {
       if(entry.isIntersecting){
         if(!entry.target.dataset.seen === "seen"){
-          sendMessageViaSocket("message_seen", { data: entry.target.dataset.id });
+          sendMessageViaSocket("markAsSeen", { data: entry.target.dataset.id });
         }
       }
       observerRef.current.unobserve(entry.target);
@@ -39,7 +40,7 @@ const MainContent = () => {
     if(!el) return;
     if(!elemRef.current.has(el)){
       elemRef.current.add(el);
-      observerRef.current.observe(el);
+      observerRef.current?.observe(el);
     }
   }
 
@@ -62,6 +63,17 @@ const MainContent = () => {
     }
 
   }, [isVisible, messages])
+
+  useEffect(() => {
+    if(ref.current){
+      ref.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end"
+      })
+    }
+  }, [messages])
+
+
   return (
     <div
       ref={rootRef}
@@ -130,6 +142,7 @@ const MainContent = () => {
           <p key={message._id}>only text type is supported.</p>
         ),
       )}
+      <div ref={ref}></div>
     </div>
   );
 };
