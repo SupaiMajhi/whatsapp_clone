@@ -1,4 +1,4 @@
-import { formatMessageTime } from "../lib.js";
+import { formatChatTime } from "../utils/util.js";
 import Avatar from "@mui/material/Avatar";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
@@ -50,7 +50,7 @@ const ShowCard = ({ chatInfo }) => {
             <h1 className={`text-xl ${theme === "light" ? "text-black" : "text-white"} tracking-wide`}>{chatInfo?.otherUser?.username}</h1>
           </div>
           <div className={`w-fit max-w-28 text-xs font-medium tracking-wider`}>
-            <p>{formatMessageTime(chatInfo?.lastMessage.createdAt)}</p>
+            <p>{formatChatTime(chatInfo?.lastMessage.createdAt)}</p>
           </div>
         </div>
 

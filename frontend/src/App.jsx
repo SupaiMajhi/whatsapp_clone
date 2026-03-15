@@ -95,7 +95,7 @@ function App() {
           <Route 
             index 
             element={
-              !isAuthenticated ? <WelcomeBanner /> : <Navigate to='/' />
+              !isAuthenticated && !otp_token ? <WelcomeBanner /> : <Navigate to='/' />
           } />
 
           <Route
