@@ -8,6 +8,7 @@
 }
 
 @theme {
+    --color-authBg: #FCF5EB;
     --color-darkNav: #1D1F1F;
     --color-dark: #161717;
     --color-lightNav: #F7F5F3;
@@ -59,8 +60,7 @@
     }
 }
 
-* {
-    box-sizing: border-box;
+html, body {
     font-family: "Roboto", sans-serif;
 }
 
@@ -77,11 +77,11 @@
     }
 
     .screen-container {
-        @apply w-screen h-screen flex justify-center items-center;
+        @apply w-screen h-screen overflow-hidden;
     }
 
     .mini-container {
-        @apply w-[calc(100%-20%)] h-[calc(100%-30%)] flex justify-center items-center rounded-2xl;
+        @apply min-w-md w-md sm:w-2xl min-h-80 h-80 sm:min-h-96 sm:h-96;
     }
 
     .content {

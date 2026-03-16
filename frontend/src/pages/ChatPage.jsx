@@ -1,4 +1,4 @@
-import Logo from "../assets/Logo";
+import Logo from "../assets/TextLogo.jsx";
 import NewChatIcon from "../assets/NewChatIcon";
 import MenuIcon from "../assets/MenuIcon";
 import Input from "../components/Input";
@@ -11,17 +11,21 @@ import useGlobalStore from "../store/globalStore.js";
 import useAppStore from "../store/appStore.js";
 
 const ChatPage = () => {
-  
   const theme = useGlobalStore((state) => state.theme);
   const isChatSelected = useAppStore((state) => state.isChatSelected);
 
   return (
     <div className="relative custom-container">
       {/** LEFT SIDE */}
-      <div className={`basis-[calc(100%-70%)] max-w-[calc(100%-70%)] h-full flex-center flex-col ${theme === "light" ? "bg-light text-dark" : "bg-dark text-white"}`}>
-        
-        <div className={`w-full h-[calc(100%-90%)] max-h-[calc(100%-90%)] flex items-center justify-between pl-6 pr-7 ${theme === "light" ? "text-black" : "text-white"}`}>
-          <div className={`${theme === "light" ? "text-[#1DAA61]" : "text-white"}`}>
+      <div
+        className={`basis-[calc(100%-70%)] max-w-[calc(100%-70%)] h-full flex-center flex-col ${theme === "light" ? "bg-light text-dark" : "bg-dark text-white"}`}
+      >
+        <div
+          className={`w-full h-[calc(100%-90%)] max-h-[calc(100%-90%)] flex items-center justify-between pl-6 pr-7 ${theme === "light" ? "text-black" : "text-white"}`}
+        >
+          <div
+            className={`${theme === "light" ? "text-[#1DAA61]" : "text-white"}`}
+          >
             <Logo />
           </div>
           <div className="flex-center gap-8">

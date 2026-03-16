@@ -3,9 +3,7 @@ import { useEffect } from "react";
 
 //components imports
 import HomePage from './pages/HomePage.jsx';
-import WelcomeBanner from "./components/WelcomeBanner.jsx";
 import AuthPage from "./pages/AuthPage.jsx";
-import Signup from './components/Signup.jsx';
 import ChatPage from "./pages/ChatPage.jsx";
 import StatusPage from "./pages/StatusPage.jsx";
 import SettingsPage from "./pages/SettingsPage.jsx";
@@ -92,14 +90,8 @@ function App() {
 
 
         <Route path="/auth" element={<AuthPage />}>
-          <Route 
-            index 
-            element={
-              !isAuthenticated && !otp_token ? <WelcomeBanner /> : <Navigate to='/' />
-          } />
-
           <Route
-            path="get_otp"
+            index
             element={
               !otp_token && !isAuthenticated ? (
                 <Login />
@@ -121,7 +113,7 @@ function App() {
              ) : isAuthenticated && !otp_token ? (
               <Navigate to='/' />
              ) : !isAuthenticated && !otp_token ? (
-              <Navigate to='/auth/get_otp' />
+              <Navigate to='/auth' />
              ) : (
               <Navigate to='/' />
              )
