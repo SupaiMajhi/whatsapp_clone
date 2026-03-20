@@ -29,7 +29,13 @@ const Login = () => {
       </div>
 
       <div>
-        <button className="w-18 min-h-9 py-2 text-base font-normal cursor-pointer bg-green-500 rounded-3xl">Next</button>
+        <button className="w-18 min-h-9 py-2 text-base font-normal cursor-pointer bg-btnPrimary rounded-3xl mt-8">
+          { isLoading ? (
+            <span className="loading loading-spinner loading-xs"></span>
+          ) : (
+            "Next"
+          )}
+        </button>
       </div>
     </form>
   );

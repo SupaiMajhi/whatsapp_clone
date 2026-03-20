@@ -39,8 +39,8 @@ function CountrySelect() {
       <Select.Portal>
         <Select.Content
           position="popper"
-          sideOffset={10}
-          className="w-(--radix-select-trigger-width) h-80 bg-white shadow-lg shadow-neutral-300 rounded-2xl overflow-hidden"
+          sideOffset={5}
+          className="w-(--radix-select-trigger-width) h-60 bg-white shadow-md/50 rounded-2xl overflow-hidden"
         >
           <Select.Viewport className="pl-3 pr-4 py-3">
             {countries.map((country) => (
