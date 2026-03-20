@@ -1,12 +1,16 @@
 
 import { create } from "zustand";
 import axios from "axios";
+
+import countries from "../../../country.js";
+
 import useGlobalStore from "../globalStore.js";
 import useAppStore from "../appStore.js"
 
+
 const useAuthStore = create((set) => ({
   isAuthenticated: false,
-  country: null,
+  country: countries[0],
   isLoading: false,
   otp_token: null,
 

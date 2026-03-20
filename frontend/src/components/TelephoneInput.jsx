@@ -1,11 +1,11 @@
 
 
-const TelephoneInput = ({ className='' }) => {
+const TelephoneInput = () => {
   return (
-    <>
+    <div className="flex-1 items-center w-xs max-w-xs h-14 max-h-14 border rounded-4xl bg-red-300">
         <input
           type="tel"
-          className={`tabular-nums ${className}`}
+          className="w-full h-full px-6 bg-white rounded-inherit"
           placeholder="Phone"
           pattern="[0-9]*"
           minLength="10"
@@ -14,7 +14,7 @@ const TelephoneInput = ({ className='' }) => {
           required
         />
       <p className="validator-hint">Must be 10 digits</p>
-    </>
+    </div>
   );
 }
 

@@ -20,7 +20,7 @@ const AuthPage = () => {
       </div>
 
       <div className="w-full h-full flex-center select-none">
-        <div className="min-w-sm w-md h-96 sm:w-2xl px-5 py-8 sm:p-12 flex-center flex-col space-y-5 bg-white rounded-2xl shadow border">
+        <div className="mini-container flex-center flex-col space-y-5 bg-white rounded-2xl shadow border">
           { isLoading ? (
             <h1>Loading....</h1>
           ) : (
