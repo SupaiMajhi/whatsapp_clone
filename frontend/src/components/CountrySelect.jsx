@@ -5,21 +5,20 @@ import { ChevronDown } from "lucide-react";
 import countries from "../../country.js";
 
 // Store imports
-import useGlobalStore from "../store/globalStore.js";
 import useAuthStore from "../store/auth/authStore.js";
 
-function CountrySelect() {
+function CountrySelect({ onChange }) {
 
   const country = useAuthStore((state) => state.country);
   const setCountry = useAuthStore((state) => state.setCountry);
 
   return (
     <Select.Root
-      name="dialCode"
       value={country?.alpha2}
       onValueChange={(value) => {
         let selected = countries.find((c) => c.alpha2 === value);
         setCountry(selected);
+        onChange(selected);
       }}
     >
       <Select.Trigger className="flex items-center justify-between w-xs max-w-xs h-14 max-h-14 px-6 py-2 bg-white border border-black rounded-4xl data-placeholder:text-xs data-placeholder:font-normal data-placeholder:text-green-500">
@@ -58,9 +57,13 @@ function CountrySelect() {
 export default CountrySelect;
 
 
-const CustomValue = React.forwardRef(({country, ...porps}, ref) => {
+const CustomValue = React.forwardRef(({country, ...props}, ref) => {
   return (
-    <span className="flex">
+    <span 
+      className="flex"
+      {...props}
+      ref={ref}
+    >
       <img src={country.flag} alt={country.alpha2} className="w-5 mr-2" />
       {country.name}
     </span>

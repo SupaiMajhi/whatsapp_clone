@@ -9,7 +9,7 @@ import useAppStore from "../appStore.js"
 
 
 const useAuthStore = create((set) => ({
-  
+
   isAuthenticated: false,
   country: countries[0],
   isLoading: true,
@@ -59,7 +59,7 @@ const useAuthStore = create((set) => ({
         useGlobalStore.setState({ redirectURL: response?.data?.data?.redirect_url });
       }
       if(response.data?.data?.user){
-        set({ userInfo: response?.data?.data?.user });
+        useAppStore.setState({ userInfo: response?.data?.data?.user });
       }
       set({ isAuthenticated: response.data?.data?.isVerified });
     } catch (error) {

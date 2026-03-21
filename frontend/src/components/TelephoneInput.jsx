@@ -1,19 +1,21 @@
 
+import useAuthStore from "../store/auth/authStore.js"
 
-const TelephoneInput = () => {
+const TelephoneInput = ({ register }) => {
+
+  const country = useAuthStore((state) => state.country);
+
+
+
   return (
-    <div className="flex-1 items-center w-xs max-w-xs h-14 max-h-14 border rounded-4xl bg-red-300">
+    <div className="relative w-xs max-w-xs min-h-14 max-h-14 flex items-center border rounded-4xl bg-white">
+        <p className="absolute left-5 top-1/2 -translate-y-1/2 h-full flex items-center rounded-l-4xl">{country?.dialCode}</p>
         <input
+          {...register("phone")}
           type="tel"
-          className="w-full h-full px-6 bg-white rounded-inherit"
-          placeholder="Phone"
-          pattern="[0-9]*"
-          minLength="10"
-          maxLength="10"
-          title="Must be 10 digits"
-          required
+          autoComplete="off"
+          className="flex-1 h-full pl-12 text-sm  font-normal rounded-inherit outline-none"
         />
-      <p className="validator-hint">Must be 10 digits</p>
     </div>
   );
 }
