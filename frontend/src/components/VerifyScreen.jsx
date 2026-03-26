@@ -1,10 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
 
 import useGlobalStore from "../store/globalStore.js";
 import useAuthStore from "../store/auth/authStore.js";
-import { otpSchema } from "../schema/validationSchema.js" 
 
 const VerifyScreen = ({ phoneNumber = "+91 98765 43210" }) => {
   const length = 6;
@@ -20,7 +18,6 @@ const VerifyScreen = ({ phoneNumber = "+91 98765 43210" }) => {
     watch,
     formState: { errors }
   } = useForm({
-    resolver: yupResolver(otpSchema),
     defaultValues: {
       otp: Array(6).fill(""),
     },

@@ -14,11 +14,11 @@ function CountrySelect({ onChange }) {
 
   return (
     <Select.Root
-      value={country?.alpha2}
+      value={country}
       onValueChange={(value) => {
-        let selected = countries.find((c) => c.alpha2 === value);
-        setCountry(selected);
+        let selected = countries.find(c => c.alpha2 === value);
         onChange(selected);
+        setCountry(value);
       }}
     >
       <Select.Trigger className="flex items-center justify-between w-xs max-w-xs h-14 max-h-14 px-6 py-2 bg-white border border-black rounded-4xl data-placeholder:text-xs data-placeholder:font-normal data-placeholder:text-green-500">
@@ -58,17 +58,20 @@ export default CountrySelect;
 
 
 const CustomValue = React.forwardRef(({country, ...props}, ref) => {
+
+  let found = countries.find(c => c.alpha2 === country);
+
   return (
     <span 
       className="flex"
       {...props}
       ref={ref}
     >
-      <img src={country.flag} alt={country.alpha2} className="w-5 mr-2" />
-      {country.name}
+      <img src={found.flag} alt={found.alpha2} className="w-5 mr-2" />
+      {found.name}
     </span>
-  )}
-);
+  )
+});
 
 
 const SelectItem = React.forwardRef(({ children, country, ...props }, ref) => {

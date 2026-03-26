@@ -1,5 +1,6 @@
 
 import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 // store imports
 import useAuthStore from "../store/auth/authStore.js";
@@ -7,10 +8,21 @@ import useGlobalStore from "../store/globalStore.js";
 
 import CountrySelect from "./CountrySelect.jsx";
 import TelephoneInput from "./TelephoneInput.jsx";
+import { loginSchema } from "../utils/validators/yupValidator.js"
 
 const Login = () => {
 
-  const { register, control, handleSubmit, formState: { errors }} = useForm();
+  const { register, control, handleSubmit, formState: { errors }} = useForm({
+    defaultValues: {
+      country: {
+        dialCode: "+91",
+        flag: "https://flagcdn.com/in.svg", 
+        alpha2: "IN",
+        name: "India"
+      }
+    },
+    resolver: yupResolver(loginSchema)
+  });
 
   const handleLogin = useAuthStore((state) => state.handleLogin);
   const isLoading = useAuthStore((state) => state.isLoading);
@@ -32,16 +44,18 @@ const Login = () => {
 
       <div className="flex-center flex-col space-y-3">
         <Controller
-          name="country"
-          defaultValue={country}
+          name="dialCode"
           control={control}
-          render={({ field }) => (
-            <CountrySelect {...field} />
+          render={({field: { onChange }}) => (
+            <CountrySelect
+              onChange={onChange}
+            />
           )}
-        />
+        />        
         <TelephoneInput
           register={register}
         />
+        <p>{errors?.phone?.message}</p>
       </div>
 
       <div>

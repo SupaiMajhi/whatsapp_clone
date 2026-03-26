@@ -11,7 +11,7 @@ import useAppStore from "../appStore.js"
 const useAuthStore = create((set) => ({
 
   isAuthenticated: false,
-  country: countries[0],
+  country: countries[0].alpha2,
   isLoading: true,
   otp_token: null,
 

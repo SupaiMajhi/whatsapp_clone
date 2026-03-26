@@ -21,6 +21,7 @@ export const formatMessageTime = (time) => {
     return 'NaN';
 }
 
+//for chatlist formating
 export const formatChatTime = (time) => {
     const now = new Date();
     const chatTime = new Date(time);
