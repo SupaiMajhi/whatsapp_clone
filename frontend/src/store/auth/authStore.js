@@ -11,12 +11,12 @@ import useAppStore from "../appStore.js"
 const useAuthStore = create((set) => ({
 
   isAuthenticated: false,
-  country: countries[0].alpha2,
+  alpha2: countries[0].alpha2,
   isLoading: true,
   otp_token: null,
 
-  setCountry: (value) => {
-    set({ country: value });
+  setAlpha2: (value) => {
+    set({ alpha2: value });
   },
 
   handleLogin: async (data) => {
@@ -25,7 +25,7 @@ const useAuthStore = create((set) => ({
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/auth/otp`,
         {
-          content: { ...data },
+          content: { phone:data.phone },
         },
         { withCredentials: true },
       );

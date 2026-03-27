@@ -9,22 +9,22 @@ import useAuthStore from "../store/auth/authStore.js";
 
 function CountrySelect({ onChange }) {
 
-  const country = useAuthStore((state) => state.country);
-  const setCountry = useAuthStore((state) => state.setCountry);
+  const alpha2 = useAuthStore((state) => state.alpha2);
+  const setAlpha2 = useAuthStore((state) => state.setAlpha2);
 
   return (
     <Select.Root
-      value={country}
+      value={alpha2}
       onValueChange={(value) => {
         let selected = countries.find(c => c.alpha2 === value);
-        onChange(selected);
-        setCountry(value);
+        onChange(selected.alpha2);
+        setAlpha2(value);
       }}
     >
       <Select.Trigger className="flex items-center justify-between w-xs max-w-xs h-14 max-h-14 px-6 py-2 bg-white border border-black rounded-4xl data-placeholder:text-xs data-placeholder:font-normal data-placeholder:text-green-500">
         <Select.Value placeholder="Select country">
-          {country ? (
-            <CustomValue country={country} />
+          {alpha2 ? (
+            <CustomValue alpha2={alpha2} />
           ) : (
             <span className="text-green-600">Select country</span>
           )}
@@ -57,9 +57,9 @@ function CountrySelect({ onChange }) {
 export default CountrySelect;
 
 
-const CustomValue = React.forwardRef(({country, ...props}, ref) => {
+const CustomValue = React.forwardRef(({alpha2, ...props}, ref) => {
 
-  let found = countries.find(c => c.alpha2 === country);
+  let found = countries.find(c => c.alpha2 === alpha2);
 
   return (
     <span 

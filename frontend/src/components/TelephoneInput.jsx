@@ -6,9 +6,9 @@ import useAuthStore from "../store/auth/authStore.js"
 
 const TelephoneInput = ({ register }) => {
 
-  const country = useAuthStore((state) => state.country);
+  const alpha2 = useAuthStore((state) => state.alpha2);
 
-  let found = countries.find(c => c.alpha2 === country);
+  let found = countries.find(c => c.alpha2 === alpha2);
 
   return (
     <div className="relative w-xs max-w-xs min-h-14 max-h-14 text-base font-medium flex items-center border rounded-4xl bg-white">

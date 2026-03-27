@@ -1,17 +1,14 @@
 
 import * as yup from "yup";
+
+import countries from "../../../country.js";
 import { isValidPhoneNumber } from "libphonenumber-js/mobile";
 
 export const loginSchema = yup.object({
-    country: yup.object({
-        dialCode: yup.string().required(),
-        flag: yup.string().url().required(),
-        alpha2: yup.string().required(),
-        name: yup.string().required()
-    }),
+    alpha2: yup.string().required("select country"),
     phone: yup.string().required("phone is required").test("valid phone", "${path} is not valid.", (value, context) => {
-        const { country } = context.parent;
-        console.log(isValidPhoneNumber(value, country.alpha2));
-        return isValidPhoneNumber(value, country.alpha2);
+        const { alpha2 } = context.parent;
+        let found = countries.find(c => c.alpha2 === alpha2);
+        return isValidPhoneNumber(value, found.alpha2);
     })
 });

@@ -14,22 +14,17 @@ const Login = () => {
 
   const { register, control, handleSubmit, formState: { errors }} = useForm({
     defaultValues: {
-      country: {
-        dialCode: "+91",
-        flag: "https://flagcdn.com/in.svg", 
-        alpha2: "IN",
-        name: "India"
-      }
+      dialCode: "+91",
+      alpha2: "IN"
     },
-    resolver: yupResolver(loginSchema)
+    resolver: yupResolver(loginSchema),
   });
 
   const handleLogin = useAuthStore((state) => state.handleLogin);
   const isLoading = useAuthStore((state) => state.isLoading);
-  const country = useAuthStore((state) => state.country);
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    await handleLogin(data);
   }
 
   return (
@@ -44,7 +39,7 @@ const Login = () => {
 
       <div className="flex-center flex-col space-y-3">
         <Controller
-          name="dialCode"
+          name="alpha2"
           control={control}
           render={({field: { onChange }}) => (
             <CountrySelect
