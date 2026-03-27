@@ -11,6 +11,7 @@ export const loginSchema = yup.object({
     }),
     phone: yup.string().required("phone is required").test("valid phone", "${path} is not valid.", (value, context) => {
         const { country } = context.parent;
+        console.log(isValidPhoneNumber(value, country.alpha2));
         return isValidPhoneNumber(value, country.alpha2);
     })
 });
