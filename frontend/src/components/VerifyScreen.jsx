@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
-import useGlobalStore from "../store/globalStore.js";
+//store imports
 import useAuthStore from "../store/auth/authStore.js";
 
 const VerifyScreen = () => {
@@ -16,6 +16,7 @@ const VerifyScreen = () => {
     }
   });
   
+  const handleVerify = useAuthStore((state) => state.handleVerify);
 
   useEffect(() => {
     if(inputRef.current){
@@ -55,8 +56,9 @@ const VerifyScreen = () => {
   }
 
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async(data) => {
+    let otp = data.otp.toString().replaceAll(",", "");
+    await handleVerify(otp);    
   }
 
 

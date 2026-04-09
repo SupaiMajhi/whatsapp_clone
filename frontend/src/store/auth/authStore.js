@@ -52,7 +52,7 @@ const useAuthStore = create((set) => ({
     try {
       set({ isLoading: true });
       const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/auth/otp/verify`, {
-        content: {...data}
+        content: { otp:data }
       }, {
         withCredentials: true
       });
