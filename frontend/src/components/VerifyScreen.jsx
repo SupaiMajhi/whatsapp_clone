@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useForm } from "react-hook-form";
 
 import useGlobalStore from "../store/globalStore.js";
 import useAuthStore from "../store/auth/authStore.js";
@@ -9,6 +10,11 @@ const VerifyScreen = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputRef = useRef(null);
   const [index, setIndex] = useState(0);
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    defaultValues: {
+      otp
+    }
+  });
   
 
   useEffect(() => {
@@ -49,10 +55,16 @@ const VerifyScreen = () => {
   }
 
 
+  const onSubmit = (data) => {
+    console.log(data);
+  }
+
+
   return (
     <form 
       id="otp-form" 
       name="otp" 
+      onSubmit={handleSubmit(onSubmit)}
       ref={inputRef}
       className="w-full h-full flex-center flex-col space-y-5 text-dark bg-lightNav rounded-xl shadow-sm/20"  
     >
@@ -68,6 +80,8 @@ const VerifyScreen = () => {
             maxLength={1}
             value={otp[i]}
             autoComplete="off"
+            register={register}
+            index={i}
             onInput={(e) => { e.target.value = e.target.value.replace(/\D/g, '') }}
             onChange={(e) => handleOnChange(e, i)}
             onKeyDown={(e) => handleKeyDown(e, i)}
@@ -83,8 +97,8 @@ const VerifyScreen = () => {
 export default VerifyScreen;
 
 
-const Input = ({ className="", ...props }) => {
+const Input = ({ className="", register, index, ...props }) => {
     return(
-        <input className={`${className}`} {...props} />
+        <input {...register(`otp.${index}`)} className={`${className}`} {...props} />
     )
 }
