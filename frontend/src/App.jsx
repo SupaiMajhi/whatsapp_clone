@@ -27,7 +27,6 @@ function App() {
   const setRedirectURL = useGlobalStore((state) => state.setRedirectURL);
   const theme = useGlobalStore((state) => state.theme);
 
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -108,15 +107,16 @@ function App() {
           <Route
             path="verify"
             element={
-             !isAuthenticated && otp_token ? (
+            //  !isAuthenticated && otp_token ? (
+            //   <VerifyScreen />
+            //  ) : isAuthenticated && !otp_token ? (
+            //   <Navigate to='/' />
+            //  ) : !isAuthenticated && !otp_token ? (
+            //   <Navigate to='/auth' />
+            //  ) : (
+            //   <Navigate to='/' />
+            //  )
               <VerifyScreen />
-             ) : isAuthenticated && !otp_token ? (
-              <Navigate to='/' />
-             ) : !isAuthenticated && !otp_token ? (
-              <Navigate to='/auth' />
-             ) : (
-              <Navigate to='/' />
-             )
             }
           />
         </Route>

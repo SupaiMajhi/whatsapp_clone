@@ -30,7 +30,7 @@ const Login = () => {
   return (
     <form 
       className="w-full h-full flex-center flex-col space-y-7 text-dark"
-      onSubmit={handleSubmit(onSubmit)}   
+      onSubmit={handleSubmit(onSubmit)}
     >
       <div className="flex-center flex-col leading-none space-y-1">
         <h1 className="text-4xl font-normal">Enter phone number</h1>

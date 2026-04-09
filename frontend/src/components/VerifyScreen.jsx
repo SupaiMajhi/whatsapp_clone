@@ -1,186 +1,90 @@
-import { useState, useEffect, useRef } from "react";
-import { useForm } from "react-hook-form";
+import { useState, useRef, useEffect } from "react";
 
 import useGlobalStore from "../store/globalStore.js";
 import useAuthStore from "../store/auth/authStore.js";
 
-const VerifyScreen = ({ phoneNumber = "+91 98765 43210" }) => {
-  const length = 6;
-  const [timer, setTimer] = useState(30);
-  const [error, setError] = useState(false);
-  const [isResendDisabled, setIsResendDisabled] = useState(true);
-  const inputRefs = useRef([]);
-  const {
-    register,
-    handleSubmit,
-    setFocus,
-    setValue,
-    watch,
-    formState: { errors }
-  } = useForm({
-    defaultValues: {
-      otp: Array(6).fill(""),
-    },
-  });
-  const handleVerify = useAuthStore((state) => state.handleVerify);
+const VerifyScreen = () => {
 
-  const theme = useGlobalStore((state) => state.theme);
-  const otpValues = watch("otp");
-  const isComplete = otpValues.every(v => v !== "");
+  const LENGTH = 6;
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const inputRef = useRef(null);
+  const [index, setIndex] = useState(0);
+  
 
-  // Handle Countdown Timer
   useEffect(() => {
-    let interval;
-    if (timer > 0) {
-      interval = setInterval(() => {
-        setTimer((prev) => prev - 1);
-      }, 1000);
-    } else {
-      setIsResendDisabled(false);
-      clearInterval(interval);
+    if(inputRef.current){
+      const nodes = inputRef.current.querySelectorAll("input");
+      nodes[index].focus();
     }
-    return () => clearInterval(interval);
-  }, [timer]);
+  }, [inputRef.current, index])
 
-  // Handle Typing
-  const handleChange = (value, index) => {
-    if (value.length > 1) {
-      // Handle paste
-      const pasted = value.slice(0, length).split("");
 
-      pasted.forEach((char, i) => {
-        setValue(`otp.${i}`, char);
-      });
-      setFocus(`otp.${pasted.length - 1}`);
-      return;
-    }
 
-    // Move to next input
-    if (value && index < length - 1) {
-      setFocus(`otp.${index + 1}`);
-    }
-  };
+  function handleOnChange(e, i){
+    const value = e.target.value.replace(/\D/g, '');
+    if(!value) return;
 
-  // Handle Backspace
-  const handleKeyDown = (e, index) => {
-    if (e.key === "Backspace" && !otpValues[index] && index > 0) {
-      setFocus(`otp.${index - 1}`);
-    }
-  };
+    setOtp((oldOtp) => {
+      const newOtp = [...oldOtp];
+      newOtp[i] = value;
+      return newOtp;
+    });
 
-  const handleResend = () => {
-    setTimer(30);
-    setIsResendDisabled(true);
-    inputRefs.current[0].focus();
-  };
-
-  const onSubmit = async (data) => {
-    try {
-      const finalOtp = data.otp.join('');
-      await handleVerify({'otp': finalOtp});
-    } catch (error) {
-      console.log(error.message);
-      // set the error to a state
+    if(i < LENGTH - 1){
+      setIndex(i + 1);
     }
   }
 
+  function handleKeyDown(e, i){
+    if(e.key === "Backspace"){
+      setOtp((oldOtp) => {
+        const newOtp = [...oldOtp];
+        newOtp[i] = '';
+        return newOtp;
+      });
+      if(i > 0){
+        setIndex(i - 1);
+      }
+    }
+  }
+
+
   return (
-    <form
-      className={`custom-container rounded-inherit ${theme === "light" ? "bg-light" : "bg-dark"}`}
-      onSubmit={handleSubmit(onSubmit)}
+    <form 
+      id="otp-form" 
+      name="otp" 
+      ref={inputRef}
+      className="w-full h-full flex-center flex-col space-y-5 text-dark bg-lightNav rounded-xl shadow-sm/20"  
     >
-      <div
-        className={`w-full max-w-md ${theme === "light" ? "bg-light" : "bg-dark"} rounded-3xl shadow-xl p-8 transition-all ${error ? "animate-shake" : ""}`}
-      >
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h2
-            className={`text-2xl font-bold ${theme === "light" ? "text-txtDark" : "text-txtLight"} mb-2`}
-          >
-            Verify your number
-          </h2>
-          <p
-            className={`text-sm ${theme === "light" ? "text-txtDark" : "text-txtLight"}`}
-          >
-            Enter the 6-digit code sent to{" "}
-            <span
-              className={`font-semibold ${theme === "light" ? "text-txtDark" : "text-txtLight"}`}
-            >
-              {phoneNumber}
-            </span>
-          </p>
-          <button
-            className={`text-xs font-medium ${theme === "light" ? "text-emerald-600" : "text-emerald-400"} mt-1 hover:underline`}
-          >
-            Wrong number?
-          </button>
-        </div>
-
-        {/* OTP Inputs */}
-        <div className="flex justify-between gap-2 mb-6">
-          {Array.from({ length }).map((_, index) => (
-            <input
-              key={index}
-              type="text"
-              maxLength={1}
-              {...register(`otp.${index}`, {
-                onChange: (e) => handleChange(e.target.value, index)
-              })}
-              onKeyDown={(e) => handleKeyDown(e, index)}
-              className={`w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-bold rounded-xl border-2 transition-all outline-none
-                ${
-                  error
-                    ? `border-red-500 ${theme === "light" ? "bg-red-50" : "bg-red-900/10"}`
-                    : `${theme === "light" ? "border-gray-200 focus:border-emerald-500" : "border-zinc-700 focus:border-emerald-500 text-white"} bg-transparent`
-                }`}
-            />
-          ))}
-        </div>
-
-        {/* Error Message */}
-        {errors.otp && (
-          <p className="text-red-500 text-center text-sm mb-4 animate-fade-in">
-            {errors.otp?.message || "Invalid OTP."}
-          </p>
-        )}
-
-        {/* Timer/Resend */}
-        <div className="text-center mb-8">
-          {isResendDisabled ? (
-            <p
-              className={`text-sm ${theme === "light" ? "text-gray-500" : "text-zinc-500"}`}
-            >
-              Resend code in{" "}
-              <span className="font-mono">
-                00:{timer < 10 ? `0${timer}` : timer}
-              </span>
-            </p>
-          ) : (
-            <button
-              onClick={handleResend}
-              className={`text-sm font-bold ${theme === "light" ? "text-emerald-600 hover:text-emerald-700" : "text-emerald-400"}`}
-            >
-              Resend code
-            </button>
-          )}
-        </div>
-
-        {/* Action Button */}
-        <button
-          type="submit"
-          disabled={!isComplete}
-          className={`w-full py-4 rounded-full font-bold text-white transition-all shadow-lg
-            ${
-              isComplete
-                ? "bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98]"
-                : `${theme === "light" ? "bg-gray-300" : "bg-zinc-800"} cursor-not-allowed`
-            }`}
-        >
-          Verify
-        </button>
+      <h1 className="text-4xl font-normal">OTP verification</h1>
+      <p className="text-base px-3 text-lightStatTxt font-normal text-center tracking-tight">Please enter the OTP (One-Time-password) sent to your registered email/phone number to complete your verification.</p>
+      <div className="w-xl h-20 flex-center space-x-4">
+        {Array.from({ length: LENGTH }).map((_, i) => (
+          <Input
+            key={i}
+            type="text"
+            inputMode="numeric"
+            minLength={0}
+            maxLength={1}
+            value={otp[i]}
+            autoComplete="off"
+            onInput={(e) => { e.target.value = e.target.value.replace(/\D/g, '') }}
+            onChange={(e) => handleOnChange(e, i)}
+            onKeyDown={(e) => handleKeyDown(e, i)}
+            className="w-14 h-14 text-center text-base font-semibold bg-[#E7E7E7] rounded-md shadow-sm/40"
+          />
+        ))}
       </div>
-    </form>
-  );
+      <button type="submit" className="w-20 py-2 text-base text-white font-normal bg-btnPrimary rounded-xl hover:bg-btnSecondary cursor-pointer">submit</button>
+    </form> 
+  )
 };
 
 export default VerifyScreen;
+
+
+const Input = ({ className="", ...props }) => {
+    return(
+        <input className={`${className}`} {...props} />
+    )
+}

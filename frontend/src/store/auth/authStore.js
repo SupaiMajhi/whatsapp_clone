@@ -25,7 +25,7 @@ const useAuthStore = create((set) => ({
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/auth/otp`,
         {
-          content: { phone:data.phone },
+          content: { phone: data.phone },
         },
         { withCredentials: true },
       );
@@ -35,6 +35,7 @@ const useAuthStore = create((set) => ({
       });
       useGlobalStore.setState({ redirectURL: response.data.data.redirect_url });
     } catch (error) {
+      console.log(error.response);
       console.log("handleLogin", error.response.data);
       useGlobalStore.setState({
         otp_token: error.response.data.error.data.verification_token,
@@ -68,7 +69,7 @@ const useAuthStore = create((set) => ({
         console.log(error.response.data);
       }
       
-      useGlobal.setState({ message: error.response.data.error.message });
+      useGlobalStore.setState({ message: error.response.data.error.message });
       if(error.response.data.error.data.redirect_url){
         useGlobalStore.setState({ redirectURL: error.response.data.error.data.redirect_url })
       }
