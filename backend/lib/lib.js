@@ -1,11 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
-import cookie from "cookie";
-import {fileTypeFromBuffer} from "file-type";
-import {readChunk} from "read-chunk";
-
-
 
 
 export const connectToDB = () => {
@@ -39,41 +34,3 @@ export const deHash = async (value, hashValue) => {
 export const generateToken = async (payload) => {
     return jwt.sign(payload, process.env.JWT_SECRET_KEY);
 }
-
-
-// export const sendMessageToSockets = (senderId, receiverId, msg) => {
-//     const senderSocket = clients.get(senderId.toHexString());
-//     const receiverSocket = clients.get(receiverId.toHexString());
-    
-//     if(senderSocket && senderSocket.readyState === WebSocket.OPEN){
-//         senderSocket.send(JSON.stringify({
-//             type: 'NEW_MSG',
-//             content: {
-//                 data: msg
-//             }
-//         }));
-//     }
-
-//     if(receiverSocket && receiverSocket.readyState === WebSocket.OPEN){
-//         receiverSocket.send(JSON.stringify({
-//             type: 'NEW_MSG',
-//             content: {
-//                 data: msg
-//             }
-//         }));
-//     }
-//     return;
-// }
-
-// export const populateToAllUsers = (wClients, type, content, id) => {
-//     wClients.forEach((client) => {
-//         if (client.id !== id && client.readyState === WebSocket.OPEN) {
-//             client.send(
-//                 JSON.stringify({
-//                 type,
-//                 content,
-//                 })
-//             );
-//         }
-//     })
-// }

@@ -1,5 +1,4 @@
 import twilio from "twilio";
-import { generateOtp } from "../lib/lib.js";
 
 const client = new twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 

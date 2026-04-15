@@ -1,11 +1,12 @@
 import { Schema, model } from "mongoose";
 
 const otpSchema = new Schema({
-    verification_token: {
-        type: String,
+    verification_token_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Token",
         unique: true,
     },
-    phoneNumber: {
+    phone: {
         type: String,
         unique: true,
         required: true,
@@ -15,7 +16,7 @@ const otpSchema = new Schema({
     },
     otpExpiry: {
         type: Date,
-        default: Date.now(),
+        default: Date.now() + (1000 * 60 * 2),
         expires: 0,
     }
 }, { timestamps: true });
