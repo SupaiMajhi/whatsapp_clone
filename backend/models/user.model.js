@@ -2,15 +2,11 @@ import { Schema, model } from "mongoose";
 
 const userSchema = new Schema(
   {
-    isVerified: {
+    isAuthenticated: {
       type: Boolean,
+      required: true
     },
-    phoneNumber: {
-      type: String,
-      unique: true,
-      required: true,
-    },
-    username: {
+    phone: {
       type: String,
       unique: true,
       required: true,
@@ -23,13 +19,7 @@ const userSchema = new Schema(
       type: Date,
       default: Date.now(),
     },
-      lastOtpSentAt: {
-      type: Date
-    },
-    resendCount: {
-      type: Number,
-      default: 0,
-    }
+    isProfileComplete: Boolean
   },
   { timestamps: true }
 );

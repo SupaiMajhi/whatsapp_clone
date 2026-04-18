@@ -1,6 +1,6 @@
-
 import cookie from "cookie";
 import jwt from "jsonwebtoken";
+import { isValidPhoneNumber } from "libphonenumber-js/mobile";
 
 import User from "../models/user.model.js";
 
@@ -32,4 +32,8 @@ export const determineFileType = async (filePath) => {
         console.log("Error in determineFileType", error.message);
         return null;
     }
+}
+
+export const validatePhoneNumber = (phone, countryCode) => {
+    return isValidPhoneNumber(phone, countryCode);
 }

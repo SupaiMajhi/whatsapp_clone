@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
 
-
 export const connectToDB = () => {
     mongoose
     .connect(process.env.MONGODB_URL)
