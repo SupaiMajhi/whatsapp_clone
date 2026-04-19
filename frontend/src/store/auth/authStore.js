@@ -20,28 +20,24 @@ const useAuthStore = create((set) => ({
   },
 
   handleLogin: async (data) => {
+    console.log(import.meta.env.VITE_BASE_URL);
     try {
       set({ isLoading: true });
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/auth/otp`,
         {
-          content: { phone: data.phone },
+          content: { phone: data.phone, countryCode: data.alpha2, dialCode: data.dialCode },
         },
         { withCredentials: true },
       );
+      console.log('data', response.data);
       useGlobalStore.setState({ message: response.data.message });
-      useGlobalStore.setState({
-        otp_token: response.data.data.verification_token
-      });
       useGlobalStore.setState({ redirectURL: response.data.data.redirect_url });
     } catch (error) {
       console.log(error.response);
       console.log("handleLogin", error.response.data);
       useGlobalStore.setState({
-        otp_token: error.response.data.error.data.verification_token,
-      });
-      useGlobalStore.setState({
-        redirectURL: error.response.data.error.data.redirect_url,
+        redirectURL: error.response.data.error.data.redirect_url, //some problem might be happening here
       });
     } finally {
       set({ isLoading: false });
@@ -111,11 +107,9 @@ const useAuthStore = create((set) => ({
       set({
         otp_token: response.data.data.verification_token,
       });
-      useGlobalStore.setState({ redirectURL: response.data?.data?.redirectURL});
     } catch (error) {
       set({ otp_token: null });
       useGlobalStore.setState({ message: error.response.data.error.message });
-      // If redirectURL === true
       if(error.response.data.error?.data?.redirect_url){
         useGlobalStore.setState({
           redirectURL: error.response.data.error.data.redirect_url

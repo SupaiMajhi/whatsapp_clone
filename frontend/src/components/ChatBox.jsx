@@ -1,5 +1,5 @@
-import Header from '../components/Header';
-import MainContent from './mainContent';
+import Header from './Header';
+import MainContent from './MainContent.jsx';
 import InputBox from './InputBox';
 
 // Store imports

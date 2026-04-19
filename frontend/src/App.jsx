@@ -29,6 +29,7 @@ function App() {
 
   const navigate = useNavigate();
 
+  console.log(redirectURL);
   useEffect(() => {
     if(redirectURL){
       navigate(redirectURL);
@@ -39,8 +40,10 @@ function App() {
 
   useEffect(() => {
     async function  doSomething() {
+      const now = Date.now()
       await handleCheckAuth();
       if(!isAuthenticated){
+        console.log( Date.now() - now );
         await handleCheckVT();
       }
     }
@@ -89,6 +92,7 @@ function App() {
 
 
         <Route path="/auth" element={<AuthPage />}>
+            {/**check verification_token */}
           <Route
             index
             element={
@@ -107,16 +111,7 @@ function App() {
           <Route
             path="verify"
             element={
-            //  !isAuthenticated && otp_token ? (
-            //   <VerifyScreen />
-            //  ) : isAuthenticated && !otp_token ? (
-            //   <Navigate to='/' />
-            //  ) : !isAuthenticated && !otp_token ? (
-            //   <Navigate to='/auth' />
-            //  ) : (
-            //   <Navigate to='/' />
-            //  )
-              <VerifyScreen />
+             <VerifyScreen />
             }
           />
         </Route>
