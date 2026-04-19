@@ -61,13 +61,6 @@ export const getOtpHandler = async (req, res) => {
           }
         })
       }else {
-        res.cookie("verification_token", token, {
-          httpOnly: true,
-          maxAge: 1000 * 60 * 5,
-          secure: false,
-          sameSite: "strict",
-        });
-
         const newOtp = new Otp({
           phone,
           otp: hashedOtp,
@@ -78,6 +71,13 @@ export const getOtpHandler = async (req, res) => {
         otpDoc.lastOtpSentAt = newOtp.sentAt;
         otpDoc.totalOtpSentCount = otpDoc.totalOtpSentCount + 1;
         await otpDoc.save();
+
+        res.cookie("verification_token", token, {
+          httpOnly: true,
+          maxAge: 1000 * 60 * 5,
+          secure: false,
+          sameSite: "strict",
+        });
 
         if (otp && validatePhoneNumber(phone, countryCode)) {
           await sendOTPtoPhoneNumber(otp, phone, dialCode);
@@ -374,7 +374,10 @@ export const checkVTtokenHandler = async (req,res) => {
     if(!vt){
       return customResponse(res, 400, {
         error: {
-          message: 'Session Expired.'
+          "message": 'Session Expired.',
+          "data": {
+            "redirect_url": "/auth",
+          }
         }
       });
     }
@@ -383,33 +386,30 @@ export const checkVTtokenHandler = async (req,res) => {
     const { phone } = jwt.verify(vt, process.env.OTP_SECRET_KEY);
     if(!phone) return customResponse(res, 400, {
       error: {
-        message: 'Session Expired.'
+        message: 'Session Expired.',
       }
     });
 
-    /**=====RETRIEVE OTP DOC WITH PHONE======= */
-    const record = await Otp.findOne({ phoneNumber: phone });
+    const record = await otpProvider.findOne({ phone });
     if(!record) return customResponse(res, 401, {
       error: {
-        message: 'unauthorized.'
+        message: 'unauthorized.',
       }
     });
 
 
     return customResponse(res, 200, {
-      message: 'Valid token',
       data: {
         verification_token: record.verification_token
       }
     });
   } catch (error) {
     if(error.name === "TokenExpiredError"){
-      await Otp.deleteMany({ verification_token: vt});
       return customResponse(res, 400, {
         error: {
           message: 'Session Expired.',
           data: {
-            redirect_url: '/auth'
+            redirect_url: '/auth',
           }
         }
       });
@@ -417,7 +417,9 @@ export const checkVTtokenHandler = async (req,res) => {
     console.log('checkVTtokenHandler', error.message);
     return customResponse(res, 500, {
       error: {
-        message: `Internal server error ${error.message}`
+        message: `Internal server error ${error.message}`,
+        data: {
+        }
       }
     });
   }
