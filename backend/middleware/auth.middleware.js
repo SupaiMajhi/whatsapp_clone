@@ -17,7 +17,7 @@ const authMiddleware = async (req, res, next) => {
       },
     });
 
-    const user = await User.findOne({ phoneNumber: phone });
+    const user = await User.findOne({ phone });
     if (!user) return customResponse(res, 401, {
       "error": {
         "message": "Unauthorized",

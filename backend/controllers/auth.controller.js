@@ -314,15 +314,18 @@ export const verifyOtpHandler = async (req, res) => {
           "redirect_url": "/auth/user/create"
         }
       })
-    }
+    }else{
+      user.isAuthenticated = true;
+      await user.save();
+      return customResponse(res, 200, { 
+        "message": "login successful",
+        "data": {
+          "redirectURL": '/',
+        }
+      });
+    }      
 
-    return customResponse(res, 200, { 
-      "message": "login successful",
-      "data": {
-        "redirectURL": '/',
-      }
-    });
-        
+
   } catch (error) {
     /** -----error = token expired------  */
     if(error.name === 'TokenExpiredError'){
@@ -353,7 +356,7 @@ export const checkAuthHandler = async (req, res) => {
           id: req.user.id,
           username: req.user.username,
           profilePic: req.user.profilePic,
-          isVerified: req.user.isVerified
+          isAuthenticated: req.user.isAuthenticated
         }
       }
     });
