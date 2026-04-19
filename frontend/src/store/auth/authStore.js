@@ -87,7 +87,7 @@ const useAuthStore = create((set) => ({
         },
       );
       useAppStore.setState({ userInfo: response.data?.data?.user });
-      set({ isAuthenticated: response.data.data.user.isVerified });
+      set({ isAuthenticated: response.data.data.user.isAuthenticated });
     } catch (error) {
       set({ userInfo: null });
       set({ isAuthenticated: false });
