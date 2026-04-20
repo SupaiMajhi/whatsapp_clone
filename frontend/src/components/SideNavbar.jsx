@@ -2,9 +2,10 @@ import { NavLink } from "react-router-dom";
 
 import  Avatar  from '@mui/material/Avatar';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import ChatIcon from '../assets/ChatIcon';
-import StatusIcon from '../assets/StatusIcon';
-import SettingIcon from '../assets/SettingIcon';
+import ActiveChatIcon from '../assets/ActiveChatIcon.jsx';
+import ChatIcon from "../assets/ChatIcon.jsx";
+import ActiveStatusIcon from '../assets/ActiveStatusIcon.jsx';
+import StatusIcon from "../assets/StatusIcon.jsx";
 
 // Store imports
 import useGlobalStore from "../store/globalStore.js";
@@ -19,22 +20,27 @@ const Navbar = () => {
     <div className={`custom-container flex-col justify-between ${theme === "light" ? "bg-lightNav" : "bg-darkNav"} p-3.5`}>
         <div className="flex-center flex-col gap-7">
             <NavLink to={'/'}>
-                <ChatIcon className={`${theme === "light" ? "icon-light" : "icon-dark"}`} />
+                {({ isActive }) => isActive ? (
+                    <ActiveChatIcon className={`${theme === "light" ? "text-dark" : "text-light"}`} />
+                ) : (
+                    <ChatIcon className={`${theme === "light" ? "text-dark" : "text-light"}`} />
+                )}
             </NavLink>
             <NavLink to={'/status'}>
-                <StatusIcon className={`${theme === "light" ? "icon-light" : "icon-dark"}`} />
+                {({ isActive }) => isActive ? (
+                    <ActiveStatusIcon className={`${theme === "light" ? "text-dark" : "text-light"}`} />
+                ) : (
+                    <StatusIcon className={`${theme === "light" ? "text-dark" : "text-light"}`} />
+                )}  
             </NavLink>
         </div>
         
         <div className="flex-center flex-col gap-5">
-            <NavLink to={'/settings'}>
-                <SettingIcon className={`${theme === "light" ? "icon-light" : "icon-dark"}`} />
-            </NavLink>
             <NavLink to={'/profile'}>
                 {userInfo?.profilePic ? (
                     <Avatar src={userInfo.profilePic} sx={{ width: 40, height: 40 }} />
                 ) : (
-                        <AccountCircleIcon className={`text-[35px]! ${theme === "light" ? "text-txtDark" : "text-txtLight"}`} />
+                    <AccountCircleIcon className={`text-[35px]! ${theme === "light" ? "text-txtDark" : "text-txtLight"}`} />
                 )}
             </NavLink>
         </div>

@@ -1,8 +1,10 @@
 const StatusIcon = (props) => (
   <svg
     viewBox="0 0 24 24"
+    height={24}
+    width={24}
     preserveAspectRatio="xMidYMid meet"
-    className={`${props.className}`}
+    className=""
     fill="none"
     {...props}
   >

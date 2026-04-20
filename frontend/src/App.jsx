@@ -29,7 +29,6 @@ function App() {
 
   const navigate = useNavigate();
 
-  console.log(redirectURL);
   useEffect(() => {
     if(redirectURL){
       navigate(redirectURL);
@@ -40,10 +39,8 @@ function App() {
 
   useEffect(() => {
     async function  doSomething() {
-      const now = Date.now()
       await handleCheckAuth();
-      if(!isAuthenticated){
-        console.log( Date.now() - now );
+      if(isAuthenticated === false){
         await handleCheckVT();
       }
     }
@@ -71,13 +68,6 @@ function App() {
           <Route
             path="status" element={
               isAuthenticated ? <StatusPage /> : <Navigate to='/auth' />
-            }
-          />
-
-          <Route
-            path="settings"
-            element={
-              isAuthenticated ? <SettingsPage /> : <Navigate to='/auth' />
             }
           />
 
