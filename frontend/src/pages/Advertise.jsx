@@ -9,9 +9,9 @@ const Advertise = () => {
   const theme = useGlobalStore((state) => state.theme);
 
   return (
-    <div className={`custom-container flex-col ${theme === "light" ? "bg-lightNav text-txtDark" : "bg-dark text-txtLight"}`}>
+    <div className={`custom-container flex-col select-none ${theme === "light" ? "bg-lightNav text-txtDark" : "bg-dark text-txtLight"}`}>
       <div className="flex-center flex-col">
-        <div className="w-[230px] mb-5">
+        <div className="w-57.5 mb-5">
           <NoChatLogo />
         </div>
         <div className="flex-column mb-7">
@@ -21,7 +21,7 @@ const Advertise = () => {
             download the Windows app.
           </p>
         </div>
-        <PrimaryButton className="text-base font-bold px-4 py-2 rounded-3xl text-[#D9FDD3] bg-[#103529]">Download</PrimaryButton>        
+        <PrimaryButton className="text-base font-bold px-4 py-2 rounded-3xl text-lightMyChatclr bg-[#103529]">Download</PrimaryButton>        
       </div>
       <div className="mt-20 text">
         <p>Your personal messages are end-to-end ecrypted</p>

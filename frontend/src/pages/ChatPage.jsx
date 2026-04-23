@@ -18,7 +18,7 @@ const ChatPage = () => {
     <div className="relative custom-container">
       {/** LEFT SIDE */}
       <div
-        className={`basis-[calc(100%-70%)] max-w-[calc(100%-70%)] h-full flex-center flex-col ${theme === "light" ? "bg-light text-dark" : "bg-dark text-white"}`}
+        className={`basis-[calc(100%-70%)] max-w-[calc(100%-70%)] h-full flex-center flex-col select-none ${theme === "light" ? "bg-light text-dark" : "bg-dark text-white"}`}
       >
         <div
           className={`w-full h-[calc(100%-90%)] max-h-[calc(100%-90%)] flex items-center justify-between pl-6 pr-7 ${theme === "light" ? "text-black" : "text-white"}`}
@@ -49,7 +49,7 @@ const ChatPage = () => {
 
       {/** -----SEPARATOR----- */}
       <div
-        className={`w-[0.5px] h-full ${theme === "light" ? "bg-[#DEDCDA]" : "bg-hoverDarkBg"}`}
+        className={`w-0.5 h-full ${theme === "light" ? "bg-[#DEDCDA]" : "bg-hoverDarkBg"}`}
       ></div>
 
       {/** RIGHT SIDE */}

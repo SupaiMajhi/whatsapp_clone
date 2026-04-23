@@ -24,7 +24,6 @@ const HomePage = () => {
         <div className="basis-[5vw] max-w-[5vw] h-full">
           <SideNavbar />
         </div>
-
         <div className="basis-[95vw] max-w-[95vw] overflow-hidden h-full">
           <Outlet />
         </div>
