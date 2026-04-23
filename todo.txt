@@ -9,3 +9,5 @@ change the toLocalTimeString or anything to intl.dateTimeformat for efficiency a
 implement yup validation on input box also, to verify a user is not sending a malicious script. another reason to implement usehookform, because every time i type something inputbox component get re-render because of setmsgTxt.
 move the userInfo state to the appStore from authStore
 again i have to write the auth controller, mainly because of the userInfo data flow and overall the flow of the auth system, now its a little complicated in sending otp, receiving otp, and resend otp
+use 'AsYouType' method of lib-phonenumber.js to parse and format a phone number as user type just like the original whatsapp
+before deploy to production change the math.random() function with crypto.randomInt() for otp generation. Also read about the problem with using math.random() function in real world scenarios
