@@ -2,6 +2,10 @@ import { Schema, model } from "mongoose";
 
 const userSchema = new Schema(
   {
+    auth_token: {
+      type: String,
+      requried: true,
+    },
     isAuthenticated: {
       type: Boolean,
       required: true
