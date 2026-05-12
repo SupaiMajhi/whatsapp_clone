@@ -30,10 +30,7 @@ export const getOtpHandler = async (req, res) => {
       if(!otpDoc){
         return customResponse(res, 400, {
           "error": {
-            "message": "OTP already exist.",
-            "data": {
-              "redirect_url": "/auth/verify"
-            }
+            "message": "Something went wrong, try after sometime.",
           }
         })
       }
@@ -47,7 +44,8 @@ export const getOtpHandler = async (req, res) => {
         "error": {
           "message": "OTP already exist.",
           "data": {
-            "redirect_url": "/auth/verify"
+            "redirect_url": "/auth/verify",
+            "verification_token": otpDoc.verification_token,
           }
         }
       })
@@ -99,7 +97,8 @@ export const getOtpHandler = async (req, res) => {
         return customResponse(res, 200, {
           "message": "OTP sent successfully.",
           "data": {
-            "redirect_url": "/auth/verify"
+            "redirect_url": "/auth/verify",
+            "verification_token": token,
           }
         })
       }
@@ -137,7 +136,8 @@ export const getOtpHandler = async (req, res) => {
     return customResponse(res, 200, {
       "message": "OTP sent successfully.",
       "data": {
-        "redirect_url": "/auth/verify"
+        "redirect_url": "/auth/verify",
+        "verification_token": token,
       }
     });
   } catch (error) {
@@ -214,7 +214,6 @@ export const verifyOtpHandler = async (req, res) => {
   try {
     /** ----VERIFY THE TOKEN----- */
     const payload = jwt.verify(vt, process.env.OTP_SECRET_KEY);
-    console.log(payload)
     if(!payload.phone){
       invalidateToken(res, "verification_token");
       return customResponse(res, 401, {
@@ -226,13 +225,11 @@ export const verifyOtpHandler = async (req, res) => {
 
     /** ------QUERY OTP COLLECTION------ */
     const otpDoc = await otpProvider.findOne({ phone: payload.phone });
-    console.log(otpDoc)
     if(!otpDoc){
       invalidateToken(res, "verification_token");
       return customResponse(res, 401, {
         "error": {
           "message": "Unauthorized",
-          "suggestion": "Please try again after sometimes."
         }
       });
     }
@@ -251,9 +248,6 @@ export const verifyOtpHandler = async (req, res) => {
       return customResponse(res, 400, { 
         "error": {
           "message": 'No otp found',
-          "data": {
-            "redirect_url": '/auth'
-          }
         }
       });
     }
@@ -262,7 +256,6 @@ export const verifyOtpHandler = async (req, res) => {
       return customResponse(res, 401, {
         "error": {
           "message": 'otp is expired.',
-          "suggestion": "Please request another one",
           "data": {
             "redirect_url": '/auth'
           }
@@ -288,6 +281,7 @@ export const verifyOtpHandler = async (req, res) => {
     const user = await User.findOne({ phone: otpDoc.phone });
     if(!user){
       const newUser = new User({
+        auth_token: token,
         isAuthenticated: true,
         phone: otpDoc.phone,
         profilePic: null,
@@ -329,6 +323,7 @@ export const verifyOtpHandler = async (req, res) => {
         }
       })
     }else{
+      user.auth_token = token;
       user.isAuthenticated = true;
       await user.save();
       return customResponse(res, 200, { 
