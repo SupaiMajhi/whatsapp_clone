@@ -25,8 +25,19 @@ export const getOtpHandler = async (req, res) => {
   
   try {
     const otpAlreadyExist = await Otp.findOne({ phone });
+    const otpDoc = await otpProvider.findOne({ phone });
     if(otpAlreadyExist){
-      res.cookie("verification_token", token, {
+      if(!otpDoc){
+        return customResponse(res, 400, {
+          "error": {
+            "message": "OTP already exist.",
+            "data": {
+              "redirect_url": "/auth/verify"
+            }
+          }
+        })
+      }
+      res.cookie("verification_token", otpDoc.verification_token, {
         httpOnly: true,
         maxAge: 1000 * 60 * 5,
         secure: false,
@@ -46,12 +57,13 @@ export const getOtpHandler = async (req, res) => {
     const payload = {
       phone,
     };
-    const token = jwt.sign(payload, process.env.OTP_SECRET_KEY);
+    const token = jwt.sign(payload, process.env.OTP_SECRET_KEY, {
+      expiresIn: 60 * 5,
+    });
 
     const otp = generateOtp();
     const hashedOtp = await hash(otp);
 
-    const otpDoc = await otpProvider.findOne({ phone });
     if(otpDoc){
       if(otpDoc.totalOtpSentCount >= MAX_RESEND_COUNT){
         return customResponse(res, 429, {
@@ -68,9 +80,14 @@ export const getOtpHandler = async (req, res) => {
         });
         await newOtp.save();
 
+        otpDoc.verification_token = token;
         otpDoc.lastOtpSentAt = newOtp.sentAt;
         otpDoc.totalOtpSentCount = otpDoc.totalOtpSentCount + 1;
         await otpDoc.save();
+
+        if (otp && validatePhoneNumber(phone, countryCode)) {
+          await sendOTPtoPhoneNumber(otp, phone, dialCode);
+        }
 
         res.cookie("verification_token", token, {
           httpOnly: true,
@@ -79,22 +96,19 @@ export const getOtpHandler = async (req, res) => {
           sameSite: "strict",
         });
 
-        if (otp && validatePhoneNumber(phone, countryCode)) {
-          await sendOTPtoPhoneNumber(otp, phone, dialCode);
-        }
-
         return customResponse(res, 200, {
           "message": "OTP sent successfully.",
           "data": {
             "redirect_url": "/auth/verify"
           }
-        })                    
+        })
       }
     }
 
     /** ------CREATE AND SAVE OTP----- */
     const newOtpProvider = new otpProvider({
       phone,
+      verification_token: token,
       lastOtpSentAt: Date.now(),
       totalOtpSentCount: 1,
     });
@@ -109,8 +123,8 @@ export const getOtpHandler = async (req, res) => {
     await newOtp.save();
 
     /** -----SEND OTP----- */
-    if (otp && validatePhoneNumber(phone)) {
-      await sendOTPtoPhoneNumber(otp, phone);
+    if (otp && validatePhoneNumber(phone, countryCode)) {
+      await sendOTPtoPhoneNumber(otp, phone, dialCode);
     }
 
     res.cookie("verification_token", token, {
@@ -400,7 +414,6 @@ export const checkVTtokenHandler = async (req,res) => {
       }
     });
 
-
     return customResponse(res, 200, {
       data: {
         verification_token: record.verification_token
@@ -421,8 +434,6 @@ export const checkVTtokenHandler = async (req,res) => {
     return customResponse(res, 500, {
       error: {
         message: `Internal server error ${error.message}`,
-        data: {
-        }
       }
     });
   }

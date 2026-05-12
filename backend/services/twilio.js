@@ -5,7 +5,7 @@ const client = new twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUT
 export const sendOTPtoPhoneNumber = async(otp, phoneNumber, dialCode) => {
     try {
         await client.messages.create({
-            body: `${otp} is your verification code. For your security, do not share this code.`,
+            body: `${otp} is your verification code. For your security, do not share this code to anyone.`,
             to: `${dialCode}${phoneNumber}`,
             from: process.env.TWILIO_PHONE_NUMBER
         });
