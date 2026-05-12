@@ -29,11 +29,12 @@ const useAuthStore = create((set) => ({
         },
         { withCredentials: true },
       );
-      console.log('data', response.data);
       useGlobalStore.setState({ message: response.data.message });
       useGlobalStore.setState({ redirectURL: response.data.data.redirect_url });
+      set({ otp_token: response.data.data.verification_token });
     } catch (error) {
       console.log("Error in handleLogin", error.response.data);
+      set({ otp_token: null });
       if(error.response.data?.error?.data?.redirect_url){
         useGlobalStore.setState({
           redirectURL: error.response.data.error.data.redirect_url, //some problem might be happening here

@@ -29,16 +29,10 @@ function App() {
 
   const navigate = useNavigate();
 
-  console.log("isAuthenticated", isAuthenticated)
-  console.log("otp_token", otp_token)
-
   useEffect(() => {
-    setTimeout(() => {
-      if(redirectURL){
-        navigate(redirectURL);
-        setRedirectURL(null);
-      }
-    }, 2000)
+    if(redirectURL){
+      navigate(redirectURL);
+    }
   }, [redirectURL]);
 
 
@@ -50,7 +44,7 @@ function App() {
       }
     }
     doSomething();
-  }, [redirectURL])
+  }, [isAuthenticated, otp_token])
 
   if(isLoading){
     return <CircularLoader className={`w-screen h-screen ${theme === "light" ? "bg-white text-black" : "bg-black text-white"}`} />
