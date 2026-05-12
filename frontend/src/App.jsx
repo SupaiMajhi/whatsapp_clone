@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate, redirect } from "react-router-dom";
 import { useEffect } from "react";
 
 //components imports
@@ -28,13 +28,15 @@ function App() {
   const theme = useGlobalStore((state) => state.theme);
 
   const navigate = useNavigate();
+  console.log(redirectURL);
 
   useEffect(() => {
     if(redirectURL){
+      console.log("executed");
       navigate(redirectURL);
       setRedirectURL(null);
     }
-  }, []);
+  }, [redirectURL]);
 
 
   useEffect(() => {
