@@ -12,7 +12,7 @@ import Login from "./components/Login.jsx";
 import CircularLoader from "./components/CircularLoader.jsx";
 //store imports
 import useGlobalStore from "./store/globalStore.js";
-import useAuthStore from "./store/auth/authStore.js";
+import useAuthStore from "./store/authStore.js";
 import VerifyScreen from "./components/VerifyScreen.jsx";
 
 function App() {
@@ -29,11 +29,16 @@ function App() {
 
   const navigate = useNavigate();
 
+  console.log("isAuthenticated", isAuthenticated)
+  console.log("otp_token", otp_token)
+
   useEffect(() => {
-    if(redirectURL){
-      navigate(redirectURL);
-      setRedirectURL(null);
-    }
+    setTimeout(() => {
+      if(redirectURL){
+        navigate(redirectURL);
+        setRedirectURL(null);
+      }
+    }, 2000)
   }, [redirectURL]);
 
 
@@ -45,7 +50,7 @@ function App() {
       }
     }
     doSomething();
-  }, [isAuthenticated, otp_token])
+  }, [redirectURL])
 
   if(isLoading){
     return <CircularLoader className={`w-screen h-screen ${theme === "light" ? "bg-white text-black" : "bg-black text-white"}`} />

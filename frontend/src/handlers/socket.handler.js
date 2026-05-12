@@ -4,7 +4,7 @@ import { sendMessageViaSocket } from "../utils/util.js";
 //store imports
 import useUserStore from "../store/userStore.js"
 import useMessageStore from "../store/messageStore.js";
-import useAuthStore from "../store/auth/authStore.js";
+import useAuthStore from "../store/authStore.js";
 
 export const handleOnOfflineMsg = (data) => {
     const messagesIds = [];

@@ -3,7 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 // store imports
-import useAuthStore from "../store/auth/authStore.js";
+import useAuthStore from "../store/authStore.js";
 import useGlobalStore from "../store/globalStore.js";
 
 import CountrySelect from "./CountrySelect.jsx";

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 //store imports
-import useAuthStore from "../store/auth/authStore.js";
+import useAuthStore from "../store/authStore.js";
 
 const VerifyScreen = () => {
 

@@ -5,7 +5,7 @@ import { ChevronDown } from "lucide-react";
 import countries from "../../country.js";
 
 // Store imports
-import useAuthStore from "../store/auth/authStore.js";
+import useAuthStore from "../store/authStore.js";
 
 function CountrySelect({ onChange }) {
 

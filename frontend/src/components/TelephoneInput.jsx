@@ -2,7 +2,7 @@
 import countries from "../../country.js"
 
 //store imports
-import useAuthStore from "../store/auth/authStore.js"
+import useAuthStore from "../store/authStore.js"
 
 const TelephoneInput = ({ register }) => {
 

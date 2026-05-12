@@ -2,10 +2,10 @@
 import { create } from "zustand";
 import axios from "axios";
 
-import countries from "../../../country.js";
+import countries from "../../country.js";
 
-import useGlobalStore from "../globalStore.js";
-import useAppStore from "../appStore.js"
+import useGlobalStore from "./globalStore.js";
+import useAppStore from "./appStore.js"
 
 
 const useAuthStore = create((set) => ({
@@ -20,7 +20,6 @@ const useAuthStore = create((set) => ({
   },
 
   handleLogin: async (data) => {
-    console.log(import.meta.env.VITE_BASE_URL);
     try {
       set({ isLoading: true });
       const response = await axios.post(
@@ -34,11 +33,12 @@ const useAuthStore = create((set) => ({
       useGlobalStore.setState({ message: response.data.message });
       useGlobalStore.setState({ redirectURL: response.data.data.redirect_url });
     } catch (error) {
-      console.log(error.response);
-      console.log("handleLogin", error.response.data);
-      useGlobalStore.setState({
-        redirectURL: error.response.data.error.data.redirect_url, //some problem might be happening here
-      });
+      console.log("Error in handleLogin", error.response.data);
+      if(error.response.data?.error?.data?.redirect_url){
+        useGlobalStore.setState({
+          redirectURL: error.response.data.error.data.redirect_url, //some problem might be happening here
+        });
+      }
     } finally {
       set({ isLoading: false });
     }

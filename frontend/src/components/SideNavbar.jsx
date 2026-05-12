@@ -9,7 +9,7 @@ import StatusIcon from "../assets/StatusIcon.jsx";
 
 // Store imports
 import useGlobalStore from "../store/globalStore.js";
-import useAuthStore from "../store/auth/authStore.js";
+import useAuthStore from "../store/authStore.js";
 
 const Navbar = () => {
 
