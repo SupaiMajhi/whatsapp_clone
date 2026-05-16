@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate, useNavigate, redirect } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 //components imports
 import HomePage from './pages/HomePage.jsx';
@@ -9,11 +9,13 @@ import StatusPage from "./pages/StatusPage.jsx";
 import SettingsPage from "./pages/SettingsPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import Login from "./components/Login.jsx";
+import Signup from "./components/Signup.jsx";
 import CircularLoader from "./components/CircularLoader.jsx";
 //store imports
 import useGlobalStore from "./store/globalStore.js";
 import useAuthStore from "./store/authStore.js";
 import VerifyScreen from "./components/VerifyScreen.jsx";
+import useAppStore from "./store/appStore.js";
 
 function App() {
 
@@ -23,11 +25,13 @@ function App() {
   const userInfo = useAuthStore((state) => state.userInfo);
   const handleCheckAuth = useAuthStore((state) => state.handleCheckAuth);
   const handleCheckVT = useAuthStore((state) => state.handleCheckVT);
+  const isProfileComplete = useAppStore((state) => state.isProfileComplete);
   const redirectURL = useGlobalStore((state) => state.redirectURL);
   const setRedirectURL = useGlobalStore((state) => state.setRedirectURL);
   const theme = useGlobalStore((state) => state.theme);
 
   const navigate = useNavigate();
+  console.log("isAuthenticated", isAuthenticated, "isProfileComplete", isProfileComplete);
 
   useEffect(() => {
     if(redirectURL){
@@ -56,8 +60,13 @@ function App() {
         <Route
           path="/"
           element={
-            isAuthenticated ? <HomePage /> : <Navigate to='/auth' />
-          }
+            isAuthenticated && !isProfileComplete ? (
+              <Signup />
+            ) : isAuthenticated && isProfileComplete ? (
+              <HomePage />
+            ) : (
+              <Navigate to='/auth' />
+            )}
         >
           <Route index element={
               isAuthenticated ? <ChatPage /> : <Navigate to='/auth' />
@@ -110,6 +119,20 @@ function App() {
                 <Navigate to="/" />
               )
             }
+          />
+
+          <Route
+            path="/auth/user/create"
+            element={
+              isAuthenticated && !isProfileComplete ? (
+                <Signup />
+              ) : isAuthenticated && isProfileComplete ? (
+                <Navigate to="/" />
+              ) : !isAuthenticated && !isProfileComplete ? (
+                <Navigate to="/auth" />
+              ) : (
+                <Navigate to="/profile" />
+              )}
           />
         </Route>
       </Routes>

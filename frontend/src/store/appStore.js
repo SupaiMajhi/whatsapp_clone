@@ -5,6 +5,7 @@ const useAppStore = create((set) => ({
     currentRcvr: null,
     errorMessage: '',
     userInfo: null,
+    isProfileComplete: false,
 
     setIsChatSelected: (value) => {
         set({ isChatSelected: value });

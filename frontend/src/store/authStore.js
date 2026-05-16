@@ -88,6 +88,7 @@ const useAuthStore = create((set) => ({
         },
       );
       useAppStore.setState({ userInfo: response.data?.data?.user });
+      useAppStore.setState({ isProfileComplete: response.data?.data?.user?.isProfileComplete });
       set({ isAuthenticated: response.data.data.user.isAuthenticated });
     } catch (error) {
       set({ userInfo: null });
