@@ -12,9 +12,10 @@ const Signup = () => {
   const fileRef = useRef(null);
   const theme = useGlobalStore((state) => state.theme);
   const { register, handleSubmit, formState: { errors }} = useForm();
+  const fileRegister = register("file");
 
-  const handleOnSubmit = (e) => {
-    console.log(e)    
+  const handleOnSubmit = (data) => {
+    console.log(data)    
   }
 
   return (
@@ -25,8 +26,8 @@ const Signup = () => {
       </div>
 
       <div className="w-full h-full flex flex-col justify-center items-center">
-        <form onSubmit={handleSubmit(handleOnSubmit)} className="flex flex-col items-center justify-center space-y-5">
-          <h3 className={`${theme === "dark" ? "text-white" : "text-black"} text-3xl font-medium tracking-wide`}>Profile info</h3>
+        <form onSubmit={handleSubmit(handleOnSubmit)} encType="multipart/form-data" className="flex flex-col items-center justify-center space-y-5">
+          <h3 className={`tracking-wide ${theme === "dark" ? "text-white" : "text-black"} text-3xl font-medium tracking-wide`}>Profile info</h3>
 
           <p className="text-xl mb-5 tracking-wide">Please provide your name and an optional profile photo</p>
 
@@ -37,7 +38,14 @@ const Signup = () => {
                 <PlusIcon className="text-white size-8" />
               </div>
             </div>
-            <input type="file" {...register("file")} ref={fileRef} className="hidden" />
+            <input 
+              type="file" 
+              {...fileRegister}
+              ref={(e) => {
+                fileRegister.ref(e);
+                fileRef.current = e;
+              }} 
+              className="hidden" />
           </div>
 
           <div className="w-full">
