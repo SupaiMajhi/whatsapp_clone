@@ -9,8 +9,12 @@ cloudinary.config({
 });
 
 export const uploadProfile = async (data) => {
-  const result = await cloudinary.uploader.upload(data.path);
-  return result;
+    try {
+      const result = await cloudinary.uploader.upload(data.path);
+      return result;
+    } catch (error) {
+        return error;
+    }
 };
 
 export const singleUpload = async (data) => {
