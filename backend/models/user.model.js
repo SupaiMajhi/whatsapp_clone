@@ -15,6 +15,10 @@ const userSchema = new Schema(
       unique: true,
       required: true,
     },
+    username: {
+        type: String,
+        required: true
+    },
     profilePic: {
       type: String,
       default: '', //todo: a link to a default avatar
