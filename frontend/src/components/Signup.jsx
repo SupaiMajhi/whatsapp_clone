@@ -1,6 +1,8 @@
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 
+import { profileSetupSchema } from "../utils/validators/yupValidator.js";
 import useGlobalStore from "../store/globalStore.js";
 import PlusIcon from "../assets/PlusIcon.jsx";
 import Logo from "../assets/Logo.jsx";
@@ -11,11 +13,15 @@ const Signup = () => {
 
   const fileRef = useRef(null);
   const theme = useGlobalStore((state) => state.theme);
-  const { register, handleSubmit, formState: { errors }} = useForm();
-  const fileRegister = register("file");
+  const { register, handleSubmit, formState: { errors }} = useForm({
+    resolver: yupResolver(profileSetupSchema)
+  });
+  const fileRegister = register("profilePic");
 
   const handleOnSubmit = (data) => {
-    console.log(data)    
+    console.log(data)
+    
+    console.log(data.profilePic[0])
   }
 
   return (
@@ -31,7 +37,7 @@ const Signup = () => {
 
           <p className="text-xl mb-5 tracking-wide">Please provide your name and an optional profile photo</p>
 
-          <div onClick={() => fileRef.current.click()} className="flex justify-center items-center">
+          <div onClick={() => fileRef.current?.click()} className="flex justify-center items-center">
             <div className="relative flex justify-center items-center overflow-hidden">
               <AccountCircleIcon className={`text-[200px]! ${theme === "light" ? "text-txtDark" : "text-txtLight"}`} />
               <div className="w-10 h-10 flex justify-center items-center absolute right-5 bottom-5 z-10 bg-green-400 rounded-full">
@@ -40,6 +46,7 @@ const Signup = () => {
             </div>
             <input 
               type="file" 
+              accept=".png, .jpg, .jpeg"
               {...fileRegister}
               ref={(e) => {
                 fileRegister.ref(e);
@@ -47,10 +54,17 @@ const Signup = () => {
               }} 
               className="hidden" />
           </div>
+          {errors?.profilePic && <p className="mt-2 text-red-300 text-base tracking-widest">{errors?.profilePic?.message}</p>}
 
           <div className="w-full">
-            <input type="text" {...register("username", { required: true, minLength: 5 })} autoComplete="off" className="w-full py-1 border-b-2 border-green-700 outline-none text-xl" placeholder="Type your name here" />
-            {errors.username && <p className="mt-2 text-red-300 text-base tracking-widest">Username is requried.</p>}
+            <input 
+                type="text" 
+                {...register("username", { required: true, minLength: 5 })} 
+                autoComplete="off" 
+                className="w-full py-1 border-b-2 border-green-700 outline-none text-xl" 
+                placeholder="Type your name here" 
+            />
+            {errors?.username && <p className="mt-2 text-red-300 text-base tracking-widest">{errors?.username?.message}</p>}
           </div>
 
           <button type="submit" className="w-2xs mt-10 py-2 text-xl text-center text-white font-medium rounded-xl bg-green-600 cursor-pointer">Next</button>

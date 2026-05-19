@@ -122,6 +122,23 @@ const useAuthStore = create((set) => ({
       set({ isLoading: false });
     }
   },
+
+  handleProfileUpdate: async (data) => {
+      try {
+        set({ isLoading: true });
+        const res = await axios.patch(`${import.meta.env.VITE_BASE_URL}/update`, {
+            content: { username: data.username, profilePic: data?.profilePic }
+        }, { withCredentials: true });
+        useAppStore.setState({ userInfo: (state) => ({ ...state.userInfo, profilePic: res.data.data?.profilePic, username: res.data.data.username, isProfileComplete: res.data.data.isProfileComplete }) });
+        useAppStore.setState({ isProfileComplete: res.data.data.isProfileComplete });
+        useGlobalStore.setState({ message: res.data.message }); 
+      } catch (error) {
+        console.log("Error in handleProfileUpdate", error.message);
+        useGlobalStore.setState({ message: error.response.data.error.message });
+      } finally {
+          set({ isLoading: false });
+      }
+  }
 }));
 
 export default useAuthStore;
