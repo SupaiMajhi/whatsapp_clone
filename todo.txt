@@ -11,3 +11,5 @@ move the userInfo state to the appStore from authStore
 again i have to write the auth controller, mainly because of the userInfo data flow and overall the flow of the auth system, now its a little complicated in sending otp, receiving otp, and resend otp
 use 'AsYouType' method of lib-phonenumber.js to parse and format a phone number as user type just like the original whatsapp
 before deploy to production change the math.random() function with crypto.randomInt() for otp generation. Also read about the problem with using math.random() function in real world scenarios
+change jwt's payload to _id from current's phone. as _id query are faster by default in mongodb. This is gonna be a huge update as we have update the controllers also.
+implement mimeType checker and limit of uploads in multer and file uploading for profile into the server. for now there is no safety checker to check the mimetype or the magic number of a file. so malicious user can send anything they want.
