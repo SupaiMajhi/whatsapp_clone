@@ -13,7 +13,7 @@ export const uploadProfile = async (data) => {
       const result = await cloudinary.uploader.upload(data.path);
       return result;
     } catch (error) {
-        return error;
+      return error;
     }
 };
 
