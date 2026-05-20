@@ -3,14 +3,14 @@ import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 
 const authMiddleware = async (req, res, next) => {
-  const { auth_token } = req.cookies;
-  if (!auth_token) return customResponse(res, 401, {
+  const { auth_token:at } = req.cookies;
+  if (!at) return customResponse(res, 401, {
     "error": {
       "message": "Unauthorized"
     }
   });
   try {
-    const { phone } = jwt.verify(auth_token, process.env.JWT_SECRET_KEY);
+    const { phone } = jwt.verify(at, process.env.JWT_SECRET_KEY);
     if (!phone) return customResponse(res, 401, {
       "error": {
         "message": "Unauthorized",
