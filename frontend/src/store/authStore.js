@@ -1,15 +1,12 @@
-
 import { create } from "zustand";
 import axios from "axios";
 
 import countries from "../../country.js";
 
 import useGlobalStore from "./globalStore.js";
-import useAppStore from "./appStore.js"
-
+import useAppStore from "./appStore.js";
 
 const useAuthStore = create((set) => ({
-
   isAuthenticated: false,
   alpha2: countries[0].alpha2,
   isLoading: true,
@@ -25,7 +22,11 @@ const useAuthStore = create((set) => ({
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/auth/otp`,
         {
-          content: { phone: data.phone, countryCode: data.alpha2, dialCode: data.dialCode },
+          content: {
+            phone: data.phone,
+            countryCode: data.alpha2,
+            dialCode: data.dialCode,
+          },
         },
         { withCredentials: true },
       );
@@ -35,7 +36,7 @@ const useAuthStore = create((set) => ({
     } catch (error) {
       console.log("Error in handleLogin", error.response.data);
       set({ otp_token: null });
-      if(error.response.data?.error?.data?.redirect_url){
+      if (error.response.data?.error?.data?.redirect_url) {
         useGlobalStore.setState({
           redirectURL: error.response.data.error.data.redirect_url, //some problem might be happening here
         });
@@ -48,27 +49,35 @@ const useAuthStore = create((set) => ({
   handleVerify: async (data) => {
     try {
       set({ isLoading: true });
-      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/auth/otp/verify`, {
-        content: { otp:data }
-      }, {
-        withCredentials: true
-      });
-      if(response?.data?.data?.redirect_url){
-        useGlobalStore.setState({ redirectURL: response?.data?.data?.redirect_url });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/auth/otp/verify`,
+        {
+          content: { otp: data },
+        },
+        {
+          withCredentials: true,
+        },
+      );
+      if (response?.data?.data?.redirect_url) {
+        useGlobalStore.setState({
+          redirectURL: response?.data?.data?.redirect_url,
+        });
       }
-      if(response.data?.data?.user){
+      if (response.data?.data?.user) {
         useAppStore.setState({ userInfo: response?.data?.data?.user });
       }
       set({ isAuthenticated: response.data?.data?.isVerified });
     } catch (error) {
       // If status === 429
-      if(error.response.status === 429){
+      if (error.response.status === 429) {
         console.log(error.response.data);
       }
-      
+
       useGlobalStore.setState({ message: error.response.data.error.message });
-      if(error.response.data.error.data.redirect_url){
-        useGlobalStore.setState({ redirectURL: error.response.data.error.data.redirect_url })
+      if (error.response.data.error.data.redirect_url) {
+        useGlobalStore.setState({
+          redirectURL: error.response.data.error.data.redirect_url,
+        });
       }
       console.log("handleVerify", error.response.data.message);
       set({ isAuthenticated: false });
@@ -88,12 +97,14 @@ const useAuthStore = create((set) => ({
         },
       );
       useAppStore.setState({ userInfo: response.data?.data?.user });
-      useAppStore.setState({ isProfileComplete: response.data?.data?.user?.isProfileComplete });
+      useAppStore.setState({
+        isProfileComplete: response.data?.data?.user?.isProfileComplete,
+      });
       set({ isAuthenticated: response.data.data.user.isAuthenticated });
     } catch (error) {
       set({ userInfo: null });
       set({ isAuthenticated: false });
-      console.log('handleCheckAuth', error.response.data);
+      console.log("handleCheckAuth", error.response.data);
     } finally {
       set({ isLoading: false });
     }
@@ -112,10 +123,10 @@ const useAuthStore = create((set) => ({
     } catch (error) {
       set({ otp_token: null });
       useGlobalStore.setState({ message: error.response.data.error.message });
-      if(error.response.data.error?.data?.redirect_url){
+      if (error.response.data.error?.data?.redirect_url) {
         useGlobalStore.setState({
-          redirectURL: error.response.data.error.data.redirect_url
-        }); 
+          redirectURL: error.response.data.error.data.redirect_url,
+        });
       }
       console.log("handleCheckVT", error.response.data.message);
     } finally {
@@ -124,21 +135,42 @@ const useAuthStore = create((set) => ({
   },
 
   handleProfileUpdate: async (data) => {
-      try {
-        set({ isLoading: true });
-        const res = await axios.patch(`${import.meta.env.VITE_BASE_URL}/update`, {
-            content: { username: data.username, profilePic: data?.profilePic }
-        }, { withCredentials: true });
-        useAppStore.setState({ userInfo: (state) => ({ ...state.userInfo, profilePic: res.data.data?.profilePic, username: res.data.data.username, isProfileComplete: res.data.data.isProfileComplete }) });
-        useAppStore.setState({ isProfileComplete: res.data.data.isProfileComplete });
-        useGlobalStore.setState({ message: res.data.message }); 
-      } catch (error) {
-        console.log("Error in handleProfileUpdate", error.message);
-        useGlobalStore.setState({ message: error.response.data.error.message });
-      } finally {
-          set({ isLoading: false });
-      }
-  }
+    try {
+      set({ isLoading: true });
+      const res = await axios.patch(
+        `${import.meta.env.VITE_BASE_URL}/auth/update`,
+        {
+          content: {
+            username: data.username,
+          },
+          profilePic: data?.profilePic[0],
+        },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+      useAppStore.setState({
+        userInfo: (state) => ({
+          ...state.userInfo,
+          profilePic: res.data.data?.profilePic,
+          username: res.data.data.username,
+          isProfileComplete: res.data.data.isProfileComplete,
+        }),
+      });
+      useAppStore.setState({
+        isProfileComplete: res.data.data.isProfileComplete,
+      });
+      useGlobalStore.setState({ message: res.data.message });
+    } catch (error) {
+      console.log("Error in handleProfileUpdate", error.message);
+      useGlobalStore.setState({ message: error.response.data.error.message });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
 }));
 
 export default useAuthStore;
