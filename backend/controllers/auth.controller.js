@@ -18,7 +18,7 @@ export const getOtpHandler = async (req, res) => {
     return customResponse(res, 400, {
       "error": {
         "message": "phone is of invalid type",
-        "suggestion": "Please enter correct phone"
+        "suggestion": "Please enter correct phone",
       }
     });
   }
@@ -83,6 +83,7 @@ export const getOtpHandler = async (req, res) => {
         otpDoc.totalOtpSentCount = otpDoc.totalOtpSentCount + 1;
         await otpDoc.save();
 
+        //send otp
         if (otp && validatePhoneNumber(phone, countryCode)) {
           await sendOTPtoPhoneNumber(otp, phone, dialCode);
         }
@@ -365,7 +366,8 @@ export const checkAuthHandler = async (req, res) => {
           id: req.user.id,
           username: req.user.username,
           profilePic: req.user.profilePic,
-          isAuthenticated: req.user.isAuthenticated
+          isAuthenticated: req.user.isAuthenticated,
+          isProfileComplete: req.user.isProfileComplete,
         }
       }
     });
@@ -461,6 +463,55 @@ export const avatarUploadHandler = async (req, res) => {
     return customResponse(res, 500, "Internal server error.");
   }
 };
+
+export const updateUserHandler = async (req, res) => {
+    console.log("body", req.body);
+
+    const { username } = req.body?.content;
+    const id = req.user.id;
+    const file = req?.file;
+
+    if(!username) return customResponse(res, 400, {
+        error: {
+            message: 'All fields are required.'
+        }
+    });
+    
+    try {
+        /**-------FIND USER WITH PHONENUMBER-------*/
+        const user = await User.findOne({ _id: id });
+        if(!user) return customResponse(res, 400, {
+            error: {
+                message: "no user found."
+            }
+        });
+
+        //todo
+        /**-----USE THE CLOUDINARY API TO OBTAIN THE LINK OF PROFILE PIC-------*/
+
+        /** ------UPDATE USER------ */
+        user.username = username;
+        user.profilePic = profilePic || "";
+        user.isProfileComplete = true;
+        await user.save();
+
+        return customResponse(res, 201, { 
+            message: 'user created.',
+            data: {
+                isProfileComplete: user.isProfileComplete, 
+                profilePic: user.profilePic,
+                uesrname: user.username,
+            }
+        });        
+    } catch (error) {
+        console.log("Error in updateUserHandler ", error.message);
+        return customResponse(res, 500, {
+            error: {
+                message: `Internal server error ${error.message}`
+            }
+        });
+    }
+}
 
 export const logoutHandler = async (req, res) => {
   try {

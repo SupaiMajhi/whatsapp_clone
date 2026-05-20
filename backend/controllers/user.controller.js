@@ -51,65 +51,6 @@ export const getUserStatus = async (req, res) => {
     }
 }
 
-export const createUserHandler = async (req, res) => {
-    const { auth_token:at } = req.cookies;
-    if(!at) return customResponse(res, 401, {
-        error: {
-            message: 'Unauthorized.'
-        }
-    });
-
-    const { username, profilePic } = req.body.content;
-    if(!username && !profilePic) return customResponse(res, 400, {
-        error: {
-            message: 'All fields are required.'
-        }
-    });
-    
-    try {
-        /** ------RETRIEVE PHONENUMBER FROM TOKEN------- */
-        const {phone} = jwt.verify(at, process.env.JWT_SECRET_KEY);
-        if(!phone) return customResponse(res, 401, {
-            error: {
-                message: 'Unauthorized.'
-            }
-        });
-
-        /**------CHECK IF ALREADY USER EXIST WITH SAME NUMBER------- */
-        const isAlreadyExist = await User.findOne({ phoneNumber: phone });
-        if(isAlreadyExist){
-            return customResponse(res, 403, { 
-                error: {
-                    message: "User already exist."
-                }     
-            });
-        }
-        /** ------CREATE A NEW USER------ */
-        const newUser = new User({
-            isVerified: true,
-            phoneNumber:phone,
-            username,
-            profilePic: profilePic || ''
-        });
-        await newUser.save();
-
-        return customResponse(res, 201, { 
-            message: 'user created.',
-            data: {
-                redirect_url: '/dashboard', 
-                user: newUser 
-            }
-        });        
-    } catch (error) {
-        console.log("Error in createUserHandler ", error.message);
-        return customResponse(res, 500, {
-            error: {
-                message: `Internal server error ${error.message}`
-            }
-        });
-    }
-}
-
 export const getChatListHandler = async (req, res) => {
     
     const id = mongoose.Types.ObjectId.createFromHexString(req.user.id);
