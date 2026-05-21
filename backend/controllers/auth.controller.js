@@ -501,22 +501,26 @@ export const updateUserHandler = async (req, res) => {
       });
 
     /**-----USE THE CLOUDINARY API TO OBTAIN THE LINK OF PROFILE PIC-------*/
-    const response = await uploadProfile(file);
-    if (!response)
-      return customResponse({
-        error: {
-          message: "Something went wrong, please try agan later",
-        },
-      });
-
-    //remove file from server
-    await fs.unlink(file.path);
+    if(file){
+      const response = await uploadProfile(file);
+      if (!response) {
+        return customResponse({
+          error: {
+            message: "Something went wrong, please try agan later",
+          },
+        });
+      }
+      user.profilePic = response?.secure_url;
+      //remove file from server
+      await fs.unlink(file.path);
+    }else {
+      user.profilePic = "";
+    } 
 
     /** ------UPDATE USER------ */
     user.username = username;
-    user.profilePic = response.secure_url || "";
     user.isProfileComplete = true;
-    await user.save();
+    await user.save(); 
 
     return customResponse(res, 201, {
       message: "profile updated successfully.",
