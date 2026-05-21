@@ -31,7 +31,6 @@ function App() {
   const theme = useGlobalStore((state) => state.theme);
 
   const navigate = useNavigate();
-  console.log("isAuthenticated", isAuthenticated, "isProfileComplete", isProfileComplete);
 
   useEffect(() => {
     if(redirectURL){
