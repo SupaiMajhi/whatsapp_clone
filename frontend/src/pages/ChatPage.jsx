@@ -37,7 +37,7 @@ const ChatPage = () => {
         <div className="w-full h-[calc(100%-10%)] max-h-[calc(100%-10%)] flex-center flex-col px-3 py-2">
           {/** INPUT */}
           <div className="w-full h-[calc(100%-90%)]">
-            <Input />
+            <Input placeholder="Search or start a new chat"  />
           </div>
 
           {/** CHATlIST */}

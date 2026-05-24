@@ -1,16 +1,17 @@
 import { useRef, useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 //store imports
 import useGlobalStore from "../store/globalStore.js";
 import useAuthStore from "../store/authStore.js";
 
-import { profileSetupSchema } from "../utils/validators/yupValidator.js";
 import PlusIcon from "../assets/PlusIcon.jsx";
 import Logo from "../assets/Logo.jsx";
 import TextLogo from "../assets/TextLogo.jsx";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import Avatar from "./Avatar.jsx";
+import { profileSetupSchema } from "../utils/validators/yupValidator.js";
 import { types } from "../utils/validators/yupValidator.js";
 
 const Signup = () => {
@@ -85,7 +86,7 @@ const Signup = () => {
           >
             <div className="relative flex justify-center items-center overflow-hidden">
               { previewImage ? (
-                <img src={previewImage} alt="preview" className="w-50 h-50 rounded-full object-cover" />
+                <Avatar url={previewImage} className="w-50 h-50" />
               ) : (
                 <DefaultAvatar theme={theme} />
               )}
