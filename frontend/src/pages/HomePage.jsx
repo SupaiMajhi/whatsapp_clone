@@ -19,12 +19,12 @@ const HomePage = () => {
   }, [])
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center">
+    <div className="w-screen h-screen flex-center">
       <div className="w-full h-full flex-center">
-        <div className="basis-[5vw] max-w-[5vw] h-full">
+        <div className="basis-[4vw] max-w-[4vw] h-full">
           <SideNavbar />
         </div>
-        <div className="basis-[95vw] max-w-[95vw] overflow-hidden h-full">
+        <div className="basis-[96vw] max-w-[96vw] h-full overflow-hidden">
           <Outlet />
         </div>
       </div>

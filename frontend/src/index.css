@@ -17,7 +17,6 @@
     --secondary-black: #161717;
     --primary-inputTxt: var(--color-neutral-400);
     --secondary-inputTxt: var(--color-neutral-600);
-    --breakpoint-xs: 20rem;
 
     --color-authBg: #FCF5EB;
     --color-authHoverBg: #f6f5f4;
@@ -39,6 +38,9 @@
     --color-lightMyChatclr: #D9FDD3; 
 
     /*will keep this value*/
+
+    --breakpoint-xs: 20rem;
+
     --color-primaryBg: #2D2E2E;
     --color-secondaryBg: #F6F5F4;
 }
