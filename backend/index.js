@@ -18,7 +18,7 @@ export const server = http.createServer(app);
 connectToDB();
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://whatsapp-clone-frontend-c70z.onrender.com',
     credentials: true,
 }));
 app.use(express.json());
