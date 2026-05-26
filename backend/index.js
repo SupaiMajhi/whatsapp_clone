@@ -13,12 +13,14 @@ import authMiddleware from "./middleware/auth.middleware.js";
 
 config();
 
+const PORT = process.env.PORT || 8080;
+
 export const app = express();
 export const server = http.createServer(app);
 connectToDB();
 
 app.use(cors({
-    origin: 'https://whatsapp-clone-frontend-c70z.onrender.com',
+    origin: process.env.CLIENT_URL,
     credentials: true,
 }));
 app.use(express.json());
@@ -32,4 +34,4 @@ app.use('/api/v1/message', authMiddleware, messageRouter);
 
 setUpWebSocketServer(server);
 
-server.listen(8080, console.log("server is listening..."));
+server.listen(PORT, () => console.log("server is listening..."));

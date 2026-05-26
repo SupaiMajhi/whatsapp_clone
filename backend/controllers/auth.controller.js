@@ -38,8 +38,8 @@ export const getOtpHandler = async (req, res) => {
       res.cookie("verification_token", otpDoc.verification_token, {
         httpOnly: true,
         maxAge: 1000 * 60 * 5,
-        secure: false,
-        sameSite: "strict",
+        secure: true,
+        sameSite: "none",
       });
       return customResponse(res, 400, {
         error: {
@@ -92,8 +92,8 @@ export const getOtpHandler = async (req, res) => {
         res.cookie("verification_token", token, {
           httpOnly: true,
           maxAge: 1000 * 60 * 5,
-          secure: false,
-          sameSite: "strict",
+          secure: true,
+          sameSite: "none",
         });
 
         return customResponse(res, 200, {
@@ -131,8 +131,8 @@ export const getOtpHandler = async (req, res) => {
     res.cookie("verification_token", token, {
       httpOnly: true,
       maxAge: 1000 * 60 * 5,
-      secure: false,
-      sameSite: "strict",
+      secure: true,
+      sameSite: "none",
     });
 
     return customResponse(res, 200, {
@@ -308,8 +308,8 @@ export const verifyOtpHandler = async (req, res) => {
       res.cookie("auth_token", token, {
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        secure: false,
-        sameSite: "strict",
+        secure: true,
+        sameSite: "none",
       });
 
       return customResponse(res, 200, {
@@ -325,8 +325,8 @@ export const verifyOtpHandler = async (req, res) => {
     res.cookie("auth_token", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
-      secure: false,
-      sameSite: "strict",
+      secure: true,
+      sameSite: "none",
     });
 
     if (!user.isProfileComplete) {
