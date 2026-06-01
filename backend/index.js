@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 8080;
 
 export const app = express();
 export const server = http.createServer(app);
-connectToDB();
+await connectToDB();
 
 app.use(cors({
     origin: process.env.CLIENT_URL,
