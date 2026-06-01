@@ -2,11 +2,13 @@ import mongoose from 'mongoose';
 import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
 
-export const connectToDB = () => {
-    mongoose
-    .connect(process.env.MONGODB_URL)
-    .then(() => console.log('db connected'))
-    .catch((e) => console.log(e.message))
+export const connectToDB = async () => {
+    try {
+        await mongoose.connect(process.env.MONGODB_URL);
+        console.log('db connected');
+    } catch (error) {
+        console.log('db connection failded', error.message);
+    }
 }
 
 export const isValidPhoneNumber = (phoneNumber) => {
