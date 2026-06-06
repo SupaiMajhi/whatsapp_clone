@@ -7,7 +7,8 @@ const otpProviderSchema = new Schema({
         required: true
     },
     verification_token: {
-        type: String
+        type: String,
+        required: true,
     },
     lastOtpSentAt: {
         type: Date,

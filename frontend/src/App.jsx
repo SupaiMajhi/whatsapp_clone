@@ -64,32 +64,30 @@ function App() {
             ) : isAuthenticated && isProfileComplete ? (
               <HomePage />
             ) : (
-              <Navigate to='/auth' />
-            )}
+              <Navigate to="/auth" />
+            )
+          }
         >
-          <Route index element={
-              isAuthenticated ? <ChatPage /> : <Navigate to='/auth' />
-            } 
+          <Route
+            index
+            element={isAuthenticated ? <ChatPage /> : <Navigate to="/auth" />}
           />
 
           <Route
-            path="status" element={
-              isAuthenticated ? <StatusPage /> : <Navigate to='/auth' />
-            }
+            path="status"
+            element={isAuthenticated ? <StatusPage /> : <Navigate to="/auth" />}
           />
 
           <Route
             path="profile"
             element={
-              isAuthenticated ? <ProfilePage /> : <Navigate to='/auth' />
+              isAuthenticated ? <ProfilePage /> : <Navigate to="/auth" />
             }
           />
         </Route>
 
-
-
         <Route path="/auth" element={<AuthPage />}>
-            {/**check verification_token */}
+          {/**check verification_token */}
           <Route
             index
             element={
@@ -119,21 +117,21 @@ function App() {
               )
             }
           />
-
-          <Route
-            path="/auth/user/create"
-            element={
-              isAuthenticated && !isProfileComplete ? (
-                <Signup />
-              ) : isAuthenticated && isProfileComplete ? (
-                <Navigate to="/" />
-              ) : !isAuthenticated && !isProfileComplete ? (
-                <Navigate to="/auth" />
-              ) : (
-                <Navigate to="/profile" />
-              )}
-          />
         </Route>
+        <Route
+          path="/auth/user/create"
+          element={
+            isAuthenticated && !isProfileComplete ? (
+              <Signup />
+            ) : isAuthenticated && isProfileComplete ? (
+              <Navigate to="/" />
+            ) : !isAuthenticated && !isProfileComplete ? (
+              <Navigate to="/auth" />
+            ) : (
+              <Navigate to="/profile" />
+            )
+          }
+        />
       </Routes>
     </div>
   );

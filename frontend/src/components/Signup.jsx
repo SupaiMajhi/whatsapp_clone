@@ -68,7 +68,7 @@ const Signup = () => {
         <form
           onSubmit={handleSubmit(handleOnSubmit)}
           encType="multipart/form-data"
-          className="flex flex-col items-center justify-center space-y-5"
+          className="flex flex-col items-center justify-center space-y-3"
         >
           <h3
             className={`tracking-wide ${theme === "dark" ? "text-white" : "text-black"} text-3xl font-medium tracking-wide`}
@@ -76,7 +76,7 @@ const Signup = () => {
             Profile info
           </h3>
 
-          <p className="text-xl mb-5 tracking-wide">
+          <p className="text-xl font-light mb-5 tracking-wide">
             Please provide your name and an optional profile photo
           </p>
 
