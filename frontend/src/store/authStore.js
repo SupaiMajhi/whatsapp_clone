@@ -87,6 +87,22 @@ const useAuthStore = create((set) => ({
     }
   },
 
+  handleLogout: async () => {
+    try {
+      set({ isLoading: true });
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/auth/logout`, {
+        withCredentials: true,
+      }); 
+      useGlobalStore.setState({ message: response.data.message });
+      set({ isAuthenticated: false });
+    } catch (error) {
+      console.log("Error in handleLogout", error.message);
+      useGlobalStore.setState({ error: error.response.data.error.message }); 
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
   handleCheckAuth: async () => {
     try {
       set({ isLoading: true });

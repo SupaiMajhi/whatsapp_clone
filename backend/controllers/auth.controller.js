@@ -25,6 +25,15 @@ export const getOtpHandler = async (req, res) => {
   }
 
   try {
+    const user = await User.findOne({ phone }).select("isAuthenticated");
+    if(user.isAuthenticated){
+      return customResponse(res, 400, {
+        error: {
+          message: "user is already authenticated",
+        },
+      });
+    }
+
     const otpAlreadyExist = await Otp.findOne({ phone });
     const otpDoc = await otpProvider.findOne({ phone });
     if (otpAlreadyExist) {
@@ -542,13 +551,18 @@ export const updateUserHandler = async (req, res) => {
 
 export const logoutHandler = async (req, res) => {
   try {
-    res.cookie("token", "", {
-      maxAge: 0,
+    const user = await User.findByIdAndUpdate({ _id: req.user._id }, { isAuthenticated: false });
+    invalidateToken(res, "auth_token");
+    return customResponse(res, 200, {
+      message: "Logout successfully.",
     });
-    return customResponse(res, 200, "Logout successfully.");
   } catch (error) {
-    console.log(error.message);
-    return customResponse(res, 500, "Internal server error.");
+    console.log("Error in logoutHandler", error.message);
+    return customResponse(res, 500, {
+      error: {
+        message: `Failed to logout`,
+      },
+    });
   }
 };
 
