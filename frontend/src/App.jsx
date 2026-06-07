@@ -32,6 +32,8 @@ function App() {
 
   const navigate = useNavigate();
 
+  console.log(isAuthenticated, otp_token);
+
   useEffect(() => {
     if(redirectURL){
       navigate(redirectURL);
