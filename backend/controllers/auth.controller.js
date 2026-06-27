@@ -25,15 +25,7 @@ export const getOtpHandler = async (req, res) => {
   }
 
   try {
-    const user = await User.findOne({ phone }).select("isAuthenticated");
-    if(user.isAuthenticated){
-      return customResponse(res, 400, {
-        error: {
-          message: "user is already authenticated",
-        },
-      });
-    }
-
+    //todo: add a check to prevent authenticated user from requesting otp here
     const otpAlreadyExist = await Otp.findOne({ phone });
     const otpDoc = await otpProvider.findOne({ phone });
     if (otpAlreadyExist) {
@@ -223,6 +215,7 @@ export const resendHandler = async (req, res) => {
 };
 
 //todo: if otp is incorrect there should be a try limit and rate limit to prevent attacks
+//todo: write changes on token and new User for dialCode field
 export const verifyOtpHandler = async (req, res) => {
   const now = Date.now();
   const MAX_TRY_COUNT = 5;
@@ -359,7 +352,7 @@ export const verifyOtpHandler = async (req, res) => {
       });
     }
   } catch (error) {
-    /** -----error = token expired------  */
+    /**----- error = token expired ------*/
     if (error.name === "TokenExpiredError") {
       return customResponse(res, 400, {
         error: {
@@ -387,6 +380,7 @@ export const checkAuthHandler = async (req, res) => {
         user: {
           id: req.user.id,
           username: req.user.username,
+          phone: req.user.phone,
           profilePic: req.user.profilePic,
           isAuthenticated: req.user.isAuthenticated,
           isProfileComplete: req.user.isProfileComplete,
@@ -488,7 +482,7 @@ export const avatarUploadHandler = async (req, res) => {
 };
 
 export const updateUserHandler = async (req, res) => {
-  const { username } = req.body?.content;
+  const { username } = req.body.content;
   const id = req.user.id;
   const file = req?.file;
 
@@ -510,7 +504,7 @@ export const updateUserHandler = async (req, res) => {
       });
 
     /**-----USE THE CLOUDINARY API TO OBTAIN THE LINK OF PROFILE PIC-------*/
-    if(file){
+    if (file) {
       const response = await uploadProfile(file);
       if (!response) {
         return customResponse({
@@ -522,14 +516,14 @@ export const updateUserHandler = async (req, res) => {
       user.profilePic = response?.secure_url;
       //remove file from server
       await fs.unlink(file.path);
-    }else {
+    } else {
       user.profilePic = "";
-    } 
+    }
 
     /** ------UPDATE USER------ */
     user.username = username;
     user.isProfileComplete = true;
-    await user.save(); 
+    await user.save();
 
     return customResponse(res, 201, {
       message: "profile updated successfully.",
@@ -551,7 +545,10 @@ export const updateUserHandler = async (req, res) => {
 
 export const logoutHandler = async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate({ _id: req.user._id }, { isAuthenticated: false });
+    const user = await User.findByIdAndUpdate(
+      { _id: req.user._id },
+      { auth_token: "", isAuthenticated: false },
+    );
     invalidateToken(res, "auth_token");
     return customResponse(res, 200, {
       message: "Logout successfully.",
