@@ -7,11 +7,14 @@ const useUserStore = create((set) => ({
 
     chatList: [],
     userStatus: null,
-    currentOpenConversationId: null,
-    isLoading: false,
+    currentOpenConversation: {
+      conversationId: null,
+      userId: null,
+    },
+    isLoading: true,
 
-    setCurrentOpenConversationId: (value) => {
-        set({ currentOpenConversationId: value });
+    setCurrentOpenConversation: (value) => {
+        set({ currentOpenConversation: value });
     },
 
     getPrevChatList: async () => {
@@ -44,7 +47,27 @@ const useUserStore = create((set) => ({
 
     updateStatus: (value) => {
         set({ userStatus: value });
-    }
+    },
+
+    searchUser: async (phone) => {
+        try {
+           set({ isLoading: true });
+           const response = await axios.post(
+            `${import.meta.env.VITE_BASE_URL}/user/search`, 
+            {
+                content: {
+                    phone,
+                }
+            }, 
+            { withCredentials: true });
+            return response.data.data.user;
+        } catch (error) {
+            console.log('Error in searchUser', error.message);
+            return {};
+        } finally {
+            set({ isLoading: false });
+        }
+    },
 }));
 
 export default useUserStore;
