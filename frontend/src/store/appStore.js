@@ -6,6 +6,8 @@ const useAppStore = create((set) => ({
     errorMessage: '',
     userInfo: null,
     isProfileComplete: false,
+    showOverlay: false,
+    isPopUpVisible: false,
 
     setIsChatSelected: (value) => {
         set({ isChatSelected: value });
@@ -13,6 +15,14 @@ const useAppStore = create((set) => ({
 
     setCurrentRcvr: (value) => {
         set({ currentRcvr: value });
+    },
+
+    setShowOverlay: (value) => {
+        set({ showOverlay: value });
+    },
+
+    setIsPopUpVisible: (value) => {
+        set({ isPopUpVisible: value });
     }
 }));
 

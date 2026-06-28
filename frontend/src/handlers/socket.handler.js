@@ -30,13 +30,16 @@ export const handleOnOfflineMsg = (data) => {
 
 export const handleOnNewMsg = (data) => {
     const messagesIds = [];
-    const { chatList } = useUserStore.getState();
+    const { chatList, currentOpenConversation } = useUserStore.getState();
     const lastMessage = data.newMsg;
     const unreadCount = data.conversation.unreadCount;
 
     const found = chatList.find(c => c._id === data.conversation._id);
 
-    if(useUserStore.getState().currentOpenConversationId === data.conversation._id){
+    let visible = currentOpenConversation.conversationId ? 
+      currentOpenConversation.conversationId === data.conversation._id : 
+      currentOpenConversation.userId === data.newMsg.sender;
+    if(visible){
         if(found){
             const newChatList = [
                 {...found, lastMessage },
@@ -79,13 +82,13 @@ export const handleOnNewMsg = (data) => {
 }
 
 export const handleDeliveredMsg = (data) => {
-    if(useUserStore.getState().currentOpenConversationId === data.conversationId){
+    if(useUserStore.getState().currentOpenConversation === data.conversationId){
         useMessageStore.getState().updateMessages(data._id, { messageStatus: data.messageStatus, deliveredAt: data.deliveredAt });
     }
 }
 
 export const handleSeenMsg = (data) => {
-    if(useUserStore.getState().currentOpenConversationId === data.conversationId){
+    if(useUserStore.getState().currentOpenConversation === data.conversationId){
         useMessageStore.getState().updateMessages(data._id, { 
             messageStatus: data.messageStatus,
             seenAt: data.seenAt

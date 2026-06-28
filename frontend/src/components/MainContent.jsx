@@ -3,7 +3,7 @@ import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import { IoCheckmarkSharp } from "react-icons/io5";
 import { FaRegClock } from "react-icons/fa6";
 
-import { formatMessageTime } from "../lib.js";
+import { formatMessageTime } from "../utils/util.js";
 import { sendMessageViaSocket } from "../utils/util.js";
 
 //store imports
@@ -18,6 +18,7 @@ const MainContent = () => {
   const userInfo = useAppStore((state) => state.userInfo);
   const theme = useGlobalStore((state) => state.theme);
 
+  console.log(messages)
   const isVisible = usePageVisibility();
   const rootRef = useRef(null);
   const observerRef = useRef(null);
@@ -78,7 +79,7 @@ const MainContent = () => {
       ref={rootRef}
       className={`w-full h-full flex flex-col px-18 pt-5 pb-8 text-sm overflow-x-hidden overflow-y-auto ${theme === "light" ? "text-black" : "text-white"}`}
     >
-      {/** for now default contentType is "text", in future i will implement other contentType */}
+      {/** todo: for now default contentType is "text", in future i will implement other contentType */}
       {messages.map((message) =>
         message?.contentType === "text" ? (
           message?.receiver === userInfo.id ? (

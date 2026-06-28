@@ -13,7 +13,7 @@ const ShowCard = ({ chatInfo }) => {
 
   const fetchAllMessage = useMessageStore((state) => state.fetchAllMessage);
   const getUserStatus = useUserStore((state) => state.getUserStatus);
-  const setCurrentOpenConversationId = useUserStore((state) => state.setCurrentOpenConversationId);
+  const setCurrentOpenConversation = useUserStore((state) => state.setCurrentOpenConversation);
   const setCurrentRcvr = useAppStore((state) => state.setCurrentRcvr)
   const setIsChatSelected = useAppStore((state) => state.setIsChatSelected);
   const theme = useGlobalStore((state) => state.theme);
@@ -21,7 +21,10 @@ const ShowCard = ({ chatInfo }) => {
 
   const handleOnClick = async () => {
     setCurrentRcvr(chatInfo?.otherUser);
-    setCurrentOpenConversationId(chatInfo._id);
+    setCurrentOpenConversation({
+      userId: null,
+      conversationId: chatInfo._id,
+    });
     setIsChatSelected(true);
     await fetchAllMessage(chatInfo._id);
     await getUserStatus(chatInfo.otherUser._id);
@@ -29,7 +32,7 @@ const ShowCard = ({ chatInfo }) => {
 
   return (
     <div
-      className={`w-full h-20 max-h-20 flex justify-center items-center gap-3 pl-2 ${theme === "light" ? "bg-light text-txtDark hover:bg-hoverLightBg" : "bg-dark text-txtLight hover:bg-hoverDarkBg"} transition-colors duration-75 ease-in rounded-2xl cursor-pointer`}
+      className={`c ${theme === "light" ? "bg-light text-txtDark hover:bg-hoverLightBg" : "bg-dark text-txtLight hover:bg-hoverDarkBg"} transition-colors duration-75 ease-in rounded-2xl cursor-pointer`}
       onClick={handleOnClick}
     >
       {/** AVATAR */}

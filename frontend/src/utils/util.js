@@ -1,3 +1,5 @@
+import useSocketStore from "../store/socketStore.js"
+
 const dayNames = [
     "Sunday",
     "Monday",
@@ -7,8 +9,6 @@ const dayNames = [
     "Friday",
     "Saturday"
 ];
-
-import useSocketStore from "../store/socketStore.js"
 
 export const onSeen = (messagesIds) => {
     const socket = useSocketStore.getState()?.socket;
@@ -33,7 +33,6 @@ export const sendMessageViaSocket = (msgType, content) => {
     }
 }
 
-
 export const formatChatTime = (time) => {
     const now = new Date();
     const chatTime = new Date(time);
@@ -41,8 +40,7 @@ export const formatChatTime = (time) => {
     const diff = now.getDate() - chatTime.getDate();
 
     if(diff === 0){
-
-        return chatTime.toLocalTimeString("en-IN", {
+        return chatTime.toLocaleTimeString("en-IN", {
             hour: "2-digit",
             minute: "2-digit"
         });
@@ -62,4 +60,25 @@ export const formatChatTime = (time) => {
     } else {
         return "NaN"
     }
+}
+
+export const formatMessageTime = (time) => {
+    const msgTime = new Date(time);
+    const now = new Date();
+
+    if(msgTime.toDateString() === now.toDateString()){
+        return msgTime.toLocaleTimeString("en-IN", {
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+    }
+
+    const yesterday = new Date();
+    yesterday.setDate(now.getDate() - 1);
+
+    if(yesterday.toDateString() === msgTime.toDateString()){
+        return 'Yesterday';
+    }
+
+    return 'NaN';
 }

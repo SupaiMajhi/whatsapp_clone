@@ -2,7 +2,7 @@ import Avatar from "@mui/material/Avatar";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuIcon from '../assets/MenuIcon';
 import SearchIcon from '../assets/SearchIcon';
-import { formatMessageTime } from "../lib.js";
+import { formatMessageTime } from "../utils/util.js";
 
 //store imports
 import useUserStore from "../store/userStore.js";
@@ -17,7 +17,7 @@ const Header = () => {
 
   return (
     <div
-      className={`sticky top-0 left-0 z-10 w-full h-20 max-h-20 flex justify-between items-center py-2 pl-4 pr-6 ${theme === "light" ? "bg-light text-black" : "bg-dark text-white"}`}
+      className={`sticky top-0 left-0 z-10 w-full h-16 max-h-16 flex justify-between items-center py-2 pl-4 pr-6 ${theme === "light" ? "bg-light text-black" : "bg-dark text-white"}`}
     >
       {/** INFO DIV */}
       <div className="w-fit h-full flex justify-center items-center gap-4">
@@ -27,14 +27,14 @@ const Header = () => {
             <Avatar className="w-full" src={currentRcvr.profilePic} />
           ) : (
             <AccountCircleIcon
-              className={`text-[60px]! ${theme === "light" ? "text-txtDark" : "text-txtLight"}`}
+              className={`text-[48px]! ${theme === "light" ? "text-txtDark" : "text-txtLight"}`}
             />
           )}
         </div>
 
         {/** USERNAME & ONLINE, OFFLINE */}
         <div className="w-fit h-full flex flex-col justify-center">
-          <h1 className="text-xl font-medium">{currentRcvr?.username}</h1>
+          <h1 className="text-sm font-extrabold tracking-wider">{currentRcvr?.username}</h1>
           <div className={`text-sm font-medium ${theme === "light" ? "text-lightStatTxt" : "text-darkStatTxt"}`}>
             {userStatus?.isOnline ? (
               <p>online</p>
@@ -48,10 +48,10 @@ const Header = () => {
       {/** ICON DIV */}
       <div className={`w-fit h-full flex justify-center items-center gap-7 ${theme === "light" ? "text-black" : "text-white"}`}>
         <button>
-          <SearchIcon className="cursor-pointer" />
+          <SearchIcon className="nav-icon" />
         </button>
         <button>
-          <MenuIcon className="cursor-pointer" />
+          <MenuIcon className="nav-icon" />
         </button>
       </div>
     </div>
