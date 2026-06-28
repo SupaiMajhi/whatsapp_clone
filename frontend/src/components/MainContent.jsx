@@ -18,7 +18,6 @@ const MainContent = () => {
   const userInfo = useAppStore((state) => state.userInfo);
   const theme = useGlobalStore((state) => state.theme);
 
-  console.log(messages)
   const isVisible = usePageVisibility();
   const rootRef = useRef(null);
   const observerRef = useRef(null);
