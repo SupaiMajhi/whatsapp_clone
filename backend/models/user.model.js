@@ -10,14 +10,17 @@ const userSchema = new Schema(
       type: Boolean,
       required: true
     },
+    dialCode: {
+      type: String,
+      required: true,
+    },
     phone: {
       type: String,
       unique: true,
       required: true,
     },
-    username: {
-        type: String,
-    },
+    username: String,
+    about: String,
     profilePic: {
       type: String,
       default: '', //todo: a link to a default avatar
