@@ -73,17 +73,9 @@ export const sendMsgHandler = async (req, res) => {
         });
         await newMsg.save();
 
-        //-------get user------
-        const user = await User.findOne({ _id: sender });
-
         //----Update Conversation----
         conversation.unreadCount += 1;
         conversation.lastMessage = newMsg;
-        conversation.otherUser = {
-            _id: user.id,
-            username: user.username,
-            profilePic: user.profilePic
-        }
         await conversation.save();
 
         //-----send in real-time------
@@ -96,7 +88,7 @@ export const sendMsgHandler = async (req, res) => {
         return customResponse(res, 200, {
             "message": 'message sent.',
             "data": {
-                newMsg
+                newMsg,
             }
         });
     } catch (error) {
@@ -231,71 +223,3 @@ export const getOfflineMessages = async (value) => {
         return [];
     }
 }
-
-// export const devGetOfflineMessages = async (req, res) => {
-//     const id = mongoose.Types.ObjectId.createFromHexString(req.user.id);
-//     if(!id) return customResponse(res, 400, 'no id');
-//     try {
-//         const messages = await Message.aggregate([
-//             {
-//                 $match: {
-//                     receiver: id,
-//                     messageStatus: "sent"
-//                 }
-//             },
-//             {
-//                 $sort: {createdAt: 1}
-//             },
-//             {
-//                 $group: {
-//                     _id: '$conversationId',
-//                     messages: {
-//                         $push: '$$ROOT'
-//                     }
-//                 }
-//             },{
-//                 $lookup: {
-//                     from: "conversations",
-//                     localField: "_id",
-//                     foreignField: "_id",
-//                     as: "conversationObj"
-//                 }
-//             },{
-//                 $unwind: "$conversationObj"
-//             },{
-//                 $addFields: {
-//                     otherUserId: {
-//                         $first: {
-//                             $filter: {
-//                                 input: "$conversationObj.participants",
-//                                 as: "p",
-//                                 cond: { $ne: ["$$p", id] }
-//                             }
-//                         }
-//                     }
-//                 }
-//             },{
-//                 $lookup: {
-//                     from: "users",
-//                     localField: "otherUserId",
-//                     foreignField: "_id",
-//                     as: "otherUser"
-//                 }
-//             },{
-//                 $unwind: "$otherUser"
-//             },{
-//                 $project: {
-//                     _id: 1,
-//                     'messages': 1,
-//                     'otherUser._id': 1,
-//                     'otherUser.username': 1,
-//                     'otherUser.profilePic': 1
-//                 }
-//             }
-//         ]);
-//         return customResponse(res, 200, 'success', messages);
-//     } catch (error) {
-//         console.log("fetchUndeliveredMessages Error", error.message);
-//         return customResponse(res, 500, 'internal server error', []);
-//     }
-// }
