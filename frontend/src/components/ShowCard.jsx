@@ -52,7 +52,7 @@ const ShowCard = ({ chatInfo }) => {
           <div className="grow">
             <h1 className={`text-xl ${theme === "light" ? "text-black" : "text-white"} tracking-wide`}>{chatInfo?.otherUser?.username}</h1>
           </div>
-          <div className={`w-fit max-w-28 text-xs font-medium tracking-wider`}>
+          <div className={`w-fit max-w-28 text-xs font-normal tracking-wider`}>
             <p>{formatChatTime(chatInfo?.lastMessage.sentAt)}</p>
           </div>
         </div>

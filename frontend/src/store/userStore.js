@@ -60,7 +60,7 @@ const useUserStore = create((set) => ({
                 }
             }, 
             { withCredentials: true });
-            return response.data.data.user;
+            return response.data.data;
         } catch (error) {
             console.log('Error in searchUser', error.message);
             return {};

@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 //store imports
 import useGlobalStore from "../store/globalStore.js";
@@ -27,22 +27,28 @@ const NewChat = ({ setShowNewChat }) => {
   const [loading, setLoading] = useState(false);
   const [phone, setPhone] = useState("");
 
-  const handleOnClick = async () => {
-    setLoading(true);
-    setSearchRslt(await searchUser(phone));
-    setLoading(false);
-  };
+  useEffect(() => {
+    async function fetchUser(phone){
+      setLoading(true);
+      setSearchRslt(await searchUser(phone));
+      setLoading(false);
+    }
 
+    if(phone.length === 10){
+      fetchUser(phone);
+    }
+  }, [phone])
+  
   const handleClick = async () => {
-    setCurrentRcvr(searchRslt);
+    setCurrentRcvr(searchRslt.user);
     setCurrentOpenConversation({
-      userId: searchRslt._id,
+      userId: searchRslt.user?._id,
       conversationId: null,
     });
     setIsChatSelected(true);
     setShowNewChat(false);
-    await fetchAllMessage(searchRslt._id);
-    await getUserStatus(searchRslt._id);
+    await fetchAllMessage(searchRslt.user?._id);
+    await getUserStatus(searchRslt.user?._id);
   };
 
   return (
@@ -67,26 +73,25 @@ const NewChat = ({ setShowNewChat }) => {
           placeholder="Search number"
           value={phone}
           handleOnChange={(e) => setPhone(e.target.value)}
-          handleOnClick={handleOnClick}
           isLoading={loading}
         />
       </div>
 
       {/**----- Results ------*/}
       <div className="w-full bg-inherit">
-        {searchRslt ? (
-          Object.keys(searchRslt)?.length > 0 ? (
+        {searchRslt?.user ? (
+          Object.keys(searchRslt.user)?.length > 0 ? (
             <div
               onClick={handleClick}
               className={`c ${theme === "light" ? "bg-light text-txtDark hover:bg-hoverLightBg" : "bg-dark text-txtLight hover:bg-hoverDarkBg"}`}
             >
               {/**----- Avatar -------*/}
               <div className="w-14 h-14 flex justify-center items-center mr-2">
-                {searchRslt?.profilePic ? (
-                  <Avatar className="w-full" url={searchRslt?.profilePic} />
+                {searchRslt.user?.profilePic ? (
+                  <Avatar className="w-full" url={searchRslt.user?.profilePic} />
                 ) : (
                   <AccountCircleIcon
-                    className={`text-[64px]! ${theme === "light" ? "text-txtDark" : "text-txtLight"}`}
+                    className={`text-[56px]! ${theme === "light" ? "text-txtDark" : "text-txtLight"}`}
                   />
                 )}
               </div>
@@ -95,13 +100,13 @@ const NewChat = ({ setShowNewChat }) => {
               <h1
                 className={`text-base tracking-wide ${theme === "light" ? "text-black" : "text-white"}`}
               >
-                {searchRslt?.phone}
+                {searchRslt.user?.phone}
               </h1>
             </div>
           ) : (
             <div className="w-full h-full flex jusitfy-center items-start">
               <p className="w-full text-center text-sm">
-                No results found for '{phone}'
+                {searchRslt?.message}
               </p>
             </div>
           )

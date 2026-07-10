@@ -53,6 +53,7 @@ export const getUserHandler = async (req, res) => {
     if (!hasDocument) {
       return customResponse(res, 200, {
         data: {
+          message: `No results found for "${phone}"`,
           user: [],
         },
       });

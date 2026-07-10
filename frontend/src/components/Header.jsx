@@ -17,7 +17,7 @@ const Header = () => {
 
   return (
     <div
-      className={`sticky top-0 left-0 z-10 w-full h-16 max-h-16 flex justify-between items-center py-2 pl-4 pr-6 ${theme === "light" ? "bg-light text-black" : "bg-dark text-white"}`}
+      className={`sticky top-0 left-0 z-10 pointer-events-none w-full h-16 max-h-16 flex justify-between items-center py-2 pl-4 pr-6 ${theme === "light" ? "bg-light text-black" : "bg-dark text-white"}`}
     >
       {/** INFO DIV */}
       <div className="w-fit h-full flex justify-center items-center gap-4">
