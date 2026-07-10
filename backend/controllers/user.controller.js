@@ -31,6 +31,7 @@ export const getAllUsersHandler = async (req, res) => {
 };
 
 export const getUserHandler = async (req, res) => {
+  console.log(req.user);
   const { phone } = req.body.content;
   if (!phone) {
     return customResponse(res, 400, {
@@ -40,12 +41,15 @@ export const getUserHandler = async (req, res) => {
     });
   }
   try {
-    const hasDocument = await User.findOne({ phone })?.select([
+    const hasDocument = await User.findOne({$and: [
+      { phone: { $eq: phone } },
+      { phone: { $ne: req.user.phone } }
+    ]})
+    ?.select([
       "-auth_token",
       "-isAuthenticated",
       "-isProfileComplete",
     ]);
-    console.log(hasDocument);
     if (!hasDocument) {
       return customResponse(res, 200, {
         data: {
