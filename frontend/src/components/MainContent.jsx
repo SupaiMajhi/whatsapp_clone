@@ -27,8 +27,8 @@ const MainContent = () => {
   const observerCallback = (entries) => {
     entries.forEach(entry => {
       if(entry.isIntersecting){
-        if(!entry.target.dataset.seen === "seen"){
-          sendMessageViaSocket("markAsSeen", { data: entry.target.dataset.id });
+        if(entry.target.dataset.seen !== "seen"){
+          sendMessageViaSocket("markAsSeen", { data: [entry.target.dataset.id] });
         }
       }
       observerRef.current.unobserve(entry.target);
@@ -98,8 +98,8 @@ const MainContent = () => {
                     <p>{formatMessageTime(message?.seenAt)}</p>
                   ) : message?.deliveredAt ? (
                     <p>{formatMessageTime(message?.deliveredAt)}</p>
-                  ) : message?.sentAt ? (
-                    <p>{formatMessageTime(message?.sentAt)}</p>
+                  ) : message?.createdAt ? (
+                    <p>{formatMessageTime(message?.createdAt)}</p>
                   ) : (
                     <p>...</p>
                   )}
@@ -118,8 +118,8 @@ const MainContent = () => {
                     <p>{formatMessageTime(message?.seenAt)}</p>
                   ) : message?.deliveredAt ? (
                     <p>{formatMessageTime(message?.deliveredAt)}</p>
-                  ) : message?.sentAt ? (
-                    <p>{formatMessageTime(message?.sentAt)}</p>
+                  ) : message?.createdAt ? (
+                    <p>{formatMessageTime(message?.createdAt)}</p>
                   ) : (
                     <p></p>
                   )}

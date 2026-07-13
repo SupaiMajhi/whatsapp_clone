@@ -36,7 +36,10 @@ export const messageSchema = new Schema(
       default: "sent",
     },
 
-    sentAt: { type: Date, default: Date.now() },
+    sentAt: { 
+      type: Date, 
+      default: Date.now 
+    },
 
     deliveredAt: { type: Date },
 

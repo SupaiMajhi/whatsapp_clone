@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import { handleOnOfflineMsg, handleOnNewMsg, handleDeliveredMsg } from "../handlers/socket.handler.js";
+import { handleOnOfflineMsg, handleOnNewMsg, handleDeliveredMsg, handleSeenMsg } from "../handlers/socket.handler.js";
 
 const useSocketStore = create((set, get) => ({
     socket: null,

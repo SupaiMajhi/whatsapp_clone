@@ -1,6 +1,10 @@
-import { formatChatTime } from "../utils/util.js";
+import { IoCheckmarkDoneSharp } from "react-icons/io5";
+import { IoCheckmarkSharp } from "react-icons/io5";
+import { FaRegClock } from "react-icons/fa6";
 import Avatar from "@mui/material/Avatar";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+
+import { formatChatTime } from "../utils/util.js";
 
 //store imports
 import useMessageStore from "../store/messageStore.js";
@@ -17,7 +21,6 @@ const ShowCard = ({ chatInfo }) => {
   const setCurrentRcvr = useAppStore((state) => state.setCurrentRcvr)
   const setIsChatSelected = useAppStore((state) => state.setIsChatSelected);
   const theme = useGlobalStore((state) => state.theme);
-
 
   const handleOnClick = async () => {
     setCurrentRcvr(chatInfo?.otherUser);
@@ -53,13 +56,24 @@ const ShowCard = ({ chatInfo }) => {
             <h1 className={`text-xl ${theme === "light" ? "text-black" : "text-white"} tracking-wide`}>{chatInfo?.otherUser?.username}</h1>
           </div>
           <div className={`w-fit max-w-28 text-xs font-normal tracking-wider`}>
-            <p>{formatChatTime(chatInfo?.lastMessage.sentAt)}</p>
+            <p>{formatChatTime(chatInfo?.lastMessage?.sentAt)}</p>
           </div>
         </div>
 
         <div className="w-full flex items-center gap-2">
           <div>
-            <p className="text-base">??</p>
+            <p className="text-base">
+                  {/** todo: update message status in conversation model also as it updates through websockets for normal messages */}
+                  {chatInfo?.lastMessage?.messageStatus === 'seen' ? (
+                    <p><IoCheckmarkDoneSharp className="text-blue-500" /></p>
+                  ) : chatInfo?.lastMessage?.messageStatus === 'delivered' ? (
+                    <p><IoCheckmarkDoneSharp /></p>
+                  ) : chatInfo?.lastMessage?.messageStatus === 'pending' ? (
+                    <p><FaRegClock /></p>
+                  ) : (
+                    <p><IoCheckmarkSharp /></p>
+                  )} 
+            </p>
           </div>
           <div><p className={`text-base ${theme === "light" ? "text-[#666666]" : "text-[#A2A295]"}`}>{chatInfo?.lastMessage?.content}</p></div>
         </div>
