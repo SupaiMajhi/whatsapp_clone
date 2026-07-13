@@ -1,12 +1,11 @@
-import { Routes, Route, Navigate, useNavigate, redirect } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 //components imports
 import HomePage from './pages/HomePage.jsx';
 import AuthPage from "./pages/AuthPage.jsx";
 import ChatPage from "./pages/ChatPage.jsx";
 import StatusPage from "./pages/StatusPage.jsx";
-import SettingsPage from "./pages/SettingsPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import Login from "./components/Login.jsx";
 import Signup from "./components/Signup.jsx";
@@ -27,12 +26,9 @@ function App() {
   const handleCheckVT = useAuthStore((state) => state.handleCheckVT);
   const isProfileComplete = useAppStore((state) => state.isProfileComplete);
   const redirectURL = useGlobalStore((state) => state.redirectURL);
-  const setRedirectURL = useGlobalStore((state) => state.setRedirectURL);
   const theme = useGlobalStore((state) => state.theme);
 
   const navigate = useNavigate();
-
-  console.log(isAuthenticated, otp_token);
 
   useEffect(() => {
     if(redirectURL){

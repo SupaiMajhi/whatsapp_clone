@@ -21,10 +21,10 @@ const InputBox = () => {
   };
 
   return (
-    <div className={`absolute bottom-5 w-[calc(100%-5%)] flex justify-center items-center gap-2 px-4 rounded-4xl ${theme === "light" ? "bg-hoverLightBg" : "bg-hoverDarkBg"}`}>
-      <div className="flex justify-center items-center gap-5">
-        <PlusIcon className="icon text-white" />
-        <StickerIcon className="icon text-white" />
+    <div className={`absolute bottom-1 w-[calc(100%-1%)] h-12 flex justify-center items-center gap-2 px-2 rounded-4xl ${theme === "light" ? "bg-hoverLightBg" : "bg-hoverDarkBg"}`}>
+      <div className="flex justify-center items-center gap-2">
+        <PlusIcon className="nav-icon" />
+        <StickerIcon className="nav-icon" />
       </div>
       <div className="grow">
         <input

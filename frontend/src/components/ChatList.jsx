@@ -4,20 +4,21 @@ import ShowCard from "./ShowCard";
 
 // Store imports
 import useUserStore from "../store/userStore.js";
+import useMessageStore from "../store/messageStore.js";
 
-const 
-ChatList = () => {
+const ChatList = () => {
 
   const chatList = useUserStore((state) => state.chatList);
   const isLoading = useUserStore((state) => state.isLoading);
   const getPrevChatList = useUserStore((state) => state.getPrevChatList);
+  const messages = useMessageStore((state) => state.messages);
 
   useEffect(() => {
     async function fetch() {
       await getPrevChatList();
     }
     fetch();
-  }, []);
+  }, [messages]);
   
   if (isLoading) {
     <div className="custom-container">

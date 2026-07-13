@@ -3,7 +3,7 @@ import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import { IoCheckmarkSharp } from "react-icons/io5";
 import { FaRegClock } from "react-icons/fa6";
 
-import { formatMessageTime } from "../lib.js";
+import { formatMessageTime } from "../utils/util.js";
 import { sendMessageViaSocket } from "../utils/util.js";
 
 //store imports
@@ -27,8 +27,8 @@ const MainContent = () => {
   const observerCallback = (entries) => {
     entries.forEach(entry => {
       if(entry.isIntersecting){
-        if(!entry.target.dataset.seen === "seen"){
-          sendMessageViaSocket("markAsSeen", { data: entry.target.dataset.id });
+        if(entry.target.dataset.seen !== "seen"){
+          sendMessageViaSocket("markAsSeen", { data: [entry.target.dataset.id] });
         }
       }
       observerRef.current.unobserve(entry.target);
@@ -78,7 +78,7 @@ const MainContent = () => {
       ref={rootRef}
       className={`w-full h-full flex flex-col px-18 pt-5 pb-8 text-sm overflow-x-hidden overflow-y-auto ${theme === "light" ? "text-black" : "text-white"}`}
     >
-      {/** for now default contentType is "text", in future i will implement other contentType */}
+      {/** todo: for now default contentType is "text", in future i will implement other contentType */}
       {messages.map((message) =>
         message?.contentType === "text" ? (
           message?.receiver === userInfo.id ? (
@@ -98,8 +98,8 @@ const MainContent = () => {
                     <p>{formatMessageTime(message?.seenAt)}</p>
                   ) : message?.deliveredAt ? (
                     <p>{formatMessageTime(message?.deliveredAt)}</p>
-                  ) : message?.sentAt ? (
-                    <p>{formatMessageTime(message?.sentAt)}</p>
+                  ) : message?.createdAt ? (
+                    <p>{formatMessageTime(message?.createdAt)}</p>
                   ) : (
                     <p>...</p>
                   )}
@@ -118,8 +118,8 @@ const MainContent = () => {
                     <p>{formatMessageTime(message?.seenAt)}</p>
                   ) : message?.deliveredAt ? (
                     <p>{formatMessageTime(message?.deliveredAt)}</p>
-                  ) : message?.sentAt ? (
-                    <p>{formatMessageTime(message?.sentAt)}</p>
+                  ) : message?.createdAt ? (
+                    <p>{formatMessageTime(message?.createdAt)}</p>
                   ) : (
                     <p></p>
                   )}

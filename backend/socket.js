@@ -59,7 +59,7 @@ export const sendViaSocket = (id, msgType, content) => {
     if(ws?.readyState === WebSocket.OPEN){
         ws.send(JSON.stringify({
             type: msgType,
-            content
+            content,
         }));
     }
 }

@@ -10,7 +10,7 @@ export const retrieveIdFromReq = async (req) => {
         if(!auth_token) return null;
         const isVerified = jwt.verify(auth_token, process.env.JWT_SECRET_KEY);
         if(!isVerified) return null;
-        const user = await User.findOne({ phoneNumber: isVerified.phone });
+        const user = await User.findOne({ phone: isVerified.phone }).select("_id");
         if(!user) return null;
         return user.id;
     } catch(err){

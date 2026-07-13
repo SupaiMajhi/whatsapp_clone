@@ -1,8 +1,9 @@
-import { create } from 'zustand';
-import axios from 'axios';
+import { create } from "zustand";
+import axios from "axios";
 
-import useGlobalStore from "./globalStore.js"
-import useAppStore from "./appStore.js"
+import useGlobalStore from "./globalStore.js";
+import useAppStore from "./appStore.js";
+import useUserStore from "./userStore.js";
 
 const useMessageStore = create((set, get) => ({
   messages: [],
@@ -38,25 +39,29 @@ const useMessageStore = create((set, get) => ({
     }
   },
 
-  sendAMessage: async(id, payload) => {
-    try{
-        set({ isLoading: true });
-        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/message/send/${id}`, {
-            content: {
-                textContent: payload
-            }
-        },{
-            withCredentials: true
-        });
-        get().setMessages(response.data.data.newMsg);
-        useGlobalStore.setState({ message: response.data.message });
-    }catch(error){
-        useAppStore.setState({ errorMessage: error.response.data.error.message });
-        console.log("Error in sendAMessage ", error);
-    }finally{
-        set({ isLoading: false });
+  sendAMessage: async (id, payload) => {
+    try {
+      set({ isLoading: true });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/message/send/${id}`,
+        {
+          content: {
+            textContent: payload,
+          },
+        },
+        {
+          withCredentials: true,
+        },
+      );
+      get().setMessages(response.data.data.newMsg);
+      useGlobalStore.setState({ message: response.data.message });
+    } catch (error) {
+      useAppStore.setState({ errorMessage: error.response.data.error.message });
+      console.log("Error in sendAMessage ", error);
+    } finally {
+      set({ isLoading: false });
     }
-  } 
+  },
 }));
 
 export default useMessageStore;
