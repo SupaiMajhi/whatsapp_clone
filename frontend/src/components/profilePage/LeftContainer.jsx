@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AnimatePresence } from "motion/react";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 //store imports
 import useAppStore from "../../store/appStore.js";
@@ -72,7 +73,16 @@ const LeftContainer = () => {
 
         <div className="overflow-y-auto w-full h-full pl-2 flex flex-col justify-start items-center">
           {/** todo: avatar should be conditionally rendered */}
-          <Avatar url={userInfo.profilePic} className="w-32 h-32 mt-28 mb-20" />
+          {userInfo?.profilePic ? (
+            <Avatar
+              url={userInfo.profilePic}
+              className="w-32 h-32 mt-28 mb-20"
+            />
+          ) : (
+            <AccountCircleIcon
+              className={`text-[150px]! mt-28 mb-20 ${theme === "light" ? "text-txtDark" : "text-txtLight"}`}
+            />
+          )}
           {profileData.map((d, i) => (
             <ProfileCard
               key={i}

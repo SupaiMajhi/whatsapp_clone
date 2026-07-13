@@ -9,7 +9,7 @@ const ProfileCard = ({ handleOnClick, icon, heading, para }) => {
   return (
     <button
       onClick={() => handleOnClick(true)}
-      className={`w-full h-18 px-5 py-2 rounded-xl flex justify-start items-center space-x-5 ${theme === "dark" ? "hover:bg-darkNav text-white" : "hover:bg-lightNav text-black"}`}
+      className={`w-full h-18 px-5 py-2 rounded-xl flex justify-start items-center space-x-5 cursor-pointer ${theme === "dark" ? "hover:bg-darkNav text-white" : "hover:bg-lightNav text-black"}`}
     >
       <div className="w-max">
         <Component className={`size-6 ${theme === "dark" ? "text-neutral-400" : "text-neutral-600/90"}`} />

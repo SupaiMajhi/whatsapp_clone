@@ -1,14 +1,11 @@
-
-const Avatar = ({ className = '', url}) => {
+const Avatar = ({ className = "", url }) => {
   return (
-    <div>
-      <div className="avatar">
-        <div className={`rounded-full ${className}`}>
-          <img src={url} className="rounded-inherit w-full h-full object-cover" />
-        </div>
+    <div className="avatar">
+      <div className={`rounded-full ${className}`}>
+        <img src={url} className="rounded-inherit w-full h-full object-cover" />
       </div>
     </div>
   );
-}
+};
 
 export default Avatar;
