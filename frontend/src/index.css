@@ -109,6 +109,10 @@ html, body {
 }
 
 @layer utilities {
+    .screen {
+        @apply w-screen h-screen;
+    }
+    
     .flex-center {
         display: flex;
         justify-content: center;
@@ -133,6 +137,14 @@ html, body {
     }
 
     .nav-active {
-        @apply size-10 rounded-full flex justify-center items-center cursor-pointer bg-white/10 hover:bg-white/20;
+        @apply size-10 rounded-full flex justify-center items-center cursor-pointer;
+    }
+
+    .home-mobile {
+        @apply size-full flex flex-col lg:hidden;
+    }
+
+    .nav-bar_mobile {
+        @apply w-fit rounded-4xl shadow-sm/60 flex justify-between items-center gap-10 px-5 py-2 md:justify-center md:space-x-20 lg:hidden;
     }
 }
