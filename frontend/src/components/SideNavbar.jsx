@@ -22,10 +22,11 @@ const Navbar = () => {
     const [isActive, setIsActive] = useState("chat");
 
   return (
-    <div className={`size-full`}>
+    <div className={`size-full ${theme === "dark" ? "bg-darkNav" : "bg-lightNav"}`}>
+
       {/** Mobile */}
       <div
-        className={`size-full flex-center ${theme === "dark" ? "bg-darkNav" : "bg-lightNav"}`}
+        className={`size-full flex justify-center items-center lg:hidden`}
       >
         <div
           className={`nav-bar_mobile ${theme === "dark" ? "bg-black/10 shadow-white/30" : "bg-light/10 shadow-black/50"}`}
@@ -67,59 +68,103 @@ const Navbar = () => {
         </div>
       </div>
 
+
       {/** Laptop */}
-      {/**<div className="size-full hidden lg:block flex-col items-center gap-3 bg-red-600">
-        <NavLink
-          to={"/"}
-          onClick={() => setIsActive("chat")}
-          className={`${isActive === "chat" ? "nav-active" : "nav-icon"}`}
-        >
-          {({ isActive }) =>
-            isActive ? (
-              <ActiveChatIcon
-                className={`${theme === "light" ? "text-dark" : "text-light"}`}
-              />
+      <div className="nav-bar">
+        <div className="flex flex-col justify-center items-center space-y-5">
+         {
+          navData.toReversed().map((d, i) => (
+            <NavLink
+              key={i} 
+              to={d.to}
+              onClick={() => setIsActive(d.value)}
+              className={`${isActive === d.value ? `nav-active ${theme === "dark" ? "bg-white/10 hover:bg-white/20" : "bg-black/5 hover:bg-black/10"}` : "nav-icon"}`}
+            >
+              {({ isActive }) =>
+                isActive ? (
+                  <d.active
+                    className={`${theme === "light" ? "text-dark" : "text-light"}`}
+                  />
+                ) : (
+                  <d.normal
+                    className={`${theme === "light" ? "text-dark" : "text-light"}`}
+                  />
+                )
+              }
+            </NavLink>
+          ))
+         } 
+        </div>
+
+        <div className="flex-center flex-col space-y-5">
+          <NavLink
+            to={"/profile"}
+            onClick={() => setIsActive("profile")}
+            className={`${isActive === "profile" ? `nav-active ${theme === "dark" ? "bg-white/10 hover:bg-white/20" : "bg-black/5 hover:bg-black/10"}` : "nav-icon"}`}
+          >
+            {userInfo?.profilePic ? (
+              <Avatar url={userInfo?.profilePic} className="w-7 h-7" />
             ) : (
-              <ChatIcon
-                className={`${theme === "light" ? "text-dark" : "text-light"}`}
+              <AccountCircleIcon
+                className={`text-[35px]! ${theme === "light" ? "text-txtDark" : "text-txtLight"}`}
               />
-            )
-          }
-        </NavLink>
-        <NavLink
-          to={"/status"}
-          onClick={() => setIsActive("status")}
-          className={`${isActive === "status" ? "nav-active" : "nav-icon"}`}
-        >
-          {({ isActive }) =>
-            isActive ? (
-              <ActiveStatusIcon
-                className={`${theme === "light" ? "text-dark" : "text-light"}`}
-              />
-            ) : (
-              <StatusIcon
-                className={`${theme === "light" ? "text-dark" : "text-light"}`}
-              />
-            )
-          }
-        </NavLink>
+            )}
+          </NavLink>
+        </div>
       </div>
 
-      <div className="flex-center flex-col gap-5">
-        <NavLink
-          to={"/profile"}
-          onClick={() => setIsActive("profile")}
-          className={`${isActive === "profile" ? "nav-active" : "nav-icon"}`}
-        >
-          {userInfo?.profilePic ? (
-            <Avatar url={userInfo?.profilePic} className="w-7 h-7" />
-          ) : (
-            <AccountCircleIcon
-              className={`text-[35px]! ${theme === "light" ? "text-txtDark" : "text-txtLight"}`}
-            />
-          )}
-        </NavLink>
-      </div>*/}
+        {/**<div>
+          <NavLink
+            to={"/"}
+            onClick={() => setIsActive("chat")}
+            className={`${isActive === "chat" ? "nav-active" : "nav-icon"}`}
+          >
+            {({ isActive }) =>
+              isActive ? (
+                <ActiveChatIcon
+                  className={`${theme === "light" ? "text-dark" : "text-light"}`}
+                />
+              ) : (
+                <ChatIcon
+                  className={`${theme === "light" ? "text-dark" : "text-light"}`}
+                />
+              )
+            }
+          </NavLink>
+          <NavLink
+            to={"/status"}
+            onClick={() => setIsActive("status")}
+            className={`${isActive === "status" ? "nav-active" : "nav-icon"}`}
+          >
+            {({ isActive }) =>
+              isActive ? (
+                <ActiveStatusIcon
+                  className={`${theme === "light" ? "text-dark" : "text-light"}`}
+                />
+              ) : (
+                <StatusIcon
+                  className={`${theme === "light" ? "text-dark" : "text-light"}`}
+                />
+              )
+            }
+          </NavLink>
+        </div>
+
+        <div className="flex-center flex-col gap-5">
+          <NavLink
+            to={"/profile"}
+            onClick={() => setIsActive("profile")}
+            className={`${isActive === "profile" ? "nav-active" : "nav-icon"}`}
+          >
+            {userInfo?.profilePic ? (
+              <Avatar url={userInfo?.profilePic} className="w-7 h-7" />
+            ) : (
+              <AccountCircleIcon
+                className={`text-[35px]! ${theme === "light" ? "text-txtDark" : "text-txtLight"}`}
+              />
+            )}
+          </NavLink>
+        </div>*/}
     </div>
   );
 }

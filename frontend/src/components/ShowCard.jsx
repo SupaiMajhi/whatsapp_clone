@@ -62,7 +62,7 @@ const ShowCard = ({ chatInfo }) => {
 
         <div className="w-full flex items-center gap-2">
           <div>
-            <p className="text-base">
+            <div className="text-base">
                   {/** todo: update message status in conversation model also as it updates through websockets for normal messages */}
                   {chatInfo?.lastMessage?.messageStatus === 'seen' ? (
                     <p><IoCheckmarkDoneSharp className="text-blue-500" /></p>
@@ -73,7 +73,7 @@ const ShowCard = ({ chatInfo }) => {
                   ) : (
                     <p><IoCheckmarkSharp /></p>
                   )} 
-            </p>
+            </div>
           </div>
           <div><p className={`text-base ${theme === "light" ? "text-[#666666]" : "text-[#A2A295]"}`}>{chatInfo?.lastMessage?.content}</p></div>
         </div>

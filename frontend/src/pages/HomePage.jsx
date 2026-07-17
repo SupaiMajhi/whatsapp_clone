@@ -26,25 +26,31 @@ const HomePage = () => {
   }, [])
 
   return (
-    <div className="w-screen h-screen flex-center">
-      <div className="w-full h-full flex-center">
-        {/**-----Overlay----- */}
-        {
-          <AnimatePresence>
-            {showOverlay ? (
-              <Overlay />
-            ) : null}
-          </AnimatePresence>
-        }
-        <div className="basis-[3.5vw] max-w-[3.5vw] h-full">
+    <div className="screen">
+
+      {/** Mobile */}
+      <div className="home-mobile">
+        <div className="flex-1 h-[calc(100%-66px)] w-full">
+          Outlet
+        </div>
+
+        <Separator className="w-full h-0.5" />
+
+        <div className="h-16 w-full flex-center">
+          <SideNavbar />
+        </div>
+      </div>
+
+      {/** Laptop */}
+      <div className="home">
+        <div className="w-18 h-full">
           <SideNavbar />
         </div>
 
-        {/**-----SEPARATOR----*/}
-        <Separator />
+        <Separator className="w-0.5 h-full" />
 
-        <div className="basis-[96.5vw] max-w-[96.5vw] h-full overflow-hidden">
-          <Outlet />
+        <div className="flex-1 h-full">
+          Outlet
         </div>
       </div>
     </div>

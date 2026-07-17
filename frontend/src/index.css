@@ -110,7 +110,7 @@ html, body {
 
 @layer utilities {
     .screen {
-        @apply w-screen h-screen;
+        @apply box-border w-screen h-screen overflow-hidden;
     }
     
     .flex-center {
@@ -141,7 +141,15 @@ html, body {
     }
 
     .home-mobile {
-        @apply size-full flex flex-col lg:hidden;
+        @apply size-full flex flex-col lg:hidden overflow-hidden;
+    }
+
+    .home {
+        @apply size-full hidden lg:flex lg:justify-center lg:items-center overflow-hidden;
+    }
+
+    .nav-bar {
+        @apply size-full hidden lg:flex flex-col justify-between items-center p-3 overflow-hidden;
     }
 
     .nav-bar_mobile {
