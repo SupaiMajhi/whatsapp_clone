@@ -31,7 +31,7 @@ const HomePage = () => {
       {/** Mobile */}
       <div className="home-mobile">
         <div className="flex-1 h-[calc(100%-66px)] w-full">
-          Outlet
+          <Outlet />
         </div>
 
         <Separator className="w-full h-0.5" />
@@ -43,14 +43,14 @@ const HomePage = () => {
 
       {/** Laptop */}
       <div className="home">
-        <div className="w-18 h-full">
+        <div className="w-16 h-full">
           <SideNavbar />
         </div>
 
         <Separator className="w-0.5 h-full" />
 
         <div className="flex-1 h-full">
-          Outlet
+          <Outlet />
         </div>
       </div>
     </div>
