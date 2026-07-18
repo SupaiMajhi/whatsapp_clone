@@ -1,11 +1,11 @@
 import useGlobalStore from "../store/globalStore.js";
 
-function Separator({ className="" }){
+function Separator(){
     const theme = useGlobalStore((state) => state.theme);
     
     return(
       <div
-        className={`${className} ${theme === "light" ? "bg-[#DEDCDA]" : "bg-hoverDarkBg"}`}
+        className={`w-0.5 h-full ${theme === "light" ? "bg-[#DEDCDA]" : "bg-hoverDarkBg"}`}
       ></div>
     );
 }

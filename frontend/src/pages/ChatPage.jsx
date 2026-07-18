@@ -24,21 +24,6 @@ const ChatPage = () => {
 
   return (
     <div className={`relative custom-container ${theme === "light" ? "bg-light text-dark" : "bg-dark text-white"}`}>
-
-      {/** Mobile */}
-      <div className="mobile-container">
-        <h1 className="mobile-header mb-2">Chats</h1>
-
-        <div className="input-container px-0">
-          <Input placeholder="Search a chat" />
-        </div>
-
-        {/** todo: render a default component if chatlist length is 0 */}
-        <ChatList />
-      </div>
-
-
-      {/** Laptop */}
       <div className="chat-laptop">
         <div className="chat_left">
           <div
