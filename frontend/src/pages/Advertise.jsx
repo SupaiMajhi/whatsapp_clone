@@ -10,7 +10,7 @@ const Advertise = () => {
 
   return (
     <div className={`custom-container flex-col select-none ${theme === "light" ? "bg-lightNav text-txtDark" : "bg-dark text-txtLight"}`}>
-      <div className="flex-center flex-col">
+      <div className="px-10 flex-center flex-col">
         <div className="w-57.5 mb-5">
           <NoChatLogo />
         </div>

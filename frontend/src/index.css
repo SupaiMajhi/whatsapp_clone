@@ -83,8 +83,16 @@ html, body {
 }
 
 @layer components {
+    .screen {
+        @apply box-border w-screen h-screen overflow-hidden;
+    }
+
     .custom-container {
         @apply w-full h-full flex justify-center items-center;
+    }
+
+    .right-container {
+        @apply flex-1 h-full;
     }
 
     .screen-container {
@@ -96,7 +104,7 @@ html, body {
     }
 
     .c {
-        @apply w-full h-20 max-h-20 flex justify-start items-center gap-3 pl-3 transition-colors duration-75 ease-in rounded-2xl cursor-pointer; 
+        @apply w-full h-18 max-h-18 flex justify-start items-center gap-3 pl-3 py-3 xl:py-4 transition-colors duration-75 ease-in rounded-2xl cursor-pointer; 
     }
 
     .home {
@@ -112,7 +120,7 @@ html, body {
     }
 
     .chat_left {
-        @apply relative w-104 xl:w-136 h-full pl-2 pr-4 pt-3 flex flex-col justify-start items-center select-none;
+        @apply w-140 h-full pl-2 pr-5 pt-3 flex flex-col justify-start items-center select-none;
     }
 
     .chat_right {
@@ -120,27 +128,23 @@ html, body {
     }
 
     .chat_header {
-        @apply w-full h-[calc(100%-95%)] max-h-[calc(100%-95%)] flex items-center justify-between pl-2 mb-4;
+        @apply w-full h-[calc(100%-85%)] max-h-[calc(100%-85%)] flex flex-col items-center space-y-3 px-3 pt-1;
+    }
+
+    .heading_container {
+        @apply w-full flex justify-between items-center;
     }
 
     .chat-main {
         @apply w-full h-[calc(100%-5%)] max-h-[calc(100%-5%)] flex flex-col items-center;
     }
 
-    .input-container {
-        @apply w-full h-[calc(100%-90%)] px-3;
-    }
-
-    .chatlist-container {
-        @apply w-full h-[calc(100%-10%)] max-h-[calc(100%-10%)] overflow-y-auto overflow-x-hidden;
+    .chatlist_container {
+        @apply w-full h-[calc(100%-15%)] max-h-[calc(100%-15%)] overflow-y-auto overflow-x-hidden;
     }
 }
 
-@layer utilities {
-    .screen {
-        @apply box-border w-screen h-screen overflow-hidden;
-    }
-    
+@layer utilities { 
     .flex-center {
         @apply flex justify-center items-center;
     }
@@ -159,7 +163,7 @@ html, body {
     }
 
     .nav-icon {
-        @apply flex justify-center items-center size-10 p-2 rounded-full cursor-pointer hover:bg-white/10;
+        @apply flex justify-center items-center size-10 p-2 rounded-full cursor-pointer;
     }
 
     .nav-active {

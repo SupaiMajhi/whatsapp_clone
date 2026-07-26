@@ -4,7 +4,7 @@ import { useEffect } from "react";
 //components imports
 import HomePage from "./pages/HomePage.jsx";
 import AuthPage from "./pages/AuthPage.jsx";
-import ChatPage from "./pages/ChatPage.jsx";
+import ChatPage from "./pages/chatpage/ChatPage.jsx";
 import StatusPage from "./pages/StatusPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import Login from "./components/Login.jsx";

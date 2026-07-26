@@ -19,7 +19,7 @@ const Input = ({ className = "", placeholder, value, handleOnChange }) => {
         name="search"
         placeholder={placeholder}
         autoComplete="off"
-        className={`w-full h-full focus:outline-3 focus:outline-green-600 text-sm font-normal px-14 rounded-inherit ${theme === "dark" ? "bg-primaryBg placeholder:text-(--primary-inputTxt) text-white" : "bg-secondaryBg placeholder:text-(--secondary-inputTxt)"} ${className}`}
+        className={`w-full h-full focus:outline-3 focus:outline-green-600 text-sm font-medium px-14 rounded-inherit ${theme === "dark" ? "bg-primaryBg placeholder:text-(--primary-inputTxt) text-white" : "bg-secondaryBg placeholder:text-(--secondary-inputTxt)"} ${className}`}
       />
     </div>
   );

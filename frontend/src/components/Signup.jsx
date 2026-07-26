@@ -36,7 +36,7 @@ const Signup = () => {
   const handleOnSubmit = async (data) => {
     await handleProfileUpdate(data);
   };
-
+  
   const handleOnChange = (e) => {
     fileRegister.onChange(e);
 

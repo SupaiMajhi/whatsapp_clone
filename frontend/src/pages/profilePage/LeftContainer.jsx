@@ -7,11 +7,11 @@ import useAppStore from "../../store/appStore.js";
 import useGlobalStore from "../../store/globalStore.js";
 
 //components imports
-import Avatar from "../Avatar.jsx";
-import Input from "../Input.jsx";
-import ProfileCard from "../ProfileCard.jsx";
-import Logout from "../Logout.jsx";
-import EditProfile from "../EditProfile.jsx";
+import Avatar from "../../components/Avatar.jsx";
+import Input from "../../components/Input.jsx";
+import ProfileCard from "../../components/ProfileCard.jsx";
+import Logout from "../../components/Logout.jsx";
+import EditProfile from "../../components/EditProfile.jsx";
 
 const LeftContainer = () => {
   const userInfo = useAppStore((state) => state.userInfo);
@@ -61,7 +61,7 @@ const LeftContainer = () => {
       </AnimatePresence>
 
       <div
-        className={`relative left-container select-none ${theme === "dark" ? "bg-(--secondary-black)" : "bg-white"}`}
+        className={`relative w-full h-full select-none ${theme === "dark" ? "bg-(--secondary-black)" : "bg-white"}`}
       >
         <div className="w-full">
           <h4 className="heading4 text-white">{userInfo?.username}</h4>

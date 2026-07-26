@@ -39,12 +39,12 @@ const ShowCard = ({ chatInfo }) => {
       onClick={handleOnClick}
     >
       {/** AVATAR */}
-      <div className="w-16 h-16 flex justify-center items-center">
+      <div className="w-14 h-14 flex justify-center items-center">
         {chatInfo?.otherUser?.profilePic ? (
           <Avatar className="w-full" src={chatInfo.otherUser.profilePic} />
         ) : (
           <AccountCircleIcon
-            className={`text-[64px]! ${theme === "light" ? "text-txtDark" : "text-txtLight"}`}
+            className={`text-[60px]! ${theme === "light" ? "text-txtDark" : "text-txtLight"}`}
           />
         )}
       </div>
@@ -53,7 +53,7 @@ const ShowCard = ({ chatInfo }) => {
       <div className="grow h-full flex flex-col justify-center gap-1 pr-3">
         <div className="w-full flex">
           <div className="grow">
-            <h1 className={`text-xl ${theme === "light" ? "text-black" : "text-white"} tracking-wide`}>{chatInfo?.otherUser?.username}</h1>
+            <h1 className={`text-base font-normal ${theme === "light" ? "text-black" : "text-white"} tracking-wide`}>{chatInfo?.otherUser?.username}</h1>
           </div>
           <div className={`w-fit max-w-28 text-xs font-normal tracking-wider`}>
             <p>{formatChatTime(chatInfo?.lastMessage?.sentAt)}</p>
@@ -75,7 +75,7 @@ const ShowCard = ({ chatInfo }) => {
                   )} 
             </div>
           </div>
-          <div><p className={`text-base ${theme === "light" ? "text-[#666666]" : "text-[#A2A295]"}`}>{chatInfo?.lastMessage?.content}</p></div>
+          <div><p className={`text-sm font-medium ${theme === "light" ? "text-[#666666]" : "text-[#A2A295]"}`}>{chatInfo?.lastMessage?.content}</p></div>
         </div>
       </div>
     </div>
