@@ -10,7 +10,7 @@ const ChatBox = () => {
   const theme = useGlobalStore((state) => state.theme);
   
   return (
-    <div className={`relative w-full h-full flex flex-col justify-center items-center`}>
+    <div className={`size-full flex-center flex-col`}>
       <div className='w-full h-[calc(100%-95%)] max-h-[calc(100%-95%)]'>
         {/** HEADER */}
         <Header />

@@ -1,5 +1,5 @@
-import { motion } from "motion/react";
 import { useState, useEffect } from "react";
+import { motion } from "motion/react";
 
 //store imports
 import useGlobalStore from "../store/globalStore.js";
@@ -53,11 +53,11 @@ const NewChat = ({ setShowNewChat }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: -100 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -100 }}
-      transition={{ type: "tween", duration: 0.3 }}
-      className={`absolute inset-0 z-10 left-container ${theme === "dark" ? "bg-dark" : "bg-light"}`}
+      className={`absolute z-20 inset-0 left-container ${theme === "dark" ? "bg-dark" : "bg-light"}`}
+      initial={{ x: "-100%" }}
+      animate={{ x: 0 }}
+      exit={{ x: "-100%" }}
+      transition={{ ease: "easeInOut", duration: 0.25 }}
     >
       <div className="w-full flex items-center gap-2 mb-5">
         <BackButton

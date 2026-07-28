@@ -24,20 +24,6 @@ const dateOptions = {
   day: "2-digit",
 };
 
-export const onSeen = (messagesIds) => {
-  const socket = useSocketStore.getState()?.socket;
-  if (socket?.readyState === WebSocket.OPEN) {
-    socket?.send(
-      JSON.stringify({
-        type: "markAsSeen",
-        content: {
-          data: messagesIds,
-        },
-      }),
-    );
-  }
-};
-
 export const sendMessageViaSocket = (msgType, content) => {
   const socket = useSocketStore.getState()?.socket;
   if (socket?.readyState === WebSocket.OPEN) {

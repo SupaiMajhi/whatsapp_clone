@@ -2,9 +2,9 @@ import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
 //components imports
-import HomePage from './pages/HomePage.jsx';
+import HomePage from "./pages/HomePage.jsx";
 import AuthPage from "./pages/AuthPage.jsx";
-import ChatPage from "./pages/ChatPage.jsx";
+import ChatPage from "./pages/chatpage/ChatPage.jsx";
 import StatusPage from "./pages/StatusPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import Login from "./components/Login.jsx";
@@ -17,7 +17,6 @@ import VerifyScreen from "./components/VerifyScreen.jsx";
 import useAppStore from "./store/appStore.js";
 
 function App() {
-
   const isLoading = useAuthStore((state) => state.isLoading);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const otp_token = useAuthStore((state) => state.otp_token);
@@ -31,28 +30,31 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if(redirectURL){
+    if (redirectURL) {
       navigate(redirectURL);
     }
   }, [redirectURL]);
 
-
   useEffect(() => {
-    async function  doSomething() {
+    async function doSomething() {
       await handleCheckAuth();
-      if(isAuthenticated === false){
+      if (isAuthenticated === false) {
         await handleCheckVT();
       }
     }
     doSomething();
-  }, [isAuthenticated, otp_token])
+  }, [isAuthenticated, otp_token]);
 
-  if(isLoading){
-    return <CircularLoader className={`w-screen h-screen ${theme === "light" ? "bg-white text-black" : "bg-black text-white"}`} />
+  if (isLoading) {
+    return (
+      <CircularLoader
+        className={`w-screen h-screen ${theme === "light" ? "bg-white text-black" : "bg-black text-white"}`}
+      />
+    );
   }
 
   return (
-    <div className="w-screen h-screen">
+    <div className="screen">
       <Routes>
         <Route
           path="/"
@@ -85,7 +87,6 @@ function App() {
         </Route>
 
         <Route path="/auth" element={<AuthPage />}>
-          {/**check verification_token */}
           <Route
             index
             element={

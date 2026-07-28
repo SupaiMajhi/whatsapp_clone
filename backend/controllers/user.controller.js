@@ -57,10 +57,10 @@ export const setUserStatus = async (id) => {
 export const getUserStatus = async (req, res) => {
   const { userId } = req.params;
   try {
-    const response = await User.findById(userId)
-      .select("isOnline")
-      .select("lastSeen");
-    return customResponse(res, 200, "retrieve successfully.", response);
+    const response = await User.findById(userId).select("lastSeen");
+    return customResponse(res, 200, {
+      data: response
+    });
   } catch (error) {
     console.log("getUserStatus Error", error.message);
     return customResponse(res, 500, "Internal server error");

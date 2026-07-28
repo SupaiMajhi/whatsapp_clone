@@ -10,6 +10,7 @@ import { sendMessageViaSocket } from "../utils/util.js";
 import useAppStore from "../store/appStore.js";
 import useMessageStore from "../store/messageStore.js";
 import useGlobalStore from "../store/globalStore.js";
+import useUserStore from "../store/userStore.js";
 import usePageVisibility from "../hooks/usePageVisibility.js";
 
 const MainContent = () => {
@@ -17,6 +18,7 @@ const MainContent = () => {
   const messages = useMessageStore((state) => state.messages);
   const userInfo = useAppStore((state) => state.userInfo);
   const theme = useGlobalStore((state) => state.theme);
+  const currentOpenConversation = useUserStore((state) => state.currentOpenConversation);
 
   const isVisible = usePageVisibility();
   const rootRef = useRef(null);
@@ -28,7 +30,11 @@ const MainContent = () => {
     entries.forEach(entry => {
       if(entry.isIntersecting){
         if(entry.target.dataset.seen !== "seen"){
-          sendMessageViaSocket("markAsSeen", { data: [entry.target.dataset.id] });
+          sendMessageViaSocket("markAsSeen", { 
+            data: {
+              messagesIds: [entry.target.dataset.id],
+              conversationId: currentOpenConversation.conversationId,
+            }});
         }
       }
       observerRef.current.unobserve(entry.target);

@@ -2,8 +2,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
 //components imports
-import LeftContainer from "../components/profilePage/LeftContainer.jsx";
-import RightContainer from "../components/profilePage/RightContainer.jsx";
+import LeftContainer from "../pages/profilePage/LeftContainer.jsx";
+import RightContainer from "../pages/profilePage/RightContainer.jsx";
 import LogoutPopUp from "../components/LogoutPopUp.jsx";
 import Separator from "../components/Separator.jsx";
 

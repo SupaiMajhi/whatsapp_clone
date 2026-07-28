@@ -15,8 +15,8 @@ const AuthPage = () => {
   return (
     <div className="screen-container py-3 px-5 sm:px-8 bg-authBg">
       <div className="flex items-center space-x-1 text-green-500">
-        <Logo className="size-7" />
-        <TextLogo className="w-20" />
+        {/* <Logo className="size-7" /> */}
+        <TextLogo className="w-26" />
       </div>
 
       <div className="w-full h-full flex-center select-none">

@@ -12,43 +12,33 @@ import useSocketStore from "../store/socketStore.js";
 import useAppStore from "../store/appStore.js";
 
 const HomePage = () => {
-
   const connect = useSocketStore((state) => state.connect);
   const disconnect = useSocketStore((state) => state.disconnect);
   const showOverlay = useAppStore((state) => state.showOverlay);
 
   useEffect(() => {
     connect();
-    
+
     return () => {
       disconnect();
-    }
-  }, [])
+    };
+  }, []);
 
   return (
-    <div className="w-screen h-screen flex-center">
-      <div className="w-full h-full flex-center">
-        {/**-----Overlay----- */}
-        {
-          <AnimatePresence>
-            {showOverlay ? (
-              <Overlay />
-            ) : null}
-          </AnimatePresence>
-        }
-        <div className="basis-[3.5vw] max-w-[3.5vw] h-full">
+    <div className="screen">
+      <div className="home">
+        <div className="w-16 h-full">
           <SideNavbar />
         </div>
 
-        {/**-----SEPARATOR----*/}
         <Separator />
 
-        <div className="basis-[96.5vw] max-w-[96.5vw] h-full overflow-hidden">
+        <div className="flex-1 h-full">
           <Outlet />
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default HomePage;

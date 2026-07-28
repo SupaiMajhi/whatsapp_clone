@@ -35,7 +35,7 @@ const useUserStore = create((set) => ({
 
     getUserStatus: async (userId) => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/get-status/${userId}`, {
+            const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/status/${userId}`, {
                 withCredentials: true
             });
             set({ userStatus: response.data.data });

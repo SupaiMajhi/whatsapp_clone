@@ -83,16 +83,20 @@ html, body {
 }
 
 @layer components {
-    .left-container {
-        @apply basis-[30vw] h-full py-2 px-3 flex flex-col items-center;
-    }
-
-    .right-container {
-        @apply basis-[70vw] h-full;
+    .screen {
+        @apply box-border w-screen h-screen overflow-hidden;
     }
 
     .custom-container {
         @apply w-full h-full flex justify-center items-center;
+    }
+
+    .left-container {
+        @apply w-104 xl:w-140 h-full p-3 flex flex-col items-center;
+    }
+
+    .right-container {
+        @apply flex-1 h-full;
     }
 
     .screen-container {
@@ -104,15 +108,49 @@ html, body {
     }
 
     .c {
-        @apply w-full h-20 max-h-20 flex justify-start items-center gap-3 pl-3 transition-colors duration-75 ease-in rounded-2xl cursor-pointer; 
+        @apply w-full h-18 max-h-18 flex justify-start items-center gap-3 pl-3 py-3 xl:py-4 transition-colors duration-75 ease-in rounded-2xl cursor-pointer; 
+    }
+
+    .home {
+        @apply size-full flex justify-center items-center overflow-hidden;
+    }
+
+    .nav-bar {
+        @apply size-full flex flex-col justify-between items-center p-3 overflow-hidden;
+    }
+
+    .chat-laptop {
+        @apply size-full flex justify-start items-center;
+    }
+
+    .chat_left {
+        @apply relative w-104 xl:w-140 h-full pl-2 pr-5 pt-3 flex flex-col justify-start items-center select-none;
+    }
+
+    .chat_right {
+        @apply basis-[calc(100%-30%)] max-w-[calc(100%-30%)] h-full;
+    }
+
+    .chat_header {
+        @apply w-full h-[calc(100%-85%)] max-h-[calc(100%-85%)] flex flex-col items-center space-y-3 pl-3 pt-1;
+    }
+
+    .heading_container {
+        @apply w-full flex justify-between items-center;
+    }
+
+    .chat-main {
+        @apply w-full h-[calc(100%-5%)] max-h-[calc(100%-5%)] flex flex-col items-center;
+    }
+
+    .chatlist_container {
+        @apply w-full h-[calc(100%-15%)] max-h-[calc(100%-15%)] overflow-y-auto overflow-x-hidden;
     }
 }
 
-@layer utilities {
+@layer utilities { 
     .flex-center {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        @apply flex justify-center items-center;
     }
 
     .rounded-inherit {
@@ -129,10 +167,11 @@ html, body {
     }
 
     .nav-icon {
-        @apply flex justify-center items-center size-10 p-2 rounded-full cursor-pointer hover:bg-white/10;
+        @apply flex justify-center items-center size-10 p-2 rounded-full cursor-pointer;
     }
 
     .nav-active {
-        @apply size-10 rounded-full flex justify-center items-center cursor-pointer bg-white/10 hover:bg-white/20;
+        @apply size-10 rounded-full flex justify-center items-center cursor-pointer;
     }
+
 }
