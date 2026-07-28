@@ -8,7 +8,7 @@ import ChatList from "../../components/ChatList.jsx";
 //store imports
 import useGlobalStore from "../../store/globalStore.js";
 
-const LeftSide = () => {
+const LeftSide = ({ setShowNewChat }) => {
 
   const theme = useGlobalStore((state) => state.theme);
 
@@ -19,7 +19,10 @@ const LeftSide = () => {
           <Logo className={`${theme === "dark" ? "text-white" : "text-[#1DAA61]"}`} />
 
           <div className="flex-center space-x-4">
-            <NewChatIcon className={`nav-icon ${theme === "dark" ? "hover:bg-white/10" : "hover:bg-black/5"}`}  />
+            <NewChatIcon 
+              className={`nav-icon ${theme === "dark" ? "hover:bg-white/10" : "hover:bg-black/5"}`}  
+              onClick={() => setShowNewChat(true)}
+            />
             <MenuIcon className={`nav-icon ${theme === "dark" ? "hover:bg-white/10" : "hover:bg-black/5"}`} />
           </div>
         </div>

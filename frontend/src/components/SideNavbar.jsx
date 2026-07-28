@@ -22,7 +22,7 @@ const Navbar = () => {
 
   return (
     <div
-      className={`size-full ${theme === "dark" ? "bg-darkNav" : "bg-lightNav"}`}
+      className={`relative z-50 size-full ${theme === "dark" ? "bg-darkNav" : "bg-lightNav"}`}
     >
       <div className="nav-bar">
         <div className="flex flex-col justify-center items-center space-y-5">

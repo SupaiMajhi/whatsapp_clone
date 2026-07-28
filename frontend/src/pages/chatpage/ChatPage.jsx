@@ -5,6 +5,7 @@ import { useState } from "react";
 import LeftSide from "./LeftSide.jsx";
 import RightSide from "./RightSide.jsx";
 import Separator from "../../components/Separator.jsx";
+import NewChat from "../../components/NewChat.jsx";
 
 //store imports
 import useGlobalStore from "../../store/globalStore.js";
@@ -14,11 +15,17 @@ const ChatPage = () => {
   const [showNewChat, setShowNewChat] = useState(false);
 
   return (
-    <div className={`custom-container ${theme === "dark" ? "bg-dark text-white" : "bg-light text-dark"}`}>
-
+    <div
+      className={`custom-container ${theme === "dark" ? "bg-dark text-white" : "bg-light text-dark"}`}
+    >
       {/** Left Side */}
       <div className="chat_left">
-        <LeftSide />
+        <AnimatePresence>
+          {showNewChat ? (
+            <NewChat setShowNewChat={setShowNewChat} />
+          ) : null}
+        </AnimatePresence>
+        <LeftSide setShowNewChat={setShowNewChat} />
       </div>
 
       {/** Separator */}

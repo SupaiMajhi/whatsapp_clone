@@ -91,6 +91,10 @@ html, body {
         @apply w-full h-full flex justify-center items-center;
     }
 
+    .left-container {
+        @apply w-104 xl:w-140 h-full p-3 flex flex-col items-center;
+    }
+
     .right-container {
         @apply flex-1 h-full;
     }
@@ -120,7 +124,7 @@ html, body {
     }
 
     .chat_left {
-        @apply w-140 h-full pl-2 pr-5 pt-3 flex flex-col justify-start items-center select-none;
+        @apply relative w-104 xl:w-140 h-full pl-2 pr-5 pt-3 flex flex-col justify-start items-center select-none;
     }
 
     .chat_right {
@@ -128,7 +132,7 @@ html, body {
     }
 
     .chat_header {
-        @apply w-full h-[calc(100%-85%)] max-h-[calc(100%-85%)] flex flex-col items-center space-y-3 px-3 pt-1;
+        @apply w-full h-[calc(100%-85%)] max-h-[calc(100%-85%)] flex flex-col items-center space-y-3 pl-3 pt-1;
     }
 
     .heading_container {

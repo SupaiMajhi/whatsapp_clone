@@ -53,11 +53,11 @@ const NewChat = ({ setShowNewChat }) => {
 
   return (
     <motion.div
-
-      className={`absolute inset-0 ${theme === "dark" ? "bg-dark" : "bg-light"}`}
-      initial={{ x: "100%" }}
+      className={`absolute z-20 inset-0 left-container ${theme === "dark" ? "bg-dark" : "bg-light"}`}
+      initial={{ x: "-100%" }}
       animate={{ x: 0 }}
-      transition={{ ease: "easeInOut", duration: 0.3 }}
+      exit={{ x: "-100%" }}
+      transition={{ ease: "easeInOut", duration: 0.25 }}
     >
       <div className="w-full flex items-center gap-2 mb-5">
         <BackButton
