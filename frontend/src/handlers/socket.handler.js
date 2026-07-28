@@ -77,11 +77,27 @@ export const handleOnNewMsg = (data) => {
   }
   messagesIds.push(lastMessage._id);
   sendMessageViaSocket("markAsDelivered", {
-    data: messagesIds,
+    data: {
+      messagesIds,
+      conversationId: found._id,
+    },
   });
 };
 
 export const handleDeliveredMsg = (data) => {
+  useUserStore.setState((state) => ({
+    chatList: state.chatList.map(c => c._id === data.conversationId ? 
+      { 
+        ...c, 
+        lastMessage: {
+          ...c.lastMessage,
+          messageStatus: data.messageStatus,
+          deliveredAt: data.deliveredAt,
+        } 
+      } 
+      : c
+    )
+  }))
   if (useUserStore.getState().currentOpenConversation.conversationId === data.conversationId) {
     useMessageStore.setState((state) => ({
       messages: state.messages.map((m) =>
@@ -98,8 +114,7 @@ export const handleDeliveredMsg = (data) => {
 };
 
 export const handleSeenMsg = (data) => {
-  if (useUserStore.getState().currentOpenConversation.conversationId === data.conversationId
-  ) {
+  if (useUserStore.getState().currentOpenConversation.conversationId === data.conversationId) {
     useMessageStore.setState((state) => ({
       messages: state.messages.map((m) =>
         m._id === data.id

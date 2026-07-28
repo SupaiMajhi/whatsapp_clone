@@ -154,7 +154,7 @@ const useAuthStore = create((set) => ({
     try {
       set({ isLoading: true });
       const res = await axios.patch(
-        `${import.meta.env.VITE_BASE_URL}/auth/update`,
+        `${import.meta.env.VITE_BASE_URL}/user/update`,
         {
           content: {
             username: data.username,
