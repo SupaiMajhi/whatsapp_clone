@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 
 import Message from "../models/message.model.js";
 import Conversation from "../models/conversation.model.js";
-import { sendViaSocket } from "../socket.js"
+import { sendViaSocket, sendBothViaSocket } from "../socket.js"
+import { sendMsgHandler } from "../controllers/message.controller.js";
 
 
 export const onDelivered = (data) => {
@@ -76,4 +77,13 @@ export const onSeen = (data) => {
         }   
     }
     return;
+}
+
+export const handle_new_message = async(sender, data) => {
+    //validate message body on backend
+    const response = await sendMsgHandler(sender, data);
+    sendBothViaSocket(sender, response.newMsg.receiver, "new_message", {
+        newMsg: response.newMsg,
+        conversation: response.conversation,
+    });   
 }

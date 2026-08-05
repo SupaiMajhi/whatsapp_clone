@@ -13,7 +13,7 @@ import authMiddleware from "./middleware/auth.middleware.js";
 
 config();
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8000;
 
 export const app = express();
 export const server = http.createServer(app);

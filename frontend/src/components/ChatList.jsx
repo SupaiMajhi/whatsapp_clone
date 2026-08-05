@@ -18,7 +18,7 @@ const ChatList = () => {
       await getPrevChatList();
     }
     fetch();
-  }, [messages]);
+  }, []);
   
   if (isLoading) {
     <div className="custom-container">

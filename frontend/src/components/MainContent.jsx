@@ -29,7 +29,7 @@ const MainContent = () => {
   const observerCallback = (entries) => {
     entries.forEach(entry => {
       if(entry.isIntersecting){
-        if(entry.target.dataset.seen !== "seen"){
+        if(entry.target.dataset.read !== "read"){
           sendMessageViaSocket("markAsSeen", { 
             data: {
               messagesIds: [entry.target.dataset.id],
@@ -92,7 +92,7 @@ const MainContent = () => {
               className="chat chat-start" 
               key={message?._id} 
               ref={(el) => setRef(el)}
-              data-seen={message.messageStatus}
+              data-read={message.messageStatus}
               data-id={message._id}
             >
               <div className={`chat-bubble flex justify-center items-center gap-2 rounded-r-[10px] rounded-tl-[10px] ${theme === "light" ? "bg-white text-black" : "bg-[#242626] text-white"}`}>

@@ -7,50 +7,17 @@ import { customResponse } from "../utils/util.js";
 import { sendViaSocket } from "../socket.js";
 import { singleUpload } from "../services/cloudinary.js";
 
-export const sendMsgHandler = async (req, res) => {
-  const sender = req.user.id;
-  const receiver = req.params.receiverId;
-  const { textContent } = req.body.content;
-  const file = req?.file;
+export const sendMsgHandler = async (sender, payload) => {
+  const receiver = payload.receiverId;
+  const { content, content_type } = payload.message;
 
-  if (!sender || !receiver)
-    return customResponse(res, 400, {
-      error: {
-        message: "participants are required.",
-      },
-    });
-
-  if (!textContent && !file)
-    return customResponse(res, 400, {
-      error: {
-        message: "Message cannot be empty.",
-      },
-    });
+  if (!sender || !receiver || !content) {
+    return "All fields are required."
+  }
 
   let participants = [sender, receiver].sort();
-  let contentType = "text";
-  let mediaUrl = null;
 
   try {
-    if (file) {
-      //----Determaine Content Type-----
-      if (file.mimetype.startsWith("image/")) contentType = "image";
-      else {
-        return customResponse(res, 400, {
-          error: {
-            message: "Unsupported file type.",
-          },
-        });
-      }
-
-      //----Upload to Cloudinary----
-      const uploadRes = await singleUpload(file.path);
-      if (uploadRes) {
-        await unlink(file.path);
-      }
-      mediaUrl = uploadRes.secure_url;
-    }
-
     //----Find or Create Conversation----
     let conversation = await Conversation.findOne({
       participants: { $all: [sender, receiver] },
@@ -68,9 +35,8 @@ export const sendMsgHandler = async (req, res) => {
       conversationId: conversation._id,
       sender,
       receiver,
-      contentType,
-      content: textContent,
-      imageOrVideoUrl: contentType !== "text" ? mediaUrl : "",
+      contentType: content_type,
+      content,
     });
     await newMsg.save();
 
@@ -79,26 +45,10 @@ export const sendMsgHandler = async (req, res) => {
     conversation.lastMessage = newMsg;
     await conversation.save();
 
-    //-----send in real-time------
-    sendViaSocket(receiver, "new_msg", {
-      data: {
-        newMsg,
-        conversation,
-      },
-    });
-    return customResponse(res, 200, {
-      message: "message sent.",
-      data: {
-        newMsg,
-      },
-    });
+    return { newMsg, conversation };
   } catch (error) {
     console.log("sendMsgHandler Error", error.message);
-    return customResponse(res, 500, {
-      error: {
-        message: `Internal server error ${error.message}`,
-      },
-    });
+    return "something went wrong.";
   }
 };
 

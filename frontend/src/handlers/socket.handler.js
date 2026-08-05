@@ -32,56 +32,28 @@ export const handleOnOfflineMsg = (data) => {
 export const handleOnNewMsg = (data) => {
   const messagesIds = [];
   const { chatList, currentOpenConversation } = useUserStore.getState();
-  const { newMsg: lastMessage, conversation } = data;
+  const { newMsg, conversation } = data;
   const unreadCount = data.conversation.unreadCount;
 
-  const found = chatList.find((c) => c._id === conversation._id);
-
-  let visible = currentOpenConversation.conversationId
-    ? currentOpenConversation.conversationId === conversation._id
-    : currentOpenConversation.userId === lastMessage.sender;
+  let visible = currentOpenConversation.conversationId === conversation._id ? true : false;
   if (visible) {
-    if (found) {
-      const newChatList = [
-        { ...found, lastMessage },
-        ...chatList.filter((c) => c._id !== conversation._id),
-      ];
-
-      useUserStore.setState({ chatList: newChatList });
-    }
-    useMessageStore.getState().setMessages(lastMessage);
+    useMessageStore.setState((state) => ({
+      messages: [...state.messages, newMsg]
+    }));
+    useUserStore.setState((state) => ({
+      chatList: state.chatList.map(c => c._id === conversation._id ? {
+        ...c,
+        lastMessage: newMsg
+      } : c)
+    }));
   } else {
-    if (found) {
-      //found = true, and user is sender
-      if (lastMessage.sender === useAuthStore.getState()?.userInfo?._id) {
-        const newChatList = [
-          { ...found, lastMessage },
-          ...chatList.filter((c) => c._id !== found._id),
-        ];
-
-        useUserStore.setState({ chatList: newChatList });
-      } else {
-        //found = true, and user is receiver
-        const newChatList = [
-          { ...found, lastMessage, unreadCount },
-          ...chatList.filter((c) => c._id !== conversation._id),
-        ];
-
-        useUserStore.setState({ chatList: newChatList });
-      }
-    } else {
-      //if chatList not found
-      useUserStore.setState({ chatList: [conversation, ...chatList] });
-      useMessageStore.getState().setMessages(lastMessage);
-    }
+    useUserStore.setState((state) => ({
+      chatList: state.chatList.map(c => c._id === conversation._id ? {
+        ...c,
+        lastMessage: newMsg
+      } : c)
+    }));
   }
-  messagesIds.push(lastMessage._id);
-  sendMessageViaSocket("markAsDelivered", {
-    data: {
-      messagesIds,
-      conversationId: found._id,
-    },
-  });
 };
 
 export const handleDeliveredMsg = (data) => {
