@@ -32,7 +32,7 @@ const setUpWebSocketServer = (server) => {
                 const message = JSON.parse(data.toString());
 
                 if(message.type === "markAsDelivered"){
-                    onDelivered(message.content.data)  //data => [id, id, id, id]
+                    onDelivered(message.payload)  //data => [id, id, id, id]
                 }
 
                 if(message.type === "markAsSeen"){

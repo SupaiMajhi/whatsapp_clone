@@ -4,6 +4,8 @@ import { sendMessageViaSocket } from "../utils/util.js";
 import useUserStore from "../store/userStore.js";
 import useMessageStore from "../store/messageStore.js";
 import useAuthStore from "../store/authStore.js";
+import useSocketStore from "../store/socketStore.js";
+import useAppStore from "../store/appStore.js";
 
 export const handleOnOfflineMsg = (data) => {
   const messagesIds = [];
@@ -30,7 +32,8 @@ export const handleOnOfflineMsg = (data) => {
 };
 
 export const handleOnNewMsg = (data) => {
-  const messagesIds = [];
+  const { socket } = useSocketStore.getState();
+  const { userInfo } = useAppStore.getState();
   const { chatList, currentOpenConversation } = useUserStore.getState();
   const { newMsg, conversation } = data;
   const unreadCount = data.conversation.unreadCount;
@@ -53,6 +56,19 @@ export const handleOnNewMsg = (data) => {
         lastMessage: newMsg
       } : c)
     }));
+  }
+  if(userInfo?.id === newMsg.receiver) {
+    if (socket?.readyState === WebSocket.OPEN) {
+      socket?.send(
+        JSON.stringify({
+          type: "markAsDelivered",
+          payload: {
+            message_id: [newMsg._id],
+            deliveredAt: Date.now(),
+          },
+        }),
+      );
+    }
   }
 };
 

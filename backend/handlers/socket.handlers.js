@@ -7,17 +7,16 @@ import { sendMsgHandler } from "../controllers/message.controller.js";
 
 
 export const onDelivered = (data) => {
-    if(Array.isArray(data.messagesIds)){
+    if(Array.isArray(data.message_id)){
         try{
-            data.messagesIds.forEach(async(msgId) => {
+            data.message_id.forEach(async(msgId) => {
                 const message = await Message.findOneAndUpdate(
-                    { _id: mongoose.Types.ObjectId.createFromHexString(msgId) }, 
-                    { messageStatus:"delivered", deliveredAt:Date.now() },
+                    { _id: mongoose.Types.ObjectId.createFromHexString(msgId) },
+                    { messageStatus: "delivered", deliveredAt: data.deliveredAt },
                     { returnDocument: "after" }
                 );
-
                 const conversation = await Conversation.findOneAndUpdate(
-                    { _id: mongoose.Types.ObjectId.createFromHexString(data.conversationId) },
+                    { _id: message.conversationId },
                     { $set: {
                         "lastMessage.messageStatus": message.messageStatus,
                         "lastMessage.deliveredAt": message.deliveredAt,

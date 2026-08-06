@@ -100,7 +100,7 @@ const ShowCard = ({ chatInfo }) => {
           </div>
 
           {chatInfo?.unreadCount > 0 && (
-            <p className="size-7 p-1 rounded-full bg-green-800 flex-center text-xs font-medium text-white">{chatInfo?.unreadCount}</p>
+            <p className="size-5 p-1 rounded-full bg-green-600 flex-center text-[10px] font-medium text-white">{chatInfo?.unreadCount}</p>
           )}
         </div>
       </div>
