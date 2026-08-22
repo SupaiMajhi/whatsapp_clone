@@ -17,10 +17,6 @@ export const isValidPhoneNumber = (phoneNumber) => {
     return regex.test(phoneNumber)
 }
 
-export const generateOtp = () => {
-    return Math.floor(100000 + Math.random() * 900000);
-}
-
 export const hash = async (value) => {
     const salt = await bcrypt.genSalt(10);
     const result = await bcrypt.hash(value.toString(), salt);

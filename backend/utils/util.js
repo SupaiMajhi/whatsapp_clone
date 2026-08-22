@@ -1,5 +1,6 @@
 import cookie from "cookie";
 import jwt from "jsonwebtoken";
+import crypto from "node:crypto";
 import { isValidPhoneNumber } from "libphonenumber-js/mobile";
 
 import User from "../models/user.model.js";
@@ -36,4 +37,8 @@ export const determineFileType = async (filePath) => {
 
 export const validatePhoneNumber = (phone, countryCode) => {
     return isValidPhoneNumber(phone, countryCode);
+}
+
+export const generateOtp = () => {
+    return crypto.randomInt(100000, 1000000);
 }

@@ -14,7 +14,6 @@ import useUserStore from "../store/userStore.js";
 import usePageVisibility from "../hooks/usePageVisibility.js";
 
 const MainContent = () => {
-
   const messages = useMessageStore((state) => state.messages);
   const userInfo = useAppStore((state) => state.userInfo);
   const theme = useGlobalStore((state) => state.theme);
@@ -27,57 +26,56 @@ const MainContent = () => {
   const ref = useRef(null);
 
   const observerCallback = (entries) => {
-    entries.forEach(entry => {
-      if(entry.isIntersecting){
-        if(entry.target.dataset.read !== "read"){
-          sendMessageViaSocket("markAsSeen", { 
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        if (entry.target.dataset.read !== "read") {
+          sendMessageViaSocket("markAsSeen", {
             data: {
               messagesIds: [entry.target.dataset.id],
               conversationId: currentOpenConversation.conversationId,
-            }});
+            },
+          });
         }
       }
       observerRef.current.unobserve(entry.target);
-    })
-  }
+    });
+  };
 
   const setRef = (el) => {
-    if(!el) return;
-    if(!elemRef.current.has(el)){
+    if (!el) return;
+    if (!elemRef.current.has(el)) {
       elemRef.current.add(el);
       observerRef.current?.observe(el);
     }
-  }
+  };
 
   useEffect(() => {
-    if(!isVisible) return;
+    if (!isVisible) return;
 
     const options = {
       root: rootRef.current,
       rootMargin: "0px",
-      threshold: 0.75
-    }
+      threshold: 0.75,
+    };
 
     observerRef.current = new IntersectionObserver(observerCallback, options);
-    elemRef.current.forEach(el => {
+    elemRef.current.forEach((el) => {
       observerRef.current.observe(el);
     });
 
     return () => {
       observerRef.current.disconnect();
-    }
-
-  }, [isVisible, messages])
+    };
+  }, [isVisible, messages]);
 
   useEffect(() => {
-    if(ref.current){
+    if (ref.current) {
       ref.current.scrollIntoView({
         behavior: "smooth",
-        block: "end"
-      })
+        block: "end",
+      });
     }
-  }, [messages])
-
+  }, [messages]);
 
   return (
     <div
@@ -88,20 +86,24 @@ const MainContent = () => {
       {messages.map((message) =>
         message?.contentType === "text" ? (
           message?.receiver === userInfo.id ? (
-            <div 
-              className="chat chat-start" 
-              key={message?._id} 
+            <div
+              className="chat chat-start"
+              key={message?._id}
               ref={(el) => setRef(el)}
               data-read={message.messageStatus}
               data-id={message._id}
             >
-              <div className={`chat-bubble flex justify-center items-center gap-2 rounded-r-[10px] rounded-tl-[10px] ${theme === "light" ? "bg-white text-black" : "bg-[#242626] text-white"}`}>
+              <div
+                className={`chat-bubble flex justify-center items-center gap-2 rounded-r-[10px] rounded-tl-[10px] ${theme === "light" ? "bg-white text-black" : "bg-[#242626] text-white"}`}
+              >
                 {/** main content */}
-                <div className="text-sm font-normal tracking-wide">{message?.content}</div>
+                <div className="text-sm font-normal tracking-wide">
+                  {message?.content}
+                </div>
                 {/** time */}
                 <div className="mt-3 text-xs">
-                  {message?.seenAt ? (
-                    <p>{formatMessageTime(message?.seenAt)}</p>
+                  {message?.readAt ? (
+                    <p>{formatMessageTime(message?.readAt)}</p>
                   ) : message?.deliveredAt ? (
                     <p>{formatMessageTime(message?.deliveredAt)}</p>
                   ) : message?.createdAt ? (
@@ -114,14 +116,18 @@ const MainContent = () => {
             </div>
           ) : (
             <div className="chat chat-end" key={message?._id}>
-              <div className={`chat-bubble flex justify-center items-center gap-2 rounded-l-[10px] rounded-tr-[10px] ${theme === "light" ? "bg-lightMyChatclr text-black" : "bg-darkMyChatclr text-white"}`}>
+              <div
+                className={`chat-bubble flex justify-center items-center gap-2 rounded-l-[10px] rounded-tr-[10px] ${theme === "light" ? "bg-lightMyChatclr text-black" : "bg-darkMyChatclr text-white"}`}
+              >
                 {/** main content */}
-                <div className="text-sm font-normal tracking-wide">{message?.content}</div>
+                <div className="text-sm font-normal tracking-wide">
+                  {message?.content}
+                </div>
                 {/** time and status */}
                 <div className="flex justify-center items-center gap-1 mt-3 text-xs">
                   {/** time */}
-                  {message?.seenAt ? (
-                    <p>{formatMessageTime(message?.seenAt)}</p>
+                  {message?.readAt ? (
+                    <p>{formatMessageTime(message?.readAt)}</p>
                   ) : message?.deliveredAt ? (
                     <p>{formatMessageTime(message?.deliveredAt)}</p>
                   ) : message?.createdAt ? (
@@ -130,15 +136,23 @@ const MainContent = () => {
                     <p></p>
                   )}
                   {/** status */}
-                  {message?.messageStatus === 'seen' ? (
-                    <p><IoCheckmarkDoneSharp className="text-blue-500" /></p>
-                  ) : message?.messageStatus === 'delivered' ? (
-                    <p><IoCheckmarkDoneSharp /></p>
-                  ) : message?.messageStatus === 'pending' ? (
-                    <p><FaRegClock /></p>
+                  {message?.messageStatus === "read" ? (
+                    <p>
+                      <IoCheckmarkDoneSharp className="text-blue-500" />
+                    </p>
+                  ) : message?.messageStatus === "delivered" ? (
+                    <p>
+                      <IoCheckmarkDoneSharp />
+                    </p>
+                  ) : message?.messageStatus === "pending" ? (
+                    <p>
+                      <FaRegClock />
+                    </p>
                   ) : (
-                    <p><IoCheckmarkSharp /></p>
-                  )}                
+                    <p>
+                      <IoCheckmarkSharp />
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

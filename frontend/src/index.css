@@ -44,10 +44,6 @@
     --color-primaryBg: #2D2E2E;
     --color-secondaryBg: #F6F5F4;
 
-    /*animation*/
-    --animate-pop: pop 300ms ease-in-out;
-    --animate-implode: implode 300ms ease-in-out;
-
     @keyframes pop {
         0% {
             transform: scale(0);

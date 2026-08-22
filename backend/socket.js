@@ -3,7 +3,7 @@ import { WebSocketServer, WebSocket } from "ws";
 
 import { retrieveIdFromReq } from "./utils/util.js"
 import { getOfflineMessages } from "./controllers/message.controller.js";
-import { onDelivered, onSeen, handle_new_message } from "./handlers/socket.handlers.js";
+import { onDelivered, onRead, handle_new_message } from "./handlers/socket.handlers.js";
 
 export const onlineUsers = new Map();
 const setUpWebSocketServer = (server) => {
@@ -36,7 +36,7 @@ const setUpWebSocketServer = (server) => {
                 }
 
                 if(message.type === "markAsSeen"){
-                    onSeen(message.content.data); //data => [id, id, id, id]
+                    onRead(message.content.data); //data => [id, id, id, id]
                 }
 
                 if(message.type === "new_message") {

@@ -41,13 +41,13 @@ export const onDelivered = (data) => {
     }
 }
 
-export const onSeen = (data) => {
+export const onRead = (data) => {
     if(Array.isArray(data.messagesIds)){
         try{
             data.messagesIds.forEach(async(msgId) => {
                 const message = await Message.findOneAndUpdate(
                     { _id: mongoose.Types.ObjectId.createFromHexString(msgId) }, 
-                    { messageStatus:"seen", seenAt:Date.now() }, 
+                    { messageStatus:"read", readAt:Date.now() }, 
                     { returnDocument: "after" }
                 );
 
@@ -55,7 +55,7 @@ export const onSeen = (data) => {
                     { _id: mongoose.Types.ObjectId.createFromHexString(data.conversationId) },
                     { $set: {
                         "lastMessage.messageStatus": message.messageStatus,
-                        "lastMessage.seenAt": message.seenAt,
+                        "lastMessage.readAt": message.readAt,
                     }},
                     { returnDocument: "after" }
                 );
@@ -66,13 +66,13 @@ export const onSeen = (data) => {
                     id: message.id,
                     conversationId: message.conversationId,
                     messageStatus: message.messageStatus,
-                    seenAt: message.seenAt,
+                    readAt: message.readAt,
                   },
                 });
             });
         }catch(error){
             //todo: handle retry, i don't know how to achieve
-            console.log('Error in onSeen', error);
+            console.log('Error in onRead', error);
         }   
     }
     return;
