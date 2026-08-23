@@ -1,6 +1,8 @@
 import cookie from "cookie";
 import jwt from "jsonwebtoken";
 import crypto from "node:crypto";
+import { Buffer } from "node:buffer";
+import { ObjectId } from "mongodb";
 import { isValidPhoneNumber } from "libphonenumber-js/mobile";
 
 import User from "../models/user.model.js";
@@ -41,4 +43,16 @@ export const validatePhoneNumber = (phone, countryCode) => {
 
 export const generateOtp = () => {
     return crypto.randomInt(100000, 1000000);
+}
+
+export const encodeCursor = (payload) => {
+    return Buffer.from(JSON.stringify(payload)).toString("base64url");
+}
+
+export const decodeCursor = (cursor) => {
+    const payload = JSON.parse(Buffer.from(cursor, "base64url").toString("utf-8"));
+    return { 
+        createdAt: new Date(payload.createdAt),
+        _id: new ObjectId(payload._id),
+    }
 }
