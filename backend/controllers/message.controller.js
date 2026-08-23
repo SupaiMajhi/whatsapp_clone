@@ -1,11 +1,8 @@
 import mongoose from "mongoose";
-import { unlink } from "fs/promises";
 
 import Message from "../models/message.model.js";
 import Conversation from "../models/conversation.model.js";
 import { customResponse } from "../utils/util.js";
-import { sendViaSocket } from "../socket.js";
-import { singleUpload } from "../services/cloudinary.js";
 
 export const sendMsgHandler = async (sender, payload) => {
   const receiver = payload.receiverId;
@@ -84,33 +81,6 @@ export const updateMsgHandler = async (req, res) => {
   } catch (error) {
     console.log("updateMsgHandler Error", error.message);
     return customResponse(res, 500, "Internal server error");
-  }
-};
-
-export const getAllMsgHandler = async (req, res) => {
-  const { convoId } = req.params;
-
-  if (!convoId)
-    return customResponse(res, 400, {
-      error: {
-        message: "Invalid conversation id",
-      },
-    });
-
-  try {
-    const messages = await Message.find({ conversationId: convoId });
-    return customResponse(res, 200, {
-      data: {
-        messages,
-      },
-    });
-  } catch (error) {
-    console.log("getAllMsgHandler Error", error.message);
-    return customResponse(res, 500, {
-      error: {
-        message: `Internal server error ${error.message}`,
-      },
-    });
   }
 };
 

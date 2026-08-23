@@ -8,6 +8,7 @@ import { connectToDB } from "./lib/lib.js";
 import authRouter from './routes/auth.route.js';
 import messageRouter from './routes/message.route.js';
 import userRouter from './routes/user.route.js';
+import conversationRouter from "./routes/conversation.route.js";
 import setUpWebSocketServer from "./socket.js";
 import authMiddleware from "./middleware/auth.middleware.js";
 
@@ -31,6 +32,7 @@ app.use(cookieParser());
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/message', authMiddleware, messageRouter);
+app.use('/api/v1/conversations', authMiddleware, conversationRouter);
 
 setUpWebSocketServer(server);
 
