@@ -7,6 +7,8 @@ const useGlobalStore = create((set) => ({
     redirectURL: null,
     isLoading: false,
     theme: "dark",
+    cursor: null,
+    hasMore: null,
 
     setError: (value) => set(() => ({ error: value })),
     setMessage: (value) => set(() => ({ message: value })),

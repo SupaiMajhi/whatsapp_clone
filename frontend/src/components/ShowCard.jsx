@@ -13,9 +13,9 @@ import useAppStore from "../store/appStore.js";
 import useGlobalStore from "../store/globalStore.js";
 
 
-const ShowCard = ({ chatInfo }) => {
+const ShowCard = ({ chatInfo, setIsFirstPage }) => {
 
-  const fetchAllMessage = useMessageStore((state) => state.fetchAllMessage);
+  const fetchFirstPage = useMessageStore((state) => state.fetchFirstPage);
   const getUserStatus = useUserStore((state) => state.getUserStatus);
   const setCurrentOpenConversation = useUserStore((state) => state.setCurrentOpenConversation);
   const setCurrentRcvr = useAppStore((state) => state.setCurrentRcvr)
@@ -30,7 +30,8 @@ const ShowCard = ({ chatInfo }) => {
       conversationId: chatInfo._id,
     });
     setIsChatSelected(true);
-    await fetchAllMessage(chatInfo._id);
+    await fetchFirstPage(chatInfo._id);
+    setIsFirstPage(false);
     await getUserStatus(chatInfo.otherUser._id);
   }
 

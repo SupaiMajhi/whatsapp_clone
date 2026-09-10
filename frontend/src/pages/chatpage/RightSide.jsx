@@ -5,14 +5,14 @@ import Advertise from "../Advertise.jsx";
 //store imports
 import useAppStore from "../../store/appStore.js";
 
-const RightSide = () => {
+const RightSide = ({ isFirstPage }) => {
 
   const isChatSelected = useAppStore((state) => state.isChatSelected);
 
   return (
     <div className="size-full">
       {isChatSelected ? (
-        <ChatBox />
+        <ChatBox isFirstPage={isFirstPage} />
       ) : (
         <Advertise />
       )}

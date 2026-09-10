@@ -8,7 +8,7 @@ import ChatList from "../../components/ChatList.jsx";
 //store imports
 import useGlobalStore from "../../store/globalStore.js";
 
-const LeftSide = ({ setShowNewChat }) => {
+const LeftSide = ({ setShowNewChat, setIsFirstPage }) => {
 
   const theme = useGlobalStore((state) => state.theme);
 
@@ -33,7 +33,7 @@ const LeftSide = ({ setShowNewChat }) => {
       </div>
 
       <div className="chatlist_container">
-        <ChatList />
+        <ChatList setIsFirstPage={setIsFirstPage} />
       </div>
     </div>
   )

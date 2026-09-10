@@ -16,7 +16,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 const NewChat = ({ setShowNewChat }) => {
   const theme = useGlobalStore((state) => state.theme);
   const searchUser = useUserStore((state) => state.searchUser);
-  const fetchAllMessage = useMessageStore((state) => state.fetchAllMessage);
+  const fetchFirstPage = useMessageStore((state) => state.fetchFirstPage);
   const getUserStatus = useUserStore((state) => state.getUserStatus);
   const setCurrentOpenConversation = useUserStore(
     (state) => state.setCurrentOpenConversation,
@@ -47,7 +47,7 @@ const NewChat = ({ setShowNewChat }) => {
     });
     setIsChatSelected(true);
     setShowNewChat(false);
-    await fetchAllMessage(searchRslt.user?._id);
+    await fetchFirstPage(searchRslt.user?._id);
     await getUserStatus(searchRslt.user?._id);
   };
 

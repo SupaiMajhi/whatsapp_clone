@@ -5,7 +5,7 @@ import InputBox from './InputBox';
 // Store imports
 import useGlobalStore from "../store/globalStore.js";
 
-const ChatBox = () => {
+const ChatBox = ({ isFirstPage }) => {
 
   const theme = useGlobalStore((state) => state.theme);
   
@@ -18,7 +18,7 @@ const ChatBox = () => {
       <div className={`relative w-full h-[calc(100%-5%)] max-h-[calc(100%-5%)] flex flex-col justify-center items-center ${theme === "light" ? "bg-lightNav text-black" : "bg-darkNav text-white"}`}>
         {/** MAIN CONTENT */}
         <div className='w-full h-[calc(100%-6%)] max-h-[calc(100%-6%)]'>
-          <MainContent />
+          <MainContent isFirstPage={isFirstPage} />
         </div>
 
         {/** INPUT BOX */}

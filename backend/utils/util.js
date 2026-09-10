@@ -2,7 +2,7 @@ import cookie from "cookie";
 import jwt from "jsonwebtoken";
 import crypto from "node:crypto";
 import { Buffer } from "node:buffer";
-import { ObjectId } from "mongodb";
+import mongoose from "mongoose";
 import { isValidPhoneNumber } from "libphonenumber-js/mobile";
 
 import User from "../models/user.model.js";
@@ -50,9 +50,11 @@ export const encodeCursor = (payload) => {
 }
 
 export const decodeCursor = (cursor) => {
-    const payload = JSON.parse(Buffer.from(cursor, "base64url").toString("utf-8"));
+    let buff = Buffer.from(cursor, "base64url");
+    let obj = buff.toString("utf-8");
+    const payload = JSON.parse(obj);
     return { 
         createdAt: new Date(payload.createdAt),
-        _id: new ObjectId(payload._id),
+        _id: mongoose.Types.ObjectId.createFromHexString(payload._id),
     }
 }
