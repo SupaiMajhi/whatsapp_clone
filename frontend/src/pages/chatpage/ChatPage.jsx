@@ -13,6 +13,7 @@ import useGlobalStore from "../../store/globalStore.js";
 const ChatPage = () => {
   const theme = useGlobalStore((state) => state.theme);
   const [showNewChat, setShowNewChat] = useState(false);
+  const [isFirstPage, setIsFirstPage] = useState(true);
 
   return (
     <div
@@ -25,7 +26,7 @@ const ChatPage = () => {
             <NewChat setShowNewChat={setShowNewChat} />
           ) : null}
         </AnimatePresence>
-        <LeftSide setShowNewChat={setShowNewChat} />
+        <LeftSide setShowNewChat={setShowNewChat} setIsFirstPage={setIsFirstPage} />
       </div>
 
       {/** Separator */}
@@ -33,7 +34,7 @@ const ChatPage = () => {
 
       {/** Right Side */}
       <div className="flex-1 h-full bg-blue-800">
-        <RightSide />
+        <RightSide isFirstPage={isFirstPage} />
       </div>
     </div>
   );

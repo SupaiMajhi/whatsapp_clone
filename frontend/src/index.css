@@ -44,10 +44,6 @@
     --color-primaryBg: #2D2E2E;
     --color-secondaryBg: #F6F5F4;
 
-    /*animation*/
-    --animate-pop: pop 300ms ease-in-out;
-    --animate-implode: implode 300ms ease-in-out;
-
     @keyframes pop {
         0% {
             transform: scale(0);
@@ -107,7 +103,7 @@ html, body {
         @apply min-w-xl max-w-3xl sm:w-3xl h-110 p-10 sm:p-14 overflow-hidden;
     }
 
-    .c {
+    .chatlist {
         @apply w-full h-18 max-h-18 flex justify-start items-center gap-3 pl-3 py-3 xl:py-4 transition-colors duration-75 ease-in rounded-2xl cursor-pointer; 
     }
 

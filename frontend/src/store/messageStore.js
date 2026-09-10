@@ -21,19 +21,46 @@ const useMessageStore = create((set, get) => ({
     }));
   },
 
-  fetchAllMessage: async (otherUser) => {
+  fetchFirstPage: async (conversationId) => {
     try {
       set({ isLoading: true });
       const response = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/message/messages/${otherUser}`,
+        `${import.meta.env.VITE_BASE_URL}/conversations/${conversationId}/messages`,
         {
           withCredentials: true,
         },
       );
       set({ messages: response.data.data.messages });
+      useGlobalStore.setState({ cursor: response.data.data.nextCursor });
+      useGlobalStore.setState({ hasMore: response.data.data.hasMore });
     } catch (error) {
       console.log(error.message);
       set({ messages: [] });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  fetchNextPage: async(conversationId) => {
+    const cursor = useGlobalStore.getState()?.cursor;
+    if(!cursor) return;
+    try {
+      set({ isLoading: true });
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/conversations/${conversationId}/messages/more`, {
+          withCredentials: true,
+          params: {
+            cursor,
+          }
+      });
+      set((state) => {
+        const msg = response.data.data.messages;
+        return { messages: [...msg, ...state.messages] }
+      });
+      useGlobalStore.setState({ cursor: response.data.data.nextCursor });
+      useGlobalStore.setState({ hasMore: response.data.data.hasMore });
+    } catch (error) {
+      console.log("Error in fetchNextPage", error.message);
     } finally {
       set({ isLoading: false });
     }

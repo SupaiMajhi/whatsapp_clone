@@ -1,5 +1,8 @@
 import cookie from "cookie";
 import jwt from "jsonwebtoken";
+import crypto from "node:crypto";
+import { Buffer } from "node:buffer";
+import mongoose from "mongoose";
 import { isValidPhoneNumber } from "libphonenumber-js/mobile";
 
 import User from "../models/user.model.js";
@@ -36,4 +39,22 @@ export const determineFileType = async (filePath) => {
 
 export const validatePhoneNumber = (phone, countryCode) => {
     return isValidPhoneNumber(phone, countryCode);
+}
+
+export const generateOtp = () => {
+    return crypto.randomInt(100000, 1000000);
+}
+
+export const encodeCursor = (payload) => {
+    return Buffer.from(JSON.stringify(payload)).toString("base64url");
+}
+
+export const decodeCursor = (cursor) => {
+    let buff = Buffer.from(cursor, "base64url");
+    let obj = buff.toString("utf-8");
+    const payload = JSON.parse(obj);
+    return { 
+        createdAt: new Date(payload.createdAt),
+        _id: mongoose.Types.ObjectId.createFromHexString(payload._id),
+    }
 }

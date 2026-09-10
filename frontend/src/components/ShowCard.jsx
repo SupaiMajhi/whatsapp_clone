@@ -13,9 +13,9 @@ import useAppStore from "../store/appStore.js";
 import useGlobalStore from "../store/globalStore.js";
 
 
-const ShowCard = ({ chatInfo }) => {
+const ShowCard = ({ chatInfo, setIsFirstPage }) => {
 
-  const fetchAllMessage = useMessageStore((state) => state.fetchAllMessage);
+  const fetchFirstPage = useMessageStore((state) => state.fetchFirstPage);
   const getUserStatus = useUserStore((state) => state.getUserStatus);
   const setCurrentOpenConversation = useUserStore((state) => state.setCurrentOpenConversation);
   const setCurrentRcvr = useAppStore((state) => state.setCurrentRcvr)
@@ -30,13 +30,14 @@ const ShowCard = ({ chatInfo }) => {
       conversationId: chatInfo._id,
     });
     setIsChatSelected(true);
-    await fetchAllMessage(chatInfo._id);
+    await fetchFirstPage(chatInfo._id);
+    setIsFirstPage(false);
     await getUserStatus(chatInfo.otherUser._id);
   }
 
   return (
     <div
-      className={`c ${theme === "light" ? "bg-light text-txtDark hover:bg-hoverLightBg" : "bg-dark text-txtLight hover:bg-hoverDarkBg"} transition-colors duration-75 ease-in rounded-2xl cursor-pointer`}
+      className={`chatlist ${theme === "light" ? "bg-light text-txtDark hover:bg-hoverLightBg" : "bg-dark text-txtLight hover:bg-hoverDarkBg"} transition-colors duration-75 ease-in rounded-2xl cursor-pointer`}
       onClick={handleOnClick}
     >
       {/** AVATAR */}
@@ -61,15 +62,15 @@ const ShowCard = ({ chatInfo }) => {
             </h1>
           </div>
           <div className={`w-fit max-w-28 text-xs font-normal tracking-wider`}>
-            <p>{formatChatTime(chatInfo?.lastMessage?.sentAt)}</p>
+            <p>{formatChatTime(chatInfo?.lastMessage?.createdAt)}</p>
           </div>
         </div>
 
-        <div className="w-full flex items-center gap-2">
-          <div>
-            <div className="text-base">
-              {userInfo.id === chatInfo.lastMessage.sender && (
-                chatInfo?.lastMessage?.messageStatus === "seen" ? (
+        <div className="w-full flex justify-between items-center">
+          <div className="flex-center gap-1">
+            {userInfo.id === chatInfo?.lastMessage?.sender && (
+              <div className="text-base">
+                {chatInfo?.lastMessage?.messageStatus === "seen" ? (
                   <p>
                     <IoCheckmarkDoneSharp className="text-blue-500" />
                   </p>
@@ -85,17 +86,23 @@ const ShowCard = ({ chatInfo }) => {
                   <p>
                     <IoCheckmarkSharp />
                   </p>
-                )
-              )}
+                )}
+              </div>
+            )}
+            <div>
+              <p
+                className={`text-sm font-medium ${theme === "light" ? "text-[#666666]" : "text-[#A2A295]"}`}
+              >
+                {chatInfo?.lastMessage?.content?.length >= 40
+                  ? chatInfo?.lastMessage?.content?.slice(0, 40) + "...."
+                  : chatInfo?.lastMessage?.content}
+              </p>
             </div>
           </div>
-          <div>
-            <p
-              className={`text-sm font-medium ${theme === "light" ? "text-[#666666]" : "text-[#A2A295]"}`}
-            >
-              {chatInfo?.lastMessage?.content}
-            </p>
-          </div>
+
+          {chatInfo?.unreadCount > 0 && (
+            <p className="size-5 p-1 rounded-full bg-green-600 flex-center text-[10px] font-medium text-white">{chatInfo?.unreadCount}</p>
+          )}
         </div>
       </div>
     </div>

@@ -2,21 +2,21 @@ import mongoose from "mongoose";
 
 import Message from "../models/message.model.js";
 import Conversation from "../models/conversation.model.js";
-import { sendViaSocket } from "../socket.js"
+import { sendViaSocket, sendBothViaSocket } from "../socket.js"
+import { sendMsgHandler } from "../controllers/message.controller.js";
 
 
 export const onDelivered = (data) => {
-    if(Array.isArray(data.messagesIds)){
+    if(Array.isArray(data.message_id)){
         try{
-            data.messagesIds.forEach(async(msgId) => {
+            data.message_id.forEach(async(msgId) => {
                 const message = await Message.findOneAndUpdate(
-                    { _id: mongoose.Types.ObjectId.createFromHexString(msgId) }, 
-                    { messageStatus:"delivered", deliveredAt:Date.now() },
+                    { _id: mongoose.Types.ObjectId.createFromHexString(msgId) },
+                    { messageStatus: "delivered", deliveredAt: data.deliveredAt },
                     { returnDocument: "after" }
                 );
-
                 const conversation = await Conversation.findOneAndUpdate(
-                    { _id: mongoose.Types.ObjectId.createFromHexString(data.conversationId) },
+                    { _id: message.conversationId },
                     { $set: {
                         "lastMessage.messageStatus": message.messageStatus,
                         "lastMessage.deliveredAt": message.deliveredAt,
@@ -41,13 +41,13 @@ export const onDelivered = (data) => {
     }
 }
 
-export const onSeen = (data) => {
+export const onRead = (data) => {
     if(Array.isArray(data.messagesIds)){
         try{
             data.messagesIds.forEach(async(msgId) => {
                 const message = await Message.findOneAndUpdate(
                     { _id: mongoose.Types.ObjectId.createFromHexString(msgId) }, 
-                    { messageStatus:"seen", seenAt:Date.now() }, 
+                    { messageStatus:"read", readAt:Date.now() }, 
                     { returnDocument: "after" }
                 );
 
@@ -55,7 +55,7 @@ export const onSeen = (data) => {
                     { _id: mongoose.Types.ObjectId.createFromHexString(data.conversationId) },
                     { $set: {
                         "lastMessage.messageStatus": message.messageStatus,
-                        "lastMessage.seenAt": message.seenAt,
+                        "lastMessage.readAt": message.readAt,
                     }},
                     { returnDocument: "after" }
                 );
@@ -66,14 +66,23 @@ export const onSeen = (data) => {
                     id: message.id,
                     conversationId: message.conversationId,
                     messageStatus: message.messageStatus,
-                    seenAt: message.seenAt,
+                    readAt: message.readAt,
                   },
                 });
             });
         }catch(error){
             //todo: handle retry, i don't know how to achieve
-            console.log('Error in onSeen', error);
+            console.log('Error in onRead', error);
         }   
     }
     return;
+}
+
+export const handle_new_message = async(sender, data) => {
+    //validate message body on backend
+    const response = await sendMsgHandler(sender, data);
+    sendBothViaSocket(sender, response.newMsg.receiver, "new_message", {
+        newMsg: response.newMsg,
+        conversation: response.conversation,
+    });   
 }

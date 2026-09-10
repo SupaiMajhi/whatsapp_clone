@@ -6,8 +6,8 @@ import User from "../models/user.model.js";
 import Otp from "../models/otp.model.js";
 import otpProvider from "../models/otpProvider.model.js";
 
-import { generateOtp, hash, deHash, generateToken } from "../lib/lib.js";
-import { customResponse, validatePhoneNumber } from "../utils/util.js";
+import { hash, deHash, generateToken } from "../lib/lib.js";
+import { customResponse, validatePhoneNumber, generateOtp } from "../utils/util.js";
 import { uploadProfile } from "../services/cloudinary.js";
 import { sendOTPtoPhoneNumber } from "../services/twilio.js";
 

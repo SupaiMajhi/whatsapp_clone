@@ -6,7 +6,7 @@ import ShowCard from "./ShowCard";
 import useUserStore from "../store/userStore.js";
 import useMessageStore from "../store/messageStore.js";
 
-const ChatList = () => {
+const ChatList = ({ setIsFirstPage }) => {
 
   const chatList = useUserStore((state) => state.chatList);
   const isLoading = useUserStore((state) => state.isLoading);
@@ -18,7 +18,7 @@ const ChatList = () => {
       await getPrevChatList();
     }
     fetch();
-  }, [messages]);
+  }, []);
   
   if (isLoading) {
     <div className="custom-container">
@@ -29,7 +29,7 @@ const ChatList = () => {
   return (
     <div className="w-full h-full flex items-center flex-col">
       {chatList?.length > 0 ? (
-        chatList.map((chat) => <ShowCard key={chat._id} chatInfo={chat} />)
+        chatList.map((chat) => <ShowCard key={chat._id} chatInfo={chat} setIsFirstPage={setIsFirstPage} />)
       ) : (
         <div className="custom-container">
           <p>No conversation yet.</p>

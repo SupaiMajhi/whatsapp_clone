@@ -4,6 +4,8 @@ import { sendMessageViaSocket } from "../utils/util.js";
 import useUserStore from "../store/userStore.js";
 import useMessageStore from "../store/messageStore.js";
 import useAuthStore from "../store/authStore.js";
+import useSocketStore from "../store/socketStore.js";
+import useAppStore from "../store/appStore.js";
 
 export const handleOnOfflineMsg = (data) => {
   const messagesIds = [];
@@ -30,58 +32,44 @@ export const handleOnOfflineMsg = (data) => {
 };
 
 export const handleOnNewMsg = (data) => {
-  const messagesIds = [];
+  const { socket } = useSocketStore.getState();
+  const { userInfo } = useAppStore.getState();
   const { chatList, currentOpenConversation } = useUserStore.getState();
-  const { newMsg: lastMessage, conversation } = data;
+  const { newMsg, conversation } = data;
   const unreadCount = data.conversation.unreadCount;
 
-  const found = chatList.find((c) => c._id === conversation._id);
-
-  let visible = currentOpenConversation.conversationId
-    ? currentOpenConversation.conversationId === conversation._id
-    : currentOpenConversation.userId === lastMessage.sender;
+  let visible = currentOpenConversation.conversationId === conversation._id ? true : false;
   if (visible) {
-    if (found) {
-      const newChatList = [
-        { ...found, lastMessage },
-        ...chatList.filter((c) => c._id !== conversation._id),
-      ];
-
-      useUserStore.setState({ chatList: newChatList });
-    }
-    useMessageStore.getState().setMessages(lastMessage);
+    useMessageStore.setState((state) => ({
+      messages: [...state.messages, newMsg]
+    }));
+    useUserStore.setState((state) => ({
+      chatList: state.chatList.map(c => c._id === conversation._id ? {
+        ...c,
+        lastMessage: newMsg
+      } : c)
+    }));
   } else {
-    if (found) {
-      //found = true, and user is sender
-      if (lastMessage.sender === useAuthStore.getState()?.userInfo?._id) {
-        const newChatList = [
-          { ...found, lastMessage },
-          ...chatList.filter((c) => c._id !== found._id),
-        ];
-
-        useUserStore.setState({ chatList: newChatList });
-      } else {
-        //found = true, and user is receiver
-        const newChatList = [
-          { ...found, lastMessage, unreadCount },
-          ...chatList.filter((c) => c._id !== conversation._id),
-        ];
-
-        useUserStore.setState({ chatList: newChatList });
-      }
-    } else {
-      //if chatList not found
-      useUserStore.setState({ chatList: [conversation, ...chatList] });
-      useMessageStore.getState().setMessages(lastMessage);
+    useUserStore.setState((state) => ({
+      chatList: state.chatList.map(c => c._id === conversation._id ? {
+        ...c,
+        lastMessage: newMsg
+      } : c)
+    }));
+  }
+  if(userInfo?.id === newMsg.receiver) {
+    if (socket?.readyState === WebSocket.OPEN) {
+      socket?.send(
+        JSON.stringify({
+          type: "markAsDelivered",
+          payload: {
+            message_id: [newMsg._id],
+            deliveredAt: Date.now(),
+          },
+        }),
+      );
     }
   }
-  messagesIds.push(lastMessage._id);
-  sendMessageViaSocket("markAsDelivered", {
-    data: {
-      messagesIds,
-      conversationId: found._id,
-    },
-  });
 };
 
 export const handleDeliveredMsg = (data) => {

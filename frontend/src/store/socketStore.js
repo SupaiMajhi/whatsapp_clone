@@ -20,8 +20,8 @@ const useSocketStore = create((set, get) => ({
                     handleOnOfflineMsg(message.content.data);
                 }
 
-                if(message.type === "new_msg"){
-                    handleOnNewMsg(message.content.data);
+                if(message.type === "new_message"){
+                    handleOnNewMsg(message.content);
                 }
 
                 if(message.type === "delivered_ack"){
@@ -50,8 +50,25 @@ const useSocketStore = create((set, get) => ({
             get().socket?.close();
         }
         set({ socket:null });
-    }
+    },
 
+    send_message: async(receiverId, message) => {
+        const socket = get()?.socket;
+
+        if(!receiverId || !message?.content){
+            return;
+        }
+
+        if(socket?.readyState === WebSocket.OPEN) {
+            socket?.send(JSON.stringify({
+                type: "new_message",
+                payload: {
+                    receiverId,
+                    message,
+                }
+            }));
+        }
+    },
 }));
 
 

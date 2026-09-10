@@ -6,17 +6,19 @@ import { useState } from "react";
 //store imports
 import useMessageStore from "../store/messageStore.js";
 import useAppStore from "../store/appStore.js";
+import useSocketStore from "../store/socketStore.js";
 import useGlobalStore from "../store/globalStore.js";
 
 const InputBox = () => {
   
   const [msgText, setMsgText] = useState("");
-  const sendAMessage = useMessageStore((state) => state.sendAMessage);
   const currentRcvr = useAppStore((state) => state.currentRcvr);
+  const send_message = useSocketStore((state) => state.send_message);
   const theme = useGlobalStore((state) => state.theme);
 
   const handleOnSubmit = async () => {
-    await sendAMessage(currentRcvr._id, msgText);
+    //change the sendAMesage handler in messageStore
+    await send_message(currentRcvr._id, { content: msgText, content_type: "text" });
     setMsgText("");
   };
 

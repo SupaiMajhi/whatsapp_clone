@@ -3,7 +3,7 @@ import { WebSocketServer, WebSocket } from "ws";
 
 import { retrieveIdFromReq } from "./utils/util.js"
 import { getOfflineMessages } from "./controllers/message.controller.js";
-import { onDelivered, onSeen } from "./handlers/socket.handlers.js";
+import { onDelivered, onRead, handle_new_message } from "./handlers/socket.handlers.js";
 
 export const onlineUsers = new Map();
 const setUpWebSocketServer = (server) => {
@@ -32,11 +32,15 @@ const setUpWebSocketServer = (server) => {
                 const message = JSON.parse(data.toString());
 
                 if(message.type === "markAsDelivered"){
-                    onDelivered(message.content.data)  //data => [id, id, id, id]
+                    onDelivered(message.payload)  //data => [id, id, id, id]
                 }
 
                 if(message.type === "markAsSeen"){
-                    onSeen(message.content.data); //data => [id, id, id, id]
+                    onRead(message.content.data); //data => [id, id, id, id]
+                }
+
+                if(message.type === "new_message") {
+                    handle_new_message(ws.id, message.payload);
                 }
             } catch(err){
                 console.log('Error in socket.js', err.message);
@@ -55,7 +59,7 @@ const setUpWebSocketServer = (server) => {
 }
 
 export const sendViaSocket = (id, msgType, content) => {
-    const ws = onlineUsers.get(id);
+    const ws = onlineUsers.get(id.toString());
     if(ws?.readyState === WebSocket.OPEN){
         ws.send(JSON.stringify({
             type: msgType,
@@ -65,8 +69,8 @@ export const sendViaSocket = (id, msgType, content) => {
 }
 
 export const sendBothViaSocket = (sender, receiver, msgType, content) => {
-    const senderWS = onlineUsers.get(sender);
-    const receiverWS = onlineUsers.get(receiver);
+    const senderWS = onlineUsers.get(sender.toString());
+    const receiverWS = onlineUsers.get(receiver.toString());
 
     if(senderWS?.readyState === WebSocket.OPEN){
         senderWS?.send(JSON.stringify({

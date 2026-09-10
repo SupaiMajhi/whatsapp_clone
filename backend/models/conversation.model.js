@@ -3,7 +3,11 @@ import mongoose, { Schema, model } from "mongoose";
 import { messageSchema } from "./message.model.js";
 
 const conversationSchema = new Schema({
-    participants: [{type: mongoose.Schema.Types.ObjectId, required: true}],
+    participants: [{
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: "User", 
+        required: true
+    }],
     lastMessage: messageSchema,
     unreadCount: {
         type: Number,

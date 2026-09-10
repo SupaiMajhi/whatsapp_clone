@@ -7,43 +7,29 @@ export const messageSchema = new Schema(
       ref: "Conversation",
       required: true,
     },
-
     sender: {
       type:mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-
     receiver: {
       type:mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-
     contentType: {
       type: String,
       enum: ["text", "image", "video", "audio", "gif"],
       default: "text",
     },
-
     content: { type: String },
-
-    imageOrVideoUrl: { type: String },
-
     messageStatus: {
       type: String,
-      enum: ["pending", "sent", "delivered", "seen"],
+      enum: ["sent", "delivered", "read"],
       default: "sent",
     },
-
-    sentAt: { 
-      type: Date, 
-      default: Date.now 
-    },
-
     deliveredAt: { type: Date },
-
-    seenAt: { type: Date },
+    readAt: { type: Date },
   },
   { timestamps: true }
 );
